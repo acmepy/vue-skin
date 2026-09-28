@@ -1,0 +1,10 @@
+{
+  "name": "@vue-skin/core",
+  "version": "0.0.1",
+  "description": "Contrato y plugin agnósticos de Vue Skin.",
+  "type": "module",
+  "exports": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

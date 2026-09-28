@@ -1,0 +1,28 @@
+import Alert from './components/Alert.vue'
+import Accordion from './components/Accordion.vue'
+import Badge from './components/Badge.vue'
+import Button from './components/Button.vue'
+import ButtonGroup from './components/ButtonGroup.vue'
+import Card from './components/Card.vue'
+import Checkbox from './components/Checkbox.vue'
+import Dialog from './components/Dialog.vue'
+import Dropdown from './components/Dropdown.vue'
+import Input from './components/Input.vue'
+import { UiIcon as Icon } from '@vue-skin/core'
+import List from './components/List.vue'
+import ListItem from './components/ListItem.vue'
+import Link from './components/Link.vue'
+import Modal from './components/Modal.vue'
+import Navbar from './components/Navbar.vue'
+import Select from './components/Select.vue'
+import Sidebar from './components/Sidebar.vue'
+import Spinner from './components/Spinner.vue'
+import Switch from './components/Switch.vue'
+import Textarea from './components/Textarea.vue'
+import Toast from './components/Toast.vue'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+export default {
+  name: 'bootstrap',
+  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, Link, List, ListItem, Modal, Navbar, Select, Sidebar, Spinner, Switch, Textarea, Toast }
+}

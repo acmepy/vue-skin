@@ -1,0 +1,14 @@
+{
+  "name": "@vue-skin/bootstrap",
+  "version": "0.0.1",
+  "description": "Adapter Bootstrap para Vue Skin.",
+  "type": "module",
+  "exports": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@vue-skin/core": "file:../core",
+    "bootstrap": "^5.3.8"
+  }
+}
