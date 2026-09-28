@@ -366,6 +366,7 @@ El código de negocio nunca debe conocer esas diferencias.
 - ayuda descriptiva;
 - tooltip;
 - error de validación;
+- `validator`, una función síncrona o asíncrona que devuelve vacío/`true` si es válido, y `false` o un mensaje si no lo es;
 - estado disabled;
 - estado readonly cuando corresponda;
 - required;
@@ -524,6 +525,7 @@ Props:
 - help
 - tooltip
 - error
+- validator
 - disabled
 - readonly
 - required
@@ -537,6 +539,8 @@ Events:
 - blur
 ```
 
+El componente expone `validate()`: ejecuta `validator`, muestra el error resultante y devuelve `Promise<boolean>`. También se ejecuta al perder foco. Las librerías externas se adaptan desde la aplicación; por ejemplo, una función puede llamar `schema.validateAt('nombre', { nombre: value })`.
+
 Tipos HTML razonables deben propagarse cuando sea posible:
 
 ```text
@@ -549,7 +553,10 @@ time
 search
 tel
 url
+datetime-local
 ```
+
+Con `type="number"`, el valor no vacío emitido por `v-model` es un número; vacío permanece como cadena vacía. Con `type="date"`, el valor usa el formato nativo `YYYY-MM-DD`.
 
 ---
 
@@ -573,10 +580,12 @@ UiLink events: click
 ### 13.2 `UiIcon`
 
 ```text
-Props: name, label
+Props: name, label, size
 ```
 
 `name` debe ser una referencia Iconify literal, por ejemplo `mdi:home`. En proyectos Vite, `icon-forge` detecta esas referencias y emite CSS local únicamente para los iconos utilizados; la aplicación desplegada no consulta Iconify en runtime.
+
+`size` acepta los tamaños semánticos `xs` (`.75em`), `sm` (`1em`), `md` (`1.25em`), `lg` (`1.5em`) y `xl` (`2em`), además de una dimensión CSS directa. Los valores numéricos, como `24` o `"24"`, se interpretan como píxeles; también se admiten valores como `"1.25em"` o `"24em"`.
 ```
 
 La presencia del slot `media` indica que el item contiene contenido multimedia. Las características de router, swipeout, sortable y smart select de Framework7 no son parte de este contrato.
@@ -640,7 +649,18 @@ Debe funcionar correctamente con valores booleanos como caso principal.
 
 ---
 
-### 15.1 `UiSwitch`
+### 15.1 `UiRadio`
+
+Selecciona un único valor dentro de un grupo de radios que comparten `v-model` y `name`.
+
+```text
+Props: modelValue, value, name, label, help, tooltip, error, disabled, required
+Events: update:modelValue, change
+```
+
+---
+
+### 15.2 `UiSwitch`
 
 Control binario para activar o desactivar una preferencia.
 
@@ -750,6 +770,18 @@ Events: update:modelValue
 ```
 
 Cada elemento de `items` debe incluir al menos `id`, `title` y `content`.
+
+### 19.2 `UiTabs`
+
+Conjunto de pestañas controlado por `v-model`.
+
+```text
+Props: modelValue, items, justified
+Events: update:modelValue, change
+Slots: panel ({ item })
+```
+
+Cada elemento de `items` incluye `id`, `label`, `content` y opcionalmente `disabled`.
 
 ---
 

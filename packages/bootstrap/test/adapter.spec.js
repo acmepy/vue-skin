@@ -28,6 +28,33 @@ describe('Bootstrap adapter', () => {
     expect(wrapper.text()).toContain('Requerido')
   })
 
+  it('exposes async validate and renders a validator error', async () => {
+    const wrapper = mount({
+      data: () => ({ value: '' }),
+      methods: { validateName(value) { return value.length >= 3 || 'Ingrese al menos tres caracteres' } },
+      template: '<UiInput ref="field" v-model="value" :validator="validateName" />'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    expect(await wrapper.vm.$refs.field.validate()).toBe(false)
+    expect(wrapper.text()).toContain('Ingrese al menos tres caracteres')
+    await wrapper.get('input').setValue('Ada')
+    expect(await wrapper.vm.$refs.field.validate()).toBe(true)
+  })
+
+  it('emits numbers as numbers and keeps native dates as YYYY-MM-DD strings', async () => {
+    const wrapper = mount({
+      data: () => ({ amount: null, birthDate: '' }),
+      template: '<div><UiInput v-model="amount" type="number" /><UiInput v-model="birthDate" type="date" /></div>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    const [amount, birthDate] = wrapper.findAll('input')
+    await amount.setValue('42')
+    await birthDate.setValue('2000-01-15')
+
+    expect(wrapper.vm.amount).toBe(42)
+    expect(wrapper.vm.birthDate).toBe('2000-01-15')
+  })
+
   it('closes a sidebar from a button in its default slot', async () => {
     const wrapper = mount({
       data: () => ({ open: true }),
@@ -157,12 +184,42 @@ describe('Bootstrap adapter', () => {
     expect(input.attributes('aria-checked')).toBe('true')
   })
 
-  it('renders an accessible icon through UiIcon', () => {
+  it('binds radio groups through v-model', async () => {
     const wrapper = mount({
-      template: '<UiIcon name="mdi:home" label="Inicio" />'
+      data: () => ({ plan: 'basic' }),
+      template: '<div><UiRadio v-model="plan" name="plan" value="basic" label="Básico" /><UiRadio v-model="plan" name="plan" value="pro" label="Pro" /></div>'
     }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
 
-    expect(wrapper.get('span').classes()).toContain('icon:mdi:home')
-    expect(wrapper.get('span').attributes('aria-label')).toBe('Inicio')
+    const radios = wrapper.findAll('input[type="radio"]')
+    expect(radios[0].element.checked).toBe(true)
+    await radios[1].setValue()
+    expect(wrapper.vm.plan).toBe('pro')
+    expect(radios[1].attributes('name')).toBe('plan')
+  })
+
+  it('binds tabs through v-model and does not select disabled tabs', async () => {
+    const wrapper = mount({
+      data: () => ({ active: 'details' }),
+      template: '<UiTabs v-model="active" :items="[{ id: \'details\', label: \'Detalles\', content: \'Contenido\' }, { id: \'settings\', label: \'Ajustes\', content: \'Opciones\' }, { id: \'locked\', label: \'Bloqueado\', content: \'No disponible\', disabled: true }]"><template #panel="{ item }"><strong>{{ item.content }}</strong></template></UiTabs>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    await wrapper.findAll('button[role="tab"]')[1].trigger('click')
+    expect(wrapper.vm.active).toBe('settings')
+    expect(wrapper.get('.tab-pane.active').text()).toBe('Opciones')
+
+    await wrapper.findAll('button[role="tab"]')[2].trigger('click')
+    expect(wrapper.vm.active).toBe('settings')
+  })
+
+  it('renders an accessible icon through UiIcon with semantic and custom sizes', () => {
+    const wrapper = mount({
+      template: '<div><UiIcon name="mdi:home" label="Inicio" size="lg" /><UiIcon name="mdi:bell" size="24" /></div>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    const [home, bell] = wrapper.findAll('span')
+    expect(home.classes()).toContain('icon:mdi:home')
+    expect(home.attributes('aria-label')).toBe('Inicio')
+    expect(home.attributes('style')).toContain('width: 1.5em')
+    expect(bell.attributes('style')).toContain('width: 24px')
   })
 })

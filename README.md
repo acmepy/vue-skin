@@ -62,6 +62,10 @@ const saving = ref(false)
 
 La vista no depende de clases ni APIs de Basecoat o Bootstrap. Cada adapter implementa el contrato visual y de comportamiento de forma independiente.
 
+## Autocompletado
+
+`@vue-skin/core` incluye `index.d.ts` para Volar y TypeScript, aun cuando la implementaciÃ³n estÃ© escrita en JavaScript. El editor sugiere atributos y valores normalizados, por ejemplo `xs`, `sm`, `md`, `lg` y `xl` para `UiIcon.size`, sin impedir dimensiones CSS como `"16"` o `"1.25em"`.
+
 ## Diálogos desde JavaScript
 
 El objeto retornado por `createVueSkin` expone un servicio de diálogos asociado a esa aplicación. Registra una vez `UiDialogHost` en la raíz para renderizar las solicitudes:

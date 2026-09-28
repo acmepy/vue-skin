@@ -14,15 +14,17 @@ import ListItem from './components/ListItem.vue'
 import Link from './components/Link.vue'
 import Modal from './components/Modal.vue'
 import Navbar from './components/Navbar.vue'
+import Radio from './components/Radio.vue'
 import Select from './components/Select.vue'
 import Sidebar from './components/Sidebar.vue'
 import Spinner from './components/Spinner.vue'
 import Switch from './components/Switch.vue'
+import Tabs from './components/Tabs.vue'
 import Textarea from './components/Textarea.vue'
 import Toast from './components/Toast.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default {
   name: 'bootstrap',
-  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, Link, List, ListItem, Modal, Navbar, Select, Sidebar, Spinner, Switch, Textarea, Toast }
+  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, Toast }
 }
