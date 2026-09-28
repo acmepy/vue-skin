@@ -1,23 +1,57 @@
 <script setup>
 import { computed, ref } from 'vue'
+import yep from 'yep'
 import { uiDialog } from './skin.js'
 
 const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
-  ['textarea', 'UiTextarea'], ['navbar', 'UiNavbar'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
-  ['accordion', 'UiAccordion'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner']
+  ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
+  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner']
 ]
 const active = ref('button')
 const activeName = computed(() => sections.find(([id]) => id === active.value)?.[1])
+const documentationTab = ref('example')
+const documentationTabs = [{ id: 'example', label: 'Ejemplo', content: '' }, { id: 'code', label: 'Código', content: '' }]
+const componentExamples = {
+  button: '<UiButton variant="primary">Guardar</UiButton>',
+  'button-group': '<UiButtonGroup><UiButton>Editar</UiButton><UiButton variant="secondary">Cancelar</UiButton></UiButtonGroup>',
+  badge: '<UiBadge variant="success" pill>Activo</UiBadge>',
+  icon: '<UiIcon name="mdi:home" size="lg" label="Inicio" />',
+  link: '<UiLink href="/details">Ver detalles</UiLink>',
+  list: '<UiList title="Canciones"><UiListItem title="Yellow Submarine" subtitle="Beatles" /></UiList>',
+  input: '<UiInput ref="nameInput" v-model="name" label="Nombre" :validator="validateName" />\nawait nameInput.value.validate()',
+  select: '<UiSelect v-model="role" label="Rol" :options="roles" />',
+  checkbox: '<UiCheckbox v-model="accepted" label="Acepto los términos" />',
+  radio: '<UiRadio v-model="plan" name="plan" value="pro" label="Plan Pro" />',
+  switch: '<UiSwitch v-model="enabled" label="Activar notificaciones" />',
+  textarea: '<UiTextarea v-model="notes" label="Notas" :rows="4" />',
+  navbar: '<UiNavbar title="Proyecto"><template #end><UiButton size="sm">Cuenta</UiButton></template></UiNavbar>',
+  dropdown: '<UiDropdown label="Acciones" :items="[{ label: \'Editar\', value: \'edit\' }]" />',
+  sidebar: '<UiSidebar v-model="open" position="start">Contenido</UiSidebar>',
+  card: '<UiCard title="Perfil">Contenido de la tarjeta</UiCard>',
+  accordion: '<UiAccordion v-model="openPanel" :items="[{ id: \'one\', title: \'Panel\', content: \'Contenido\' }]" />',
+  tabs: '<UiTabs v-model="activeTab" :items="[{ id: \'overview\', label: \'Resumen\', content: \'Contenido\' }]" />',
+  modal: '<UiModal v-model="modalOpen" title="Ejemplo">Contenido</UiModal>',
+  dialog: 'await uiDialog.alert(\'Los cambios fueron guardados.\', \'Éxito\')',
+  alert: '<UiAlert variant="success" dismissible>Operación realizada.</UiAlert>',
+  toast: '<UiToast v-model="toastOpen" title="Vue Skin" message="Operación completada." />',
+  spinner: '<UiSpinner label="Cargando" />'
+}
+const activeCode = computed(() => formatExample(componentExamples[active.value] ?? ''))
 const sidebarOpen = ref(false)
 const modalOpen = ref(false)
 const name = ref('')
+const nameInput = ref()
+const age = ref(null)
+const birthDate = ref('')
 const role = ref('editor')
 const accepted = ref(false)
+const selectedPlan = ref('basic')
 const notes = ref('')
 const loading = ref(false)
 const toastOpen = ref(false)
 const accordionOpen = ref('first')
+const activeTab = ref('overview')
 const notificationsEnabled = ref(true)
 const dropdownResult = ref('')
 const result = ref('')
@@ -27,9 +61,30 @@ const accordionItems = [
   { id: 'second', title: 'Segundo panel', content: 'Contenido del segundo panel.' },
   { id: 'third', title: 'Tercer panel', content: 'Contenido del tercer panel.' }
 ]
+const tabItems = [
+  { id: 'overview', label: 'Resumen', content: 'Estado general del proyecto y sus últimos cambios.' },
+  { id: 'activity', label: 'Actividad', content: 'Actividad reciente del equipo.' },
+  { id: 'settings', label: 'Configuración', content: 'Preferencias disponibles para el proyecto.' }
+]
 const dropdownItems = [{ label: 'Editar', value: 'edit' }, { label: 'Duplicar', value: 'duplicate' }, { label: 'Eliminar', value: 'delete' }]
+const userSchema = yep.object({ name: yep.string().title('Nombre').required().min(3) })
 
 function selectSection(id, event) { event?.preventDefault(); active.value = id; sidebarOpen.value = false }
+async function validateName(value) { await userSchema.validateAt('name', { name: value }) }
+async function validateNameField() { result.value = (await nameInput.value?.validate()) ? 'Nombre válido' : 'Revise el nombre' }
+function formatExample(example) {
+  if (!example.startsWith('<')) return example
+
+  let depth = 0
+  return (example.match(/<[^>]+>|[^<]+/g) ?? []).reduce((lines, token) => {
+    const value = token.trim()
+    if (!value) return lines
+    if (value.startsWith('</')) depth -= 1
+    lines.push(`${'  '.repeat(Math.max(depth, 0))}${value}`)
+    if (value.startsWith('<') && !value.startsWith('</') && !value.endsWith('/>')) depth += 1
+    return lines
+  }, []).join('\n')
+}
 async function showAlert() { await uiDialog.alert('Los cambios fueron guardados.', 'Éxito'); result.value = 'Alert aceptado' }
 async function showConfirm() { result.value = (await uiDialog.confirm('¿Desea continuar?', 'Confirmación')) ? 'Confirmado' : 'Cancelado' }
 async function showPrompt() { const value = await uiDialog.prompt('Ingrese un nombre para el proyecto.', 'Nuevo proyecto', { label: 'Nombre', initialValue: 'Vue Skin' }); result.value = value === null ? 'Prompt cancelado' : `Proyecto: ${value}` }
@@ -53,6 +108,10 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       <p class="eyebrow">Adapter activo: Bootstrap</p>
       <h1>{{ activeName }}</h1>
 
+      <UiTabs v-model="documentationTab" :items="documentationTabs">
+        <template #panel="{ item }">
+          <template v-if="item.id === 'example'">
+
       <UiCard v-if="active === 'button'" title="Botones">
         <div class="example-row"><UiButton>Primario</UiButton><UiButton variant="secondary">Secundario</UiButton><UiButton variant="danger">Eliminar</UiButton><UiButton loading>Guardando</UiButton></div>
       </UiCard>
@@ -66,7 +125,7 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       </UiCard>
 
       <UiCard v-else-if="active === 'icon'" title="Iconos">
-        <div class="example-row"><UiIcon name="mdi:home" label="Inicio" /><UiIcon name="mdi:account" label="Cuenta" /><UiIcon name="mdi:bell" label="Notificaciones" /></div>
+        <div class="example-row"><UiIcon name="mdi:home" label="Extra pequeño" size="xs" /><UiIcon name="mdi:home" label="Pequeño" size="sm" /><UiIcon name="mdi:account" label="Mediano" size="md" /><UiIcon name="mdi:bell" label="Grande" size="lg" /><UiIcon name="mdi:bell" label="Extra grande" size="xl" /><UiIcon name="mdi:bell" label="16 píxeles" size="16" /><UiIcon name="mdi:bell" label="2.4 em" size="2.4em" /></div>
       </UiCard>
 
       <UiCard v-else-if="active === 'link'" title="Enlaces">
@@ -101,8 +160,10 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       </UiCard>
 
       <UiCard v-else-if="active === 'input'" title="Campo de texto">
-        <UiInput v-model="name" label="Nombre" help="Ingrese su nombre completo" tooltip="Visible para el equipo" :error="name ? '' : 'El nombre es obligatorio'" required />
-        <p class="example-result">Valor: {{ name || '—' }}</p>
+        <UiInput ref="nameInput" v-model="name" label="Nombre" help="Ingrese al menos tres caracteres" tooltip="Visible para el equipo" :validator="validateName" required />
+        <UiButton class="mt-3" size="sm" @click="validateNameField">Validar nombre</UiButton>
+        <div class="row g-3 mt-1"><div class="col-md-6"><UiInput v-model="age" type="number" label="Edad" /></div><div class="col-md-6"><UiInput v-model="birthDate" type="date" label="Fecha de nacimiento" /></div></div>
+        <p class="example-result">Nombre: {{ name || '—' }} · Edad: {{ age ?? '—' }} · Fecha: {{ birthDate || '—' }}</p>
       </UiCard>
 
       <UiCard v-else-if="active === 'select'" title="Lista de opciones">
@@ -113,6 +174,13 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       <UiCard v-else-if="active === 'checkbox'" title="Checkbox">
         <UiCheckbox v-model="accepted" label="Acepto los términos" help="Requerido para guardar" required />
         <p class="example-result">Estado: {{ accepted ? 'Aceptado' : 'Pendiente' }}</p>
+      </UiCard>
+
+      <UiCard v-else-if="active === 'radio'" title="Radio">
+        <UiRadio v-model="selectedPlan" name="plan" value="basic" label="Plan Básico" />
+        <UiRadio v-model="selectedPlan" name="plan" value="pro" label="Plan Pro" />
+        <UiRadio v-model="selectedPlan" name="plan" value="enterprise" label="Plan Empresa" />
+        <p class="example-result">Plan seleccionado: {{ selectedPlan }}</p>
       </UiCard>
 
       <UiCard v-else-if="active === 'switch'" title="Switch">
@@ -170,6 +238,11 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
         <UiAccordion v-model="accordionOpen" :items="accordionItems" />
       </UiCard>
 
+      <UiCard v-else-if="active === 'tabs'" title="Pestañas">
+        <UiTabs v-model="activeTab" :items="tabItems" />
+        <p class="example-result">Pestaña activa: {{ activeTab }}</p>
+      </UiCard>
+
       <UiCard v-else-if="active === 'modal'" title="Modal">
         <UiButton @click="modalOpen = true">Abrir modal</UiButton>
       </UiCard>
@@ -193,6 +266,10 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       <UiCard v-else-if="active === 'spinner'" title="Indicador de carga">
         <div class="example-row"><UiSpinner /><UiButton :loading="loading" @click="loading = !loading">Alternar carga</UiButton></div>
       </UiCard>
+          </template>
+          <pre v-else class="example-code"><code>{{ activeCode }}</code></pre>
+        </template>
+      </UiTabs>
     </main>
   </div>
 
@@ -220,6 +297,7 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
 .eyebrow { color: #6c757d; font-size: .875rem; margin: 0 0 .5rem; }
 .example-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .example-result { margin: 1rem 0 0; color: #495057; }
+.example-code { margin: 0; padding: 1rem; border-radius: .375rem; background: #212529; color: #f8f9fa; tab-size: 2; white-space: pre-wrap; }
 .component-examples { display: grid; gap: 1.5rem; }
 .component-examples h2 { font-size: 1rem; margin: 0 0 .75rem; }
 .song-image { border-radius: .5rem; display: block; }
