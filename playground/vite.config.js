@@ -3,5 +3,5 @@ import vue from '@vitejs/plugin-vue'
 import { iconForge } from 'icon-forge/vite'
 
 export default defineConfig({
-  plugins: [vue(), iconForge({ component: 'UiIcon' })]
+  plugins: [vue(), iconForge({ component: 'UiIcon', source: ['src', '../packages/bootstrap/src', '../packages/layouts/src'] })]
 })

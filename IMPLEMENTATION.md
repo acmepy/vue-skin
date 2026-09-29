@@ -132,9 +132,14 @@ Nombres conceptuales de paquetes:
 @vue-skin/core
 @vue-skin/basecoat
 @vue-skin/bootstrap
+@vue-skin/layouts
 ```
 
 El nombre/scoping npm definitivo puede cambiar si no está disponible públicamente. Esto no debe afectar la arquitectura.
+
+`@vue-skin/layouts` es opcional e independiente de los adapters. Contiene composiciones reutilizables que usan slots y componentes públicos de Vue Skin, sin importar Bootstrap ni Basecoat.
+
+Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-model` para la sección activa. Integra `UiSidebar`, `UiNavbar`, el switcher lateral y `UiThemeSwitcher`; las vistas de la aplicación aportan únicamente el contenido principal.
 
 ---
 
@@ -541,6 +546,17 @@ Events:
 
 El componente expone `validate()`: ejecuta `validator`, muestra el error resultante y devuelve `Promise<boolean>`. También se ejecuta al perder foco. Las librerías externas se adaptan desde la aplicación; por ejemplo, una función puede llamar `schema.validateAt('nombre', { nombre: value })`.
 
+### 13.1 `UiInputGroup`
+
+Campo de texto con contenido antes o después del control.
+
+```text
+Props: mismas de UiInput, prefix, suffix
+Slots: prefix, suffix
+```
+
+Los slots permiten usar texto, iconos o botones como complementos del campo.
+
 Tipos HTML razonables deben propagarse cuando sea posible:
 
 ```text
@@ -716,6 +732,19 @@ Evitar modelar el componente según la estructura exacta de `.navbar` de Bootstr
 
 ---
 
+### 17.1 `UiThemeSwitcher`
+
+Alterna el tema visual global mediante `v-model` con los valores `light` y `dark`.
+
+```text
+Props: modelValue, storageKey, persist
+Events: update:modelValue, change
+```
+
+El adapter Bootstrap aplica el valor en `document.documentElement[data-bs-theme]`. Por defecto persiste la elección en `localStorage.themeMode`.
+
+---
+
 ## 18. `UiSidebar`
 
 Contrato inicial sugerido:
@@ -725,6 +754,7 @@ Props:
 - modelValue (abierto/cerrado)
 - position
 - width
+- breakpoint (`sm`, `md`, `lg`, `xl` o `xxl`; por defecto `lg`)
 
 Events:
 - update:modelValue
@@ -739,6 +769,8 @@ Slots:
 ```
 
 Métodos internos y animaciones pueden ser diferentes entre adapters.
+
+En Bootstrap, el sidebar es un offcanvas responsivo: por debajo de `breakpoint` funciona como panel superpuesto; desde ese punto se integra al layout como un `aside` que ocupa espacio junto al contenido principal.
 
 ---
 

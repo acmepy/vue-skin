@@ -23,6 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 const element = ref()
 const tag = computed(() => props.href ? 'a' : 'div')
+const hasDetails = computed(() => props.header || props.subtitle || props.text || props.footer)
 let tooltipInstance
 
 function click(event) {
@@ -57,16 +58,16 @@ onBeforeUnmount(() => tooltipInstance?.dispose())
     <div v-if="$slots.media" class="flex-shrink-0 me-3"><slot name="media" /></div>
     <div class="flex-grow-1 min-width-0">
       <div v-if="header" class="small text-body-secondary">{{ header }}</div>
-      <div v-if="title" class="fw-semibold">{{ title }}</div>
+      <div v-if="title" :class="{ 'fw-semibold': hasDetails }">{{ title }}</div>
       <div v-if="subtitle" class="small text-body-secondary">{{ subtitle }}</div>
       <div v-if="text" class="small mt-1">{{ text }}</div>
       <slot />
       <div v-if="footer" class="small text-body-secondary mt-1">{{ footer }}</div>
     </div>
-      <div v-if="after || badge !== undefined || $slots.end" class="ms-3 text-end flex-shrink-0">
-        <div v-if="after && (badge === undefined || badge === null)">{{ after }}</div>
-      <Badge v-if="badge !== undefined && badge !== null" :variant="badgeVariant" pill>{{ badge }}</Badge>
-      <slot name="end" />
-    </div>
+    <div v-if="after || badge !== undefined || $slots.end" class="ms-3 text-end flex-shrink-0">
+      <div v-if="after && (badge === undefined || badge === null)">{{ after }}</div>
+    <Badge v-if="badge !== undefined && badge !== null" :variant="badgeVariant" pill>{{ badge }}</Badge>
+    <slot name="end" />
+  </div>
   </component>
 </template>

@@ -11,6 +11,7 @@
     "@vue-skin/basecoat": "file:../packages/basecoat",
     "@vue-skin/bootstrap": "file:../packages/bootstrap",
     "@vue-skin/core": "file:../packages/core",
+    "@vue-skin/layouts": "file:../packages/layouts",
     "vue": "^3.5.0"
   },
   "devDependencies": {

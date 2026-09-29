@@ -6,12 +6,36 @@ const props = defineProps({ modelValue: Boolean, title: String, size: String, ce
 const emit = defineEmits(['update:modelValue', 'open', 'opened', 'close', 'closed'])
 const element = ref()
 let instance
+let requestedVisible = props.modelValue
+let isVisible = false
+let backdropElement
+let disposeTimer
 
-function sync(visible) { visible ? instance?.show() : instance?.hide() }
-function onShow() { emit('open') }
-function onShown() { emit('update:modelValue', true); emit('opened') }
+function disposeInstance() {
+  if (!instance) return
+  instance.dispose()
+  instance = undefined
+}
+
+function sync(visible) {
+  requestedVisible = visible
+  visible ? instance?.show() : instance?.hide()
+}
+function onShow() { isVisible = true; emit('open') }
+function onShown() {
+  backdropElement = [...document.querySelectorAll('.modal-backdrop')].at(-1)
+  if (!requestedVisible) { instance?.hide(); return }
+  emit('update:modelValue', true)
+  emit('opened')
+}
 function onHide() { emit('close') }
-function onHidden() { emit('update:modelValue', false); emit('closed') }
+function onHidden() {
+  isVisible = false
+  if (requestedVisible) { instance?.show(); return }
+  emit('update:modelValue', false)
+  emit('closed')
+}
+function requestClose() { emit('update:modelValue', false) }
 
 watch(() => props.modelValue, sync)
 onMounted(() => {
@@ -27,7 +51,17 @@ onBeforeUnmount(() => {
   element.value?.removeEventListener('shown.bs.modal', onShown)
   element.value?.removeEventListener('hide.bs.modal', onHide)
   element.value?.removeEventListener('hidden.bs.modal', onHidden)
-  instance?.dispose()
+  if (isVisible) {
+    element.value?.addEventListener('hidden.bs.modal', disposeInstance, { once: true })
+    instance?.hide()
+    disposeTimer = window.setTimeout(() => {
+      disposeInstance()
+      backdropElement?.remove()
+      if (!document.querySelector('.modal-backdrop')) document.body.classList.remove('modal-open')
+    }, 350)
+  } else {
+    disposeInstance()
+  }
 })
 </script>
 
@@ -37,7 +71,7 @@ onBeforeUnmount(() => {
       <section class="modal-content">
         <header v-if="title || $slots.header" class="modal-header">
           <slot name="header"><h2 class="modal-title fs-5">{{ title }}</h2></slot>
-          <button v-if="closable" type="button" class="btn-close" aria-label="Cerrar" data-bs-dismiss="modal" />
+          <button v-if="closable" type="button" class="btn-close" aria-label="Cerrar" @click="requestClose" />
         </header>
         <div class="modal-body"><slot /></div>
         <footer v-if="$slots.footer" class="modal-footer"><slot name="footer" /></footer>

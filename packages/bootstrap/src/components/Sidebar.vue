@@ -2,18 +2,26 @@
 import { Offcanvas } from 'bootstrap'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-const props = defineProps({ modelValue: Boolean, position: { type: String, default: 'start' }, width: String })
+const props = defineProps({ modelValue: Boolean, position: { type: String, default: 'start' }, width: String, breakpoint: { type: String, default: 'lg' } })
 const emit = defineEmits(['update:modelValue', 'open', 'close'])
 const placement = computed(() => props.position === 'end' ? 'end' : 'start')
 const element = ref()
 let instance
+let mediaQuery
 
-function sync(visible) { visible ? instance?.show() : instance?.hide() }
+const breakpointWidths = { sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 }
+function isOverlay() { return !mediaQuery?.matches }
+
+function sync(visible) {
+  if (!isOverlay()) return
+  visible ? instance?.show() : instance?.hide()
+}
 function onShown() { emit('update:modelValue', true); emit('open') }
 function onHidden() { emit('update:modelValue', false); emit('close') }
 
 watch(() => props.modelValue, sync)
 onMounted(() => {
+  mediaQuery = window.matchMedia?.(`(min-width: ${breakpointWidths[props.breakpoint] ?? breakpointWidths.lg}px)`) ?? { matches: false }
   instance = Offcanvas.getOrCreateInstance(element.value)
   element.value.addEventListener('shown.bs.offcanvas', onShown)
   element.value.addEventListener('hidden.bs.offcanvas', onHidden)
@@ -27,12 +35,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <aside ref="element" class="offcanvas" :class="`offcanvas-${placement}`" :style="width ? { width } : undefined" tabindex="-1">
+  <aside ref="element" class="ui-sidebar" :class="[`offcanvas-${placement}`, `offcanvas-${breakpoint}`, modelValue ? `d-${breakpoint}-flex` : `d-${breakpoint}-none`]" :style="width ? { width } : undefined" tabindex="-1">
     <header v-if="$slots.header" class="offcanvas-header">
       <slot name="header" />
-      <button type="button" class="btn-close" aria-label="Cerrar" data-bs-dismiss="offcanvas" />
     </header>
-    <div class="offcanvas-body"><slot /></div>
+    <div class="offcanvas-body ui-sidebar-body" style="flex: 1 1 auto; min-height: 0; overflow-y: auto"><slot /></div>
     <footer v-if="$slots.footer" class="offcanvas-footer"><slot name="footer" /></footer>
   </aside>
 </template>
+
+<style>
+.ui-sidebar { flex-direction: column; min-width: 0; }
+.ui-sidebar .offcanvas-header { display: flex !important; flex-shrink: 0; }
+.ui-sidebar .ui-sidebar-body { display: block !important; flex: 1 1 auto !important; min-height: 0; overflow-y: auto !important; }
+</style>

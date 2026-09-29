@@ -8,6 +8,7 @@ import Checkbox from './components/Checkbox.vue'
 import Dialog from './components/Dialog.vue'
 import Dropdown from './components/Dropdown.vue'
 import Input from './components/Input.vue'
+import InputGroup from './components/InputGroup.vue'
 import { UiIcon as Icon } from '@vue-skin/core'
 import List from './components/List.vue'
 import ListItem from './components/ListItem.vue'
@@ -21,10 +22,11 @@ import Spinner from './components/Spinner.vue'
 import Switch from './components/Switch.vue'
 import Tabs from './components/Tabs.vue'
 import Textarea from './components/Textarea.vue'
+import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import Toast from './components/Toast.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default {
   name: 'bootstrap',
-  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, Toast }
+  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, InputGroup, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, ThemeSwitcher, Toast }
 }

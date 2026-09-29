@@ -55,6 +55,18 @@ describe('Bootstrap adapter', () => {
     expect(wrapper.vm.birthDate).toBe('2000-01-15')
   })
 
+  it('renders input groups with prefix and suffix slots', async () => {
+    const wrapper = mount({
+      data: () => ({ amount: '' }),
+      template: '<UiInputGroup v-model="amount" prefix="$"><template #suffix><UiButton>Aplicar</UiButton></template></UiInputGroup>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    await wrapper.get('input').setValue('25')
+    expect(wrapper.vm.amount).toBe('25')
+    expect(wrapper.get('.input-group-text').text()).toBe('$')
+    expect(wrapper.get('button').text()).toBe('Aplicar')
+  })
+
   it('closes a sidebar from a button in its default slot', async () => {
     const wrapper = mount({
       data: () => ({ open: true }),
@@ -69,8 +81,25 @@ describe('Bootstrap adapter', () => {
     await new Promise((resolve) => setTimeout(resolve, 20))
 
     expect(wrapper.vm.open).toBe(false)
-    expect(wrapper.get('.offcanvas').classes()).not.toContain('show')
+    expect(wrapper.get('aside').classes()).not.toContain('show')
     wrapper.unmount()
+  })
+
+  it('uses a responsive Bootstrap offcanvas that participates in desktop layout', async () => {
+    const originalMatchMedia = window.matchMedia
+    window.matchMedia = () => ({ matches: true })
+    const wrapper = mount({
+      data: () => ({ open: true }),
+      template: '<UiSidebar v-model="open" breakpoint="xl">Navegación</UiSidebar>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    expect(wrapper.get('aside').classes()).toEqual(expect.arrayContaining(['offcanvas-xl', 'd-xl-flex']))
+    wrapper.vm.open = false
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('aside').classes()).toContain('d-xl-none')
+    expect(wrapper.get('.ui-sidebar-body').classes()).toContain('offcanvas-body')
+    wrapper.unmount()
+    window.matchMedia = originalMatchMedia
   })
 
   it('renders the prompt dialog with the normalized input API', () => {
@@ -82,6 +111,21 @@ describe('Bootstrap adapter', () => {
     expect(wrapper.get('input').element.value).toBe('Vue Skin')
     expect(wrapper.text()).toContain('Cancelar')
     wrapper.unmount()
+  })
+
+  it('syncs a modal with v-model and disposes it on unmount', async () => {
+    const wrapper = mount({
+      data: () => ({ open: true }),
+      template: '<UiModal v-model="open" title="Ejemplo">Contenido</UiModal>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    await new Promise((resolve) => setTimeout(resolve, 20))
+    expect(wrapper.get('.modal').classes()).toContain('show')
+    await wrapper.get('.btn-close').trigger('click')
+    expect(wrapper.vm.open).toBe(false)
+    wrapper.unmount()
+    await new Promise((resolve) => setTimeout(resolve, 350))
+    expect(document.querySelector('.modal-backdrop')).toBeNull()
   })
 
   it('renders Bootstrap utility components through their normalized API', () => {
@@ -129,6 +173,15 @@ describe('Bootstrap adapter', () => {
 
     expect(wrapper.get('.badge').text()).toBe('Nuevo')
     expect(wrapper.text()).not.toContain('Editar')
+  })
+
+  it('renders a title-only list item with normal text weight', () => {
+    const wrapper = mount({
+      template: '<UiList><UiListItem title="Texto normal" /><UiListItem title="Título con detalle" subtitle="Detalle" /></UiList>'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    expect(wrapper.get('.list-group-item > div > div').classes()).not.toContain('fw-semibold')
+    expect(wrapper.findAll('.list-group-item > div > div')[1].classes()).toContain('fw-semibold')
   })
 
   it('supports list headers, footers, group titles and disabled links', async () => {
@@ -195,6 +248,26 @@ describe('Bootstrap adapter', () => {
     await radios[1].setValue()
     expect(wrapper.vm.plan).toBe('pro')
     expect(radios[1].attributes('name')).toBe('plan')
+  })
+
+  it('toggles Bootstrap global light and dark themes', async () => {
+    localStorage.setItem('themeMode', 'dark')
+    const wrapper = mount({
+      data: () => ({ theme: null }),
+      template: '<UiThemeSwitcher v-model="theme" />'
+    }, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+
+    expect(wrapper.vm.theme).toBe('dark')
+    expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark')
+    await wrapper.get('button').trigger('click')
+    expect(wrapper.vm.theme).toBe('light')
+    expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light')
+    expect(localStorage.getItem('themeMode')).toBe('light')
+    expect(wrapper.get('button').attributes('style')).toContain('width: 2rem')
+    expect(wrapper.get('button').attributes('style')).toContain('height: 2rem')
+    expect(wrapper.get('span').classes()).toContain('icon:mdi:weather-night')
+    document.documentElement.setAttribute('data-bs-theme', 'light')
+    localStorage.removeItem('themeMode')
   })
 
   it('binds tabs through v-model and does not select disabled tabs', async () => {

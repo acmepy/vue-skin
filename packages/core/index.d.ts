@@ -10,6 +10,7 @@ export type ButtonType = SuggestedValue<'button' | 'submit' | 'reset'>
 export type ModalSize = SuggestedValue<'sm' | 'lg' | 'xl' | 'fullscreen'>
 export type ToastPosition = 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'
 export type DialogType = 'alert' | 'confirm' | 'prompt' | 'preloader'
+export type Theme = 'light' | 'dark'
 export type ComponentOf<Props> = DefineComponent<Props, {}, {}, {}, {}, {}, {}, string[]>
 
 export interface UiButtonProps { variant?: Variant; size?: ControlSize; disabled?: boolean; loading?: boolean; type?: ButtonType }
@@ -18,6 +19,7 @@ export interface UiIconProps { name: string; label?: string; size?: IconSize }
 export type ValidatorResult = boolean | string | null | undefined | void
 export type Validator = (value: unknown) => ValidatorResult | Promise<ValidatorResult>
 export interface UiInputProps { modelValue?: string | number; label?: string; type?: InputType; name?: string; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; validator?: Validator; disabled?: boolean; readonly?: boolean; required?: boolean; autocomplete?: string }
+export interface UiInputGroupProps extends UiInputProps { prefix?: string; suffix?: string }
 export interface UiSelectOption { value: string | number; label: string }
 export interface UiSelectProps { modelValue?: string | number; label?: string; options?: UiSelectOption[]; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean }
 export interface UiCheckboxProps { modelValue?: unknown; label?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean; trueValue?: unknown; falseValue?: unknown }
@@ -28,7 +30,8 @@ export interface UiListProps { title?: string; divided?: boolean; bordered?: boo
 export interface UiListItemProps { href?: string; target?: string; header?: string; title?: string; subtitle?: string; text?: string; footer?: string; after?: string; badge?: string | number; badgeVariant?: Variant; active?: boolean; disabled?: boolean; groupTitle?: boolean; tooltip?: string }
 export interface UiLinkProps { href?: string; target?: string; disabled?: boolean }
 export interface UiNavbarProps { title?: string; fixed?: boolean; sticky?: boolean }
-export interface UiSidebarProps { modelValue?: boolean; position?: SuggestedValue<'start' | 'end'>; width?: string }
+export interface UiThemeSwitcherProps { modelValue?: Theme | null; storageKey?: string; persist?: boolean }
+export interface UiSidebarProps { modelValue?: boolean; position?: SuggestedValue<'start' | 'end'>; width?: string; breakpoint?: SuggestedValue<'sm' | 'md' | 'lg' | 'xl' | 'xxl'> }
 export interface UiCardProps { title?: string }
 export interface UiAccordionItem { id: string | number; title: string; content: string }
 export interface UiAccordionProps { modelValue?: string | number | null; items?: UiAccordionItem[]; flush?: boolean }
@@ -63,6 +66,7 @@ declare module 'vue' {
     UiButtonGroup: ComponentOf<UiButtonGroupProps>
     UiIcon: ComponentOf<UiIconProps>
     UiInput: ComponentOf<UiInputProps>
+    UiInputGroup: ComponentOf<UiInputGroupProps>
     UiSelect: ComponentOf<UiSelectProps>
     UiCheckbox: ComponentOf<UiCheckboxProps>
     UiRadio: ComponentOf<UiRadioProps>
@@ -72,6 +76,7 @@ declare module 'vue' {
     UiListItem: ComponentOf<UiListItemProps>
     UiLink: ComponentOf<UiLinkProps>
     UiNavbar: ComponentOf<UiNavbarProps>
+    UiThemeSwitcher: ComponentOf<UiThemeSwitcherProps>
     UiSidebar: ComponentOf<UiSidebarProps>
     UiCard: ComponentOf<UiCardProps>
     UiAccordion: ComponentOf<UiAccordionProps>
