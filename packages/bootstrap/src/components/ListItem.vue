@@ -1,6 +1,7 @@
 <script setup>
 import { Tooltip } from 'bootstrap'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { UiIcon } from '@vue-skin/core'
 import Badge from './Badge.vue'
 
 defineOptions({ inheritAttrs: false })
@@ -64,10 +65,11 @@ onBeforeUnmount(() => tooltipInstance?.dispose())
       <slot />
       <div v-if="footer" class="small text-body-secondary mt-1">{{ footer }}</div>
     </div>
-    <div v-if="after || badge !== undefined || $slots.end" class="ms-3 text-end flex-shrink-0">
+    <div v-if="after || badge !== undefined || $slots.end || href" class="ms-3 text-end flex-shrink-0 d-flex align-items-center">
       <div v-if="after && (badge === undefined || badge === null)">{{ after }}</div>
-    <Badge v-if="badge !== undefined && badge !== null" :variant="badgeVariant" pill>{{ badge }}</Badge>
-    <slot name="end" />
-  </div>
+      <Badge v-if="badge !== undefined && badge !== null" :variant="badgeVariant" pill>{{ badge }}</Badge>
+      <slot name="end" />
+      <UiIcon v-if="href" class="ms-2" name="lucide:chevron-right" size="sm" />
+    </div>
   </component>
 </template>

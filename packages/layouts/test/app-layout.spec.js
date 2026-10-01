@@ -15,15 +15,15 @@ const components = {
 describe('UiAppLayout', () => {
   it('renders integrated navigation and updates the selected section', async () => {
     const wrapper = mount(UiAppLayout, {
-      props: { modelValue: 'home', title: 'Proyecto', header: 'Navegación', sections: [['home', 'Inicio'], ['settings', 'Ajustes']] },
+      props: { modelValue: 'home', title: 'Proyecto', header: 'Navegación', sections: [{ id: 'layouts', title: 'Layouts', groupTitle: true }, ['home', 'Inicio'], ['settings', 'Ajustes']] },
       global: { components }
     })
 
     expect(wrapper.get('nav').text()).toContain('Proyecto')
     expect(wrapper.get('aside').text()).toContain('Navegación')
     const sections = wrapper.findAll('[data-test="section"]')
-    expect(sections[0].attributes('data-active')).toBe('true')
-    await sections[1].trigger('click')
+    expect(sections[1].attributes('data-active')).toBe('true')
+    await sections[2].trigger('click')
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['settings'])
     expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ id: 'settings', title: 'Ajustes' })
   })

@@ -139,7 +139,7 @@ El nombre/scoping npm definitivo puede cambiar si no está disponible públicame
 
 `@vue-skin/layouts` es opcional e independiente de los adapters. Contiene composiciones reutilizables que usan slots y componentes públicos de Vue Skin, sin importar Bootstrap ni Basecoat.
 
-Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-model` para la sección activa. Integra `UiSidebar`, `UiNavbar`, el switcher lateral y `UiThemeSwitcher`; las vistas de la aplicación aportan únicamente el contenido principal.
+Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-model` para la sección activa. Integra `UiSidebar`, `UiNavbar`, el switcher lateral y `UiThemeSwitcher`; las vistas de la aplicación aportan únicamente el contenido principal. Cada entrada de `sections` puede ser un par `[id, título]` o un objeto; un objeto con `groupTitle: true` se renderiza como encabezado no interactivo. `UiLogin` es otra composición reutilizable: integra los controles de formulario del adapter activo y emite las credenciales al enviar el formulario.
 
 ---
 

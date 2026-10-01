@@ -164,6 +164,7 @@ describe('Bootstrap adapter', () => {
     expect(wrapper.text()).toContain('Yellow Submarine')
     expect(wrapper.get('.badge').text()).toBe('3')
     expect(wrapper.text()).not.toContain('$15')
+    expect(wrapper.get('.icon\\:lucide\\:chevron-right').attributes('aria-hidden')).toBe('true')
   })
 
   it('uses a badge in the trailing position instead of after text', () => {

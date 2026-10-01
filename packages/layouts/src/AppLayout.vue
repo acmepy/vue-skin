@@ -12,10 +12,11 @@ const isDesktop = () => typeof window !== 'undefined' && (window.matchMedia?.('(
 const sidebarOpen = ref(isDesktop())
 const normalizedSections = computed(() => props.sections.map((section) => Array.isArray(section)
   ? { id: section[0], title: section[1] }
-  : { id: section.id, title: section.title ?? section.label }
+  : { id: section.id, title: section.title ?? section.label, groupTitle: section.groupTitle }
 ))
 
 function selectSection(section, event) {
+  if (section.groupTitle) return
   event?.preventDefault()
   emit('update:modelValue', section.id)
   emit('select', section)
@@ -28,8 +29,8 @@ function selectSection(section, event) {
     <div class="ui-app-layout-sidebar">
       <UiSidebar v-model="sidebarOpen" width="15rem" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
-        <UiList :bordered="false">
-          <UiListItem v-for="section in normalizedSections" :key="section.id" :href="`#${section.id}`" :title="section.title" :active="modelValue === section.id" @click="selectSection(section, $event)" />
+        <UiList :bordered="false" :divided="false">
+          <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)" />
         </UiList>
       </UiSidebar>
     </div>

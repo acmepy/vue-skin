@@ -1,16 +1,20 @@
 <script setup>
 import { computed, ref } from 'vue'
 import yep from 'yep'
-import { UiAppLayout } from '@vue-skin/layouts'
+import { UiAppLayout, UiLogin } from '@vue-skin/layouts'
 import { uiDialog } from './skin.js'
 
 const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['input-group', 'UiInputGroup'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
   ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
-  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner']
+  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
+  { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin']
 ]
 const active = ref('button')
-const activeName = computed(() => sections.find(([id]) => id === active.value)?.[1])
+const activeName = computed(() => {
+  const section = sections.find((item) => (Array.isArray(item) ? item[0] : item.id) === active.value)
+  return Array.isArray(section) ? section[1] : section?.title
+})
 const documentationTab = ref('example')
 const documentationTabs = [{ id: 'example', label: 'Ejemplo', content: '' }, { id: 'code', label: 'Código', content: '' }]
 const componentExamples = {
@@ -73,10 +77,18 @@ const componentExamples = {
   radio: '<UiRadio v-model="selectedPlan" name="plan" value="basic" label="Plan Básico" />\n<UiRadio v-model="selectedPlan" name="plan" value="pro" label="Plan Pro" />\n<UiRadio v-model="selectedPlan" name="plan" value="enterprise" label="Plan Empresa" />',
   switch: '<UiSwitch v-model="notificationsEnabled" label="Activar notificaciones" help="Recibirá novedades importantes." />',
   textarea: '<UiTextarea v-model="notes" label="Notas" placeholder="Información adicional" />',
-  navbar: '<UiAppLayout v-model="active" title="Vue Skin" header="Componentes" :sections="sections"><main>Contenido</main></UiAppLayout>',
+  login: `<UiLogin
+  v-model:email="loginEmail"
+  v-model:password="loginPassword"
+  v-model:remember="loginRemember"
+  :full-height="false"
+  @submit="login"
+/>`,
+  navbar: '<UiNavbar title="Proyecto Atlas"><template #start>...</template><template #end>...</template></UiNavbar>',
   'theme-switcher': '<UiThemeSwitcher v-model="theme" />',
   dropdown: '<UiDropdown label="Acciones" :items="dropdownItems" align="end" @select="dropdownResult = $event.label" />',
-  sidebar: '<UiAppLayout v-model="active" title="Vue Skin" header="Componentes" :sections="sections"><main>Contenido</main></UiAppLayout>',
+  sidebar: '<UiSidebar v-model="open" breakpoint="lg"><template #header>...</template><UiList>...</UiList></UiSidebar>',
+  'app-layout': '<UiAppLayout v-model="active" title="Vue Skin" header="Componentes" :sections="sections"><main>Contenido</main></UiAppLayout>',
   card: `<UiCard title="Perfil">
   <p>Las tarjetas organizan contenido con título, cuerpo y slots de cabecera o pie opcionales.</p>
   <template #footer>Última actualización: hoy</template>
@@ -125,6 +137,10 @@ const role = ref('editor')
 const accepted = ref(false)
 const selectedPlan = ref('basic')
 const notes = ref('')
+const loginEmail = ref('')
+const loginPassword = ref('')
+const loginRemember = ref(false)
+const loginResult = ref('')
 const loading = ref(false)
 const toastOpen = ref(false)
 const accordionOpen = ref('first')
@@ -165,6 +181,7 @@ async function showAlert() { await uiDialog.alert('Los cambios fueron guardados.
 async function showConfirm() { result.value = (await uiDialog.confirm('¿Desea continuar?', 'Confirmación')) ? 'Confirmado' : 'Cancelado' }
 async function showPrompt() { const value = await uiDialog.prompt('Ingrese un nombre para el proyecto.', 'Nuevo proyecto', { label: 'Nombre', initialValue: 'Vue Skin' }); result.value = value === null ? 'Prompt cancelado' : `Proyecto: ${value}` }
 async function showPreloader() { const preloader = uiDialog.preloader('Procesando cambios'); await new Promise((resolve) => setTimeout(resolve, 5000)); preloader.close(); result.value = 'Proceso finalizado' }
+function login({ email, remember }) { loginResult.value = `Enviado: ${email || 'sin correo'}${remember ? ' · recordar sesión' : ''}` }
 </script>
 
 <template>
@@ -274,11 +291,17 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
         <p class="example-result">{{ notes || 'Sin notas' }}</p>
       </UiCard>
 
+      <UiCard v-else-if="active === 'login'" title="Inicio de sesión">
+        <UiLogin v-model:email="loginEmail" v-model:password="loginPassword" v-model:remember="loginRemember" :full-height="false" @submit="login">
+          <template #footer><p v-if="loginResult" class="example-result text-center">{{ loginResult }}</p></template>
+        </UiLogin>
+      </UiCard>
+
       <UiCard v-else-if="active === 'navbar'" title="Barra de navegación">
         <p>La barra superior de esta página es un <code>UiNavbar</code>. Este ejemplo muestra sus slots de navegación.</p>
         <UiNavbar title="Proyecto Atlas">
           <template #start><UiButton variant="link">Inicio</UiButton><UiButton variant="link">Proyectos</UiButton></template>
-          <template #end><UiDropdown label="Cuenta" size="sm" variant="outline-light" align="end" :items="[{ label: 'Mi perfil', value: 'profile' }, { label: 'Cerrar sesión', value: 'logout' }]" /></template>
+          <template #end><UiDropdown label="Cuenta" size="sm" variant="outline-secondary" align="end" :items="[{ label: 'Mi perfil', value: 'profile' }, { label: 'Cerrar sesión', value: 'logout' }]" /></template>
         </UiNavbar>
       </UiCard>
 
@@ -295,6 +318,10 @@ async function showPreloader() { const preloader = uiDialog.preloader('Procesand
       <UiCard v-else-if="active === 'sidebar'" title="Panel lateral">
         <p>En escritorio ocupa espacio dentro del layout; en móvil se abre como un panel superpuesto.</p>
         <p>Este shell ya integra la navegación lateral y su switcher.</p>
+      </UiCard>
+
+      <UiCard v-else-if="active === 'app-layout'" title="Layout de aplicación">
+        <p>Esta documentación está construida con <code>UiAppLayout</code>. Integra navbar, sidebar responsivo, selector de tema y secciones de navegación.</p>
       </UiCard>
 
       <section v-else-if="active === 'card'" class="component-examples">
