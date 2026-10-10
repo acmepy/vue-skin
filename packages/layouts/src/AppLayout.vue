@@ -27,15 +27,15 @@ function selectSection(section, event) {
 <template>
   <div class="ui-app-layout">
     <div class="ui-app-layout-sidebar">
-      <UiSidebar v-model="sidebarOpen" width="15rem" aria-label="Navegación principal">
+      <UiSidebar v-model="sidebarOpen" class="bg-body-tertiary" width="15rem" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
-        <UiList :bordered="false" :divided="false">
+        <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--bs-tertiary-bg)" filter>
           <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)" />
         </UiList>
       </UiSidebar>
     </div>
     <div class="ui-app-layout-content">
-      <UiNavbar :title="title">
+      <UiNavbar class="ui-app-layout-navbar" :title="title">
         <template #start>
           <UiButton class="ui-app-layout-sidebar-switcher d-inline-flex align-items-center justify-content-center p-0" style="width: 2rem; height: 2rem" variant="outline-secondary" :aria-label="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" :title="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" @click="sidebarOpen = !sidebarOpen">
             <template #icon><UiIcon name="lucide:sidebar" size="18" /></template>
@@ -49,9 +49,12 @@ function selectSection(section, event) {
 </template>
 
 <style>
-.ui-app-layout { display: grid; grid-template-columns: max-content minmax(0, 1fr); min-height: 100vh; }
+.ui-app-layout { --ui-app-layout-header-height: 3.5rem; display: grid; grid-template-columns: max-content minmax(0, 1fr); min-height: 100vh; }
 .ui-app-layout-sidebar { height: 100vh; position: sticky; top: 0; overflow: hidden; }
 .ui-app-layout-sidebar > * { height: 100%; }
+.ui-app-layout-sidebar > .ui-sidebar { border-inline-end: 1px solid var(--ui-sidebar-scroll-thumb) !important; }
+.ui-app-layout-navbar { min-height: var(--ui-app-layout-header-height); }
+.ui-app-layout-sidebar .offcanvas-header { min-height: var(--ui-app-layout-header-height); padding-block: .5rem; }
 .ui-app-layout-content { grid-column: 2; min-width: 0; }
 .ui-app-layout-heading { margin: 0; font-size: 1rem; }
 

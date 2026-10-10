@@ -4,8 +4,11 @@ import Badge from './components/Badge.vue'
 import Button from './components/Button.vue'
 import ButtonGroup from './components/ButtonGroup.vue'
 import Card from './components/Card.vue'
+import Chart from './components/Chart.vue'
 import Checkbox from './components/Checkbox.vue'
 import Dialog from './components/Dialog.vue'
+import DataTable from './components/DataTable.vue'
+import DataTableButton from './components/DataTableButton.vue'
 import Dropdown from './components/Dropdown.vue'
 import Input from './components/Input.vue'
 import InputGroup from './components/InputGroup.vue'
@@ -28,5 +31,5 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default {
   name: 'bootstrap',
-  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Checkbox, Dialog, Dropdown, Icon, Input, InputGroup, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, ThemeSwitcher, Toast }
+  components: { Accordion, Alert, Badge, Button, ButtonGroup, Card, Chart, Checkbox, DataTable, DataTableButton, Dialog, Dropdown, Icon, Input, InputGroup, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, ThemeSwitcher, Toast }
 }

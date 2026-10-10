@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
 <template>
   <aside ref="element" class="ui-sidebar" :class="[`offcanvas-${placement}`, `offcanvas-${breakpoint}`, modelValue ? `d-${breakpoint}-flex` : `d-${breakpoint}-none`]" :style="width ? { width } : undefined" tabindex="-1">
     <header v-if="$slots.header" class="offcanvas-header">
-      <slot name="header" />
+      <div class="ui-sidebar-header-content"><slot name="header" /></div>
     </header>
     <div class="offcanvas-body ui-sidebar-body" style="flex: 1 1 auto; min-height: 0; overflow-y: auto"><slot /></div>
     <footer v-if="$slots.footer" class="offcanvas-footer"><slot name="footer" /></footer>
@@ -45,13 +45,14 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
-.ui-sidebar { flex-direction: column; min-width: 0; }
+.ui-sidebar { --ui-sidebar-scroll-track: #f8f9fa; --ui-sidebar-scroll-thumb: #adb5bd; --ui-sidebar-scroll-thumb-hover: #6c757d; flex-direction: column; min-width: 0; }
 .ui-sidebar .offcanvas-header { display: flex !important; flex-shrink: 0; }
+.ui-sidebar-header-content { flex: 1 1 auto; min-width: 0; width: 100%; overflow-wrap: anywhere; }
 .ui-sidebar .ui-sidebar-body { display: block !important; flex: 1 1 auto !important; min-height: 0; overflow-y: auto !important; scrollbar-color: var(--ui-sidebar-scroll-thumb) var(--ui-sidebar-scroll-track); }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar { width: .75rem; }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar-track { background: var(--ui-sidebar-scroll-track); }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar-thumb { background: var(--ui-sidebar-scroll-thumb); border: .2rem solid var(--ui-sidebar-scroll-track); border-radius: 999px; }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar-thumb:hover { background-color: var(--ui-sidebar-scroll-thumb-hover); }
-[data-bs-theme='light'] .ui-sidebar .ui-sidebar-body { --ui-sidebar-scroll-track: #f8f9fa; --ui-sidebar-scroll-thumb: #adb5bd; --ui-sidebar-scroll-thumb-hover: #6c757d; color-scheme: light; }
-[data-bs-theme='dark'] .ui-sidebar .ui-sidebar-body { --ui-sidebar-scroll-track: #212529; --ui-sidebar-scroll-thumb: #495057; --ui-sidebar-scroll-thumb-hover: #6c757d; color-scheme: dark; }
+[data-bs-theme='light'] .ui-sidebar { color-scheme: light; }
+[data-bs-theme='dark'] .ui-sidebar { --ui-sidebar-scroll-track: #212529; --ui-sidebar-scroll-thumb: #495057; --ui-sidebar-scroll-thumb-hover: #6c757d; color-scheme: dark; }
 </style>

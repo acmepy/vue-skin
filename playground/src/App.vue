@@ -8,6 +8,7 @@ const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['input-group', 'UiInputGroup'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
   ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
   ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
+  ['data-table', 'UiDataTable'], ['data-table-button', 'UiDataTableButton'], ['chart', 'UiChart'],
   { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin']
 ]
 const active = ref('button')
@@ -17,13 +18,124 @@ const activeName = computed(() => {
 })
 const documentationTab = ref('example')
 const documentationTabs = [{ id: 'example', label: 'Ejemplo', content: '' }, { id: 'code', label: 'Código', content: '' }]
+const chartExamples = ref([
+  {
+    title: 'Barras', type: 'bar',
+    data: { labels: ['Enero', 'Febrero', 'Marzo', 'Abril'], datasets: [
+      { label: 'Ventas', data: [35, 48, 42, 65], backgroundColor: '#0d6efd' },
+      { label: 'Objetivo', data: [40, 45, 50, 60], backgroundColor: '#6c757d' }
+    ] },
+    options: { scales: { y: { beginAtZero: true } } }
+  },
+  {
+    title: 'Línea', type: 'line',
+    data: { labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'], datasets: [
+      { label: 'Visitas', data: [120, 180, 145, 220, 260], borderColor: '#0d6efd', backgroundColor: '#0d6efd', tension: 0.3 }
+    ] }
+  },
+  {
+    title: 'Dona', type: 'doughnut',
+    data: { labels: ['Web', 'Tienda', 'Otros'], datasets: [
+      { label: 'Ventas por canal', data: [55, 30, 15], backgroundColor: ['#0d6efd', '#198754', '#ffc107'], borderWidth: 0 }
+    ] },
+    options: { cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+  },
+  {
+    title: 'Pastel', type: 'pie',
+    data: { labels: ['Completado', 'Pendiente', 'En curso'], datasets: [
+      { label: 'Tareas', data: [18, 7, 10], backgroundColor: ['#198754', '#ffc107', '#0dcaf0'], borderWidth: 0 }
+    ] }
+  },
+  {
+    title: 'Área', type: 'line',
+    data: { labels: ['Enero', 'Febrero', 'Marzo', 'Abril'], datasets: [
+      { label: 'Ingresos', data: [12, 19, 16, 28], borderColor: '#198754', backgroundColor: 'rgba(25, 135, 84, 0.2)', fill: true, tension: 0.3 }
+    ] },
+    options: { scales: { y: { beginAtZero: true } } }
+  }
+])
+function updateChartExample() {
+  const dataset = chartExamples.value[0].data.datasets[0]
+  dataset.data = dataset.data.map((value) => value + 5)
+}
 const componentExamples = {
+  chart: `// Dentro de script setup
+import { ref } from 'vue'
+const chartExamples = ref(${JSON.stringify(chartExamples.value, null, 2)})
+function updateChartExample() {
+  const dataset = chartExamples.value[0].data.datasets[0]
+  dataset.data = dataset.data.map((value) => value + 5)
+}
+
+<div class="d-grid gap-4">
+  <div><UiButton @click="updateChartExample">Actualizar barras</UiButton></div>
+  <div class="row g-4">
+    <div v-for="example in chartExamples" :key="example.title" class="col-12 col-xl-6">
+      <UiCard>
+        <UiChart :type="example.type" :data="example.data" :options="example.options" :title="example.title" :height="300" />
+      </UiCard>
+    </div>
+  </div>
+</div>`,
+  'data-table': `// Datos y columnas (dentro de script setup)
+import { ref } from 'vue'
+const tableData = ref([
+  { id: 1, nombre: 'Ana Gómez', correo: 'ana@ejemplo.com', saldo: 150 },
+  { id: 2, nombre: 'Luis Pérez', correo: 'luis@ejemplo.com', saldo: 85 },
+  { id: 3, nombre: 'María López', correo: 'maria@ejemplo.com', saldo: 230 }
+])
+const tableHeader = {
+  id: { label: 'ID', align: 'center' },
+  nombre: { label: 'Nombre', align: 'start' },
+  correo: { label: 'Correo', align: 'start' },
+  saldo: { label: 'Saldo', align: 'end' }
+}
+// Referencias para icon-forge: <UiIcon name="mdi:eye" /> <UiIcon name="mdi:pencil" /> <UiIcon name="mdi:delete" />
+const tableActions = [
+  { label: 'Ver', icon: 'mdi:eye', value: 'view' },
+  { label: 'Editar', icon: 'mdi:pencil', value: 'edit' },
+  { label: 'Borrar', icon: 'mdi:delete', value: 'delete', variant: 'outline-danger' }
+]
+async function handleTableAction(item, row) {
+  if (item.value === 'view') {
+    await uiDialog.alert(row.nombre + ' · ' + row.correo, 'Cliente')
+  } else if (item.value === 'edit') {
+    const nombre = await uiDialog.prompt('Ingrese el nombre del cliente.', 'Editar cliente', { label: 'Nombre', initialValue: row.nombre })
+    if (nombre !== null && nombre.trim()) row.nombre = nombre.trim()
+  } else if (item.value === 'delete' && await uiDialog.confirm('¿Borrar a ' + row.nombre + '?', 'Borrar cliente')) {
+    tableData.value = tableData.value.filter((cliente) => cliente.id !== row.id)
+  }
+}
+// uiDialog proviene de createVueSkin({ adapter }).dialog.
+// Montar <UiDialogHost /> una vez en la aplicación.
+
+<UiDataTable
+  :data="tableData"
+  :header="tableHeader"
+  title="Clientes"
+  filter
+  show-id
+  vertical-borders
+  horizontal-borders
+  striped
+  scroll="20rem"
+>
+  <template #detail="{ row }">
+    <UiDataTableButton :items="tableActions" @select="handleTableAction($event, row)" />
+  </template>
+  <template #footer="{ data, total }">
+    Mostrando {{ data.length }} de {{ total }} clientes
+  </template>
+</UiDataTable>
+<p>Una opción con link se muestra como enlace:</p>
+<UiDataTableButton :items="[{ label: 'Volver a la tabla', icon: 'mdi:eye', link: '#table-example' }]" />
+<!-- Asignar id="table-example" al contenedor de la tabla. -->`,
   button: '<UiButton>Primario</UiButton>\n<UiButton variant="secondary">Secundario</UiButton>\n<UiButton variant="danger">Eliminar</UiButton>\n<UiButton loading>Guardando</UiButton>',
   'button-group': '<UiButtonGroup label="Acciones de documento"><UiButton>Editar</UiButton><UiButton variant="secondary">Duplicar</UiButton><UiButton variant="danger">Eliminar</UiButton></UiButtonGroup>',
   badge: '<UiBadge>Nuevo</UiBadge>\n<UiBadge variant="success" pill>Activo</UiBadge>\n<UiBadge variant="danger">3 errores</UiBadge>',
   icon: '<UiIcon name="mdi:home" label="Extra pequeño" size="xs" />\n<UiIcon name="mdi:home" label="Pequeño" size="sm" />\n<UiIcon name="mdi:account" label="Mediano" size="md" />\n<UiIcon name="mdi:bell" label="Grande" size="lg" />\n<UiIcon name="mdi:bell" label="Extra grande" size="xl" />\n<UiIcon name="mdi:bell" label="16 píxeles" size="16" />\n<UiIcon name="mdi:bell" label="2.4 em" size="2.4em" />',
   link: '<UiLink href="#details">Ver detalles</UiLink>\n<UiLink href="#disabled" disabled>No disponible</UiLink>',
-  list: `<UiList title="Songs">
+  list: `<UiList title="Songs" filter>
   <UiListItem href="#" title="Yellow Submarine" subtitle="Beatles" after="$15" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit.">
     <template #media><img class="song-image" src="https://cdn.framework7.io/placeholder/people-160x160-1.jpg" alt="Yellow Submarine" width="80"></template>
   </UiListItem>
@@ -40,14 +152,48 @@ const componentExamples = {
   <UiListItem href="#" header="Email" title="john@doe" footer="Home" after="Edit"><template #media>●</template></UiListItem>
   <UiListItem href="#" header="Email" title="john@framework7" footer="Work" after="Edit"><template #media>●</template></UiListItem>
 </UiList>
-<UiList title="Links, no icons" class="mt-4">
+<UiList title="Links, no icons" class="mt-4" filter>
   <UiListItem href="#" title="Ivan Petrov" />
   <UiListItem href="#" title="John Doe" />
   <UiListItem group-title title="Group Title Here" />
   <UiListItem href="#" title="Ivan Petrov" />
   <UiListItem href="#" title="Jenna Smith" />
+</UiList>
+<UiList title="Contenido personalizado" class="mt-4" filter>
+  <UiListItem filter-text="Ana Gómez Administración">
+    <strong>Ana Gómez</strong> · Administración
+  </UiListItem>
 </UiList>`,
-  input: `<UiInput ref="nameInput" v-model="name" label="Nombre" help="Ingrese al menos tres caracteres" tooltip="Visible para el equipo" :validator="validateName" required />
+  input: String.raw`// Dentro de script setup
+import { ref } from 'vue'
+import yep from 'yep'
+const name = ref('')
+const nameInput = ref()
+const result = ref('')
+const email = ref('')
+const age = ref(null)
+const birthDate = ref('')
+const appointmentTime = ref('')
+const appointmentDateTime = ref('')
+const errorEmail = ref('ana@ejemplo.com')
+const inputErrors = ref({ email: 'Este correo ya está registrado.' })
+function validateRegistrationEmail() {
+  const value = errorEmail.value.trim()
+  inputErrors.value.email = !value
+    ? 'Ingrese un correo.'
+    : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+      ? 'Ingrese un correo válido.'
+      : value.toLowerCase() === 'ana@ejemplo.com'
+        ? 'Este correo ya está registrado.'
+        : null
+}
+const userSchema = yep.object({ name: yep.string().title('Nombre').required().min(3) })
+async function validateName(value) { await userSchema.validateAt('name', { name: value }) }
+async function validateNameField() {
+  result.value = (await nameInput.value?.validate()) ? 'Nombre válido' : 'Revise el nombre'
+}
+
+<UiInput ref="nameInput" v-model="name" label="Nombre" help="Ingrese al menos tres caracteres" tooltip="Visible para el equipo" :validator="validateName" required />
 <UiButton class="mt-3" size="sm" @click="validateNameField">Validar nombre</UiButton>
 <div class="row g-3 mt-1">
   <div class="col-md-6"><UiInput v-model="email" type="email" label="Correo electrónico" placeholder="nombre@empresa.com" autocomplete="email" /></div>
@@ -55,7 +201,17 @@ const componentExamples = {
   <div class="col-md-6"><UiInput v-model="birthDate" type="date" label="Fecha de nacimiento" /></div>
   <div class="col-md-6"><UiInput v-model="appointmentTime" type="time" label="Hora de la cita" /></div>
   <div class="col-12"><UiInput v-model="appointmentDateTime" type="datetime-local" label="Fecha y hora de entrega" /></div>
-</div>`,
+</div>
+<p>Nombre: {{ name || '—' }} · Correo: {{ email || '—' }} · Edad: {{ age ?? '—' }} · Fecha: {{ birthDate || '—' }}</p>
+<section class="mt-4">
+  <h3 class="h6">Error desde la aplicación</h3>
+  <p class="small text-body-secondary">Valida al perder el foco y muestra el resultado mediante la prop error. El correo ana@ejemplo.com simula un registro existente.</p>
+  <UiInput v-model="errorEmail" label="Correo de registro" type="email" :error="inputErrors.email" help="Ingresa otro correo y sal del campo para validar." @blur="validateRegistrationEmail" @input="inputErrors.email = null" />
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <UiButton size="sm" variant="danger" @click="inputErrors.email = 'Este correo ya está registrado.'">Mostrar error</UiButton>
+    <UiButton size="sm" variant="secondary" @click="inputErrors.email = null">Quitar error</UiButton>
+  </div>
+</section>`,
   'input-group': `<UiInputGroup v-model="amount" label="Monto" prefix="$" help="Ingrese el monto a aplicar">
   <template #suffix><UiButton variant="secondary">Aplicar</UiButton></template>
 </UiInputGroup>
@@ -88,7 +244,24 @@ const componentExamples = {
   'theme-switcher': '<UiThemeSwitcher v-model="theme" />',
   dropdown: '<UiDropdown label="Acciones" :items="dropdownItems" align="end" @select="dropdownResult = $event.label" />',
   sidebar: '<UiSidebar v-model="open" breakpoint="lg"><template #header>...</template><UiList>...</UiList></UiSidebar>',
-  'app-layout': '<UiAppLayout v-model="active" title="Vue Skin" header="Componentes" :sections="sections"><main>Contenido</main></UiAppLayout>',
+  'app-layout': `// Dentro de script setup
+import { ref } from 'vue'
+import { UiAppLayout } from '@vue-skin/layouts'
+const active = ref('home')
+const sections = [['home', 'Inicio'], ['settings', 'Configuración']]
+
+<UiAppLayout v-model="active" title="Vue Skin" :sections="sections">
+  <template #header>
+    <div class="d-flex align-items-center gap-3">
+      <UiIcon name="mdi:home" size="32" class="text-primary flex-shrink-0" />
+      <div>
+        <h2 class="h6 mb-1">Vue Skin</h2>
+        <p class="small text-body-secondary mb-0">Componentes y layouts</p>
+      </div>
+    </div>
+  </template>
+  <main>Contenido de {{ active }}</main>
+</UiAppLayout>`,
   card: `<UiCard title="Perfil">
   <p>Las tarjetas organizan contenido con título, cuerpo y slots de cabecera o pie opcionales.</p>
   <template #footer>Última actualización: hoy</template>
@@ -117,9 +290,47 @@ await uiDialog.prompt('Ingrese un nombre para el proyecto.', 'Nuevo proyecto', {
 const preloader = uiDialog.preloader('Procesando cambios')
 setTimeout(() => preloader.close(), 5000)`,
   alert: '<UiAlert variant="success">Operación realizada correctamente.</UiAlert>\n<UiAlert variant="warning" dismissible>Esta alerta puede cerrarse.</UiAlert>',
-  toast: '<UiButton @click="toastOpen = true">Mostrar toast</UiButton>\n<UiToast v-model="toastOpen" title="Vue Skin" message="La operación fue completada." variant="success" />',
+  toast: `// Dentro de script setup
+import { ref } from 'vue'
+
+const toastColors = ref(
+  ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+    .map((variant) => ({ variant, open: false }))
+)
+const toastPositions = ref([
+  { position: 'top-start', label: 'Arriba izquierda', open: false },
+  { position: 'top-center', label: 'Arriba centro', open: false },
+  { position: 'top-end', label: 'Arriba derecha', open: false },
+  { position: 'bottom-start', label: 'Abajo izquierda', open: false },
+  { position: 'bottom-center', label: 'Abajo centro', open: false },
+  { position: 'bottom-end', label: 'Abajo derecha', open: false }
+])
+
+<section class="component-examples">
+  <UiCard title="Colores">
+    <div class="example-row">
+      <UiButton v-for="toast in toastColors" :key="toast.variant" :variant="toast.variant" @click="toast.open = true">
+        {{ toast.variant }}
+      </UiButton>
+    </div>
+    <UiToast v-for="toast in toastColors" :key="toast.variant" v-model="toast.open" :title="toast.variant" :message="'Ejemplo de toast ' + toast.variant" :variant="toast.variant" position="bottom-end" />
+  </UiCard>
+  <UiCard title="Ubicaciones">
+    <div class="example-row">
+      <UiButton v-for="toast in toastPositions" :key="toast.position" variant="outline-secondary" @click="toast.open = true">
+        {{ toast.label }}
+      </UiButton>
+    </div>
+    <UiToast v-for="toast in toastPositions" :key="toast.position" v-model="toast.open" :title="toast.label" :message="toast.position" variant="info" :position="toast.position" />
+  </UiCard>
+</section>
+
+/* CSS del ejemplo */
+.component-examples { display: grid; gap: 1.5rem; }
+.example-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }`,
   spinner: '<UiSpinner />\n<UiButton :loading="loading" @click="loading = !loading">Alternar carga</UiButton>'
 }
+componentExamples['data-table-button'] = componentExamples['data-table']
 const activeCode = computed(() => formatExample(componentExamples[active.value] ?? ''))
 const theme = ref(null)
 const modalOpen = ref(false)
@@ -127,6 +338,18 @@ const name = ref('')
 const nameInput = ref()
 const age = ref(null)
 const email = ref('')
+const errorEmail = ref('ana@ejemplo.com')
+const inputErrors = ref({ email: 'Este correo ya está registrado.' })
+function validateRegistrationEmail() {
+  const value = errorEmail.value.trim()
+  inputErrors.value.email = !value
+    ? 'Ingrese un correo.'
+    : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+      ? 'Ingrese un correo válido.'
+      : value.toLowerCase() === 'ana@ejemplo.com'
+        ? 'Este correo ya está registrado.'
+        : null
+}
 const birthDate = ref('')
 const appointmentTime = ref('')
 const appointmentDateTime = ref('')
@@ -142,13 +365,52 @@ const loginPassword = ref('')
 const loginRemember = ref(false)
 const loginResult = ref('')
 const loading = ref(false)
-const toastOpen = ref(false)
+const toastColors = ref(
+  ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+    .map((variant) => ({ variant, open: false }))
+)
+const toastPositions = ref([
+  { position: 'top-start', label: 'Arriba izquierda', open: false },
+  { position: 'top-center', label: 'Arriba centro', open: false },
+  { position: 'top-end', label: 'Arriba derecha', open: false },
+  { position: 'bottom-start', label: 'Abajo izquierda', open: false },
+  { position: 'bottom-center', label: 'Abajo centro', open: false },
+  { position: 'bottom-end', label: 'Abajo derecha', open: false }
+])
 const accordionOpen = ref('first')
 const activeTab = ref('overview')
 const notificationsEnabled = ref(true)
 const dropdownResult = ref('')
 const result = ref('')
 const roles = [{ value: 'admin', label: 'Administración' }, { value: 'editor', label: 'Edición' }, { value: 'viewer', label: 'Consulta' }]
+const tableData = ref([
+  { id: 1, nombre: 'Ana Gómez', correo: 'ana@ejemplo.com', saldo: 150 },
+  { id: 2, nombre: 'Luis Pérez', correo: 'luis@ejemplo.com', saldo: 85 },
+  { id: 3, nombre: 'María López', correo: 'maria@ejemplo.com', saldo: 230 }
+])
+const tableHeader = {
+  id: { label: 'ID', align: 'center' },
+  nombre: { label: 'Nombre', align: 'start' },
+  correo: { label: 'Correo', align: 'start' },
+  saldo: { label: 'Saldo', align: 'end' }
+}
+// Referencias para icon-forge: <UiIcon name="mdi:eye" /> <UiIcon name="mdi:pencil" /> <UiIcon name="mdi:delete" />
+const tableActions = [
+  { label: 'Ver', icon: 'mdi:eye', value: 'view' },
+  { label: 'Editar', icon: 'mdi:pencil', value: 'edit' },
+  { label: 'Borrar', icon: 'mdi:delete', value: 'delete', variant: 'outline-danger' }
+]
+const tableLinks = [{ label: 'Volver a la tabla', icon: 'mdi:eye', link: '#table-example' }]
+async function handleTableAction(item, row) {
+  if (item.value === 'view') {
+    await uiDialog.alert(row.nombre + ' · ' + row.correo, 'Cliente')
+  } else if (item.value === 'edit') {
+    const nombre = await uiDialog.prompt('Ingrese el nombre del cliente.', 'Editar cliente', { label: 'Nombre', initialValue: row.nombre })
+    if (nombre !== null && nombre.trim()) row.nombre = nombre.trim()
+  } else if (item.value === 'delete' && await uiDialog.confirm('¿Borrar a ' + row.nombre + '?', 'Borrar cliente')) {
+    tableData.value = tableData.value.filter((cliente) => cliente.id !== row.id)
+  }
+}
 const accordionItems = [
   { id: 'first', title: 'Primer panel', content: 'Contenido del primer panel.' },
   { id: 'second', title: 'Segundo panel', content: 'Contenido del segundo panel.' },
@@ -186,6 +448,15 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
 
 <template>
   <UiAppLayout v-model="active" title="Vue Skin" header="Componentes" :sections="sections">
+    <template #header>
+      <div class="d-flex align-items-center gap-3">
+        <UiIcon name="mdi:home" size="32" class="text-primary flex-shrink-0" />
+        <div>
+          <h2 class="h6 mb-1">Vue Skin</h2>
+          <p class="small text-body-secondary mb-0">Componentes y layouts</p>
+        </div>
+      </div>
+    </template>
 
     <main class="documentation-main">
       <p class="eyebrow">Adapter activo: Bootstrap</p>
@@ -216,7 +487,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
       </UiCard>
 
       <UiCard v-else-if="active === 'list'" title="Lista con contenido multimedia">
-        <UiList title="Songs">
+        <UiList title="Songs" filter>
           <UiListItem href="#" title="Yellow Submarine" subtitle="Beatles" after="$15" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit.">
             <template #media><img class="song-image" src="https://cdn.framework7.io/placeholder/people-160x160-1.jpg" alt="Yellow Submarine" width="80"></template>
           </UiListItem>
@@ -233,12 +504,17 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
           <UiListItem href="#" header="Email" title="john@doe" footer="Home" after="Edit"><template #media>●</template></UiListItem>
           <UiListItem href="#" header="Email" title="john@framework7" footer="Work" after="Edit"><template #media>●</template></UiListItem>
         </UiList>
-        <UiList title="Links, no icons" class="mt-4">
+        <UiList title="Links, no icons" class="mt-4" filter>
           <UiListItem href="#" title="Ivan Petrov" />
           <UiListItem href="#" title="John Doe" />
           <UiListItem group-title title="Group Title Here" />
           <UiListItem href="#" title="Ivan Petrov" />
           <UiListItem href="#" title="Jenna Smith" />
+        </UiList>
+        <UiList title="Contenido personalizado" class="mt-4" filter>
+          <UiListItem filter-text="Ana Gómez Administración">
+            <strong>Ana Gómez</strong> · Administración
+          </UiListItem>
         </UiList>
       </UiCard>
 
@@ -253,6 +529,15 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
           <div class="col-12"><UiInput v-model="appointmentDateTime" type="datetime-local" label="Fecha y hora de entrega" /></div>
         </div>
         <p class="example-result">Nombre: {{ name || '—' }} · Correo: {{ email || '—' }} · Edad: {{ age ?? '—' }} · Fecha: {{ birthDate || '—' }}</p>
+        <section class="mt-4">
+          <h3 class="h6">Error desde la aplicación</h3>
+          <p class="small text-body-secondary">Valida al perder el foco y muestra el resultado mediante la prop error. El correo ana@ejemplo.com simula un registro existente.</p>
+          <UiInput v-model="errorEmail" label="Correo de registro" type="email" :error="inputErrors.email" help="Ingresa otro correo y sal del campo para validar." @blur="validateRegistrationEmail" @input="inputErrors.email = null" />
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <UiButton size="sm" variant="danger" @click="inputErrors.email = 'Este correo ya está registrado.'">Mostrar error</UiButton>
+            <UiButton size="sm" variant="secondary" @click="inputErrors.email = null">Quitar error</UiButton>
+          </div>
+        </section>
       </UiCard>
 
       <UiCard v-else-if="active === 'input-group'" title="Grupo de input">
@@ -318,10 +603,32 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
       <UiCard v-else-if="active === 'sidebar'" title="Panel lateral">
         <p>En escritorio ocupa espacio dentro del layout; en móvil se abre como un panel superpuesto.</p>
         <p>Este shell ya integra la navegación lateral y su switcher.</p>
+        <p>El slot <code>#header</code> acepta logos, texto en varias líneas y cualquier componente Vue. El encabezado de esta página es un ejemplo.</p>
       </UiCard>
 
       <UiCard v-else-if="active === 'app-layout'" title="Layout de aplicación">
         <p>Esta documentación está construida con <code>UiAppLayout</code>. Integra navbar, sidebar responsivo, selector de tema y secciones de navegación.</p>
+        <p>Usa <code>&lt;template #header&gt;</code> para reemplazar el encabezado lateral; sin el slot se muestra el texto de la prop <code>header</code>.</p>
+      </UiCard>
+
+      <div v-else-if="active === 'chart'" class="d-grid gap-4">
+        <div><UiButton @click="updateChartExample">Actualizar barras</UiButton></div>
+        <div class="row g-4">
+          <div v-for="example in chartExamples" :key="example.title" class="col-12 col-xl-6">
+            <UiCard>
+              <UiChart :type="example.type" :data="example.data" :options="example.options" :title="example.title" :height="300" />
+            </UiCard>
+          </div>
+        </div>
+      </div>
+
+      <UiCard v-else-if="active === 'data-table' || active === 'data-table-button'" id="table-example">
+        <UiDataTable :data="tableData" :header="tableHeader" title="Clientes" filter show-id vertical-borders horizontal-borders striped scroll="20rem">
+          <template #detail="{ row }"><UiDataTableButton :items="tableActions" @select="handleTableAction($event, row)" /></template>
+          <template #footer="{ data, total }">Mostrando {{ data.length }} de {{ total }} clientes</template>
+        </UiDataTable>
+        <p class="mt-3">Una opción con <code>link</code> se muestra como enlace:</p>
+        <UiDataTableButton :items="tableLinks" />
       </UiCard>
 
       <section v-else-if="active === 'card'" class="component-examples">
@@ -371,10 +678,24 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
         <UiAlert variant="warning" dismissible>Esta alerta puede cerrarse.</UiAlert>
       </UiCard>
 
-      <UiCard v-else-if="active === 'toast'" title="Toast">
-        <UiButton @click="toastOpen = true">Mostrar toast</UiButton>
-        <UiToast v-model="toastOpen" title="Vue Skin" message="La operación fue completada." variant="success" />
-      </UiCard>
+      <section v-else-if="active === 'toast'" class="component-examples">
+        <UiCard title="Colores">
+          <div class="example-row">
+            <UiButton v-for="toast in toastColors" :key="toast.variant" :variant="toast.variant" @click="toast.open = true">
+              {{ toast.variant }}
+            </UiButton>
+          </div>
+          <UiToast v-for="toast in toastColors" :key="toast.variant" v-model="toast.open" :title="toast.variant" :message="'Ejemplo de toast ' + toast.variant" :variant="toast.variant" position="bottom-end" />
+        </UiCard>
+        <UiCard title="Ubicaciones">
+          <div class="example-row">
+            <UiButton v-for="toast in toastPositions" :key="toast.position" variant="outline-secondary" @click="toast.open = true">
+              {{ toast.label }}
+            </UiButton>
+          </div>
+          <UiToast v-for="toast in toastPositions" :key="toast.position" v-model="toast.open" :title="toast.label" :message="toast.position" variant="info" :position="toast.position" />
+        </UiCard>
+      </section>
 
       <UiCard v-else-if="active === 'spinner'" title="Indicador de carga">
         <div class="example-row"><UiSpinner /><UiButton :loading="loading" @click="loading = !loading">Alternar carga</UiButton></div>

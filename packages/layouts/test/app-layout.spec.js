@@ -13,6 +13,21 @@ const components = {
 }
 
 describe('UiAppLayout', () => {
+  it('forwards a custom header template instead of the text fallback', () => {
+    const wrapper = mount(UiAppLayout, {
+      props: { title: 'Proyecto', header: 'Texto predeterminado' },
+      slots: { header: '<div class="brand"><img src="/logo.svg" alt="Mi empresa"><h2>Mi empresa</h2><p>Primera línea<br>Segunda línea</p><button>Perfil</button></div>' },
+      global: { components }
+    })
+    expect(wrapper.get('aside .brand img').attributes('alt')).toBe('Mi empresa')
+    expect(wrapper.get('aside .brand h2').text()).toBe('Mi empresa')
+    expect(wrapper.get('aside .brand p br').exists()).toBe(true)
+    expect(wrapper.get('aside .brand button').text()).toBe('Perfil')
+    expect(wrapper.get('aside').text()).not.toContain('Texto predeterminado')
+    expect(wrapper.get('nav').text()).toContain('Proyecto')
+    wrapper.unmount()
+  })
+
   it('renders integrated navigation and updates the selected section', async () => {
     const wrapper = mount(UiAppLayout, {
       props: { modelValue: 'home', title: 'Proyecto', header: 'Navegación', sections: [{ id: 'layouts', title: 'Layouts', groupTitle: true }, ['home', 'Inicio'], ['settings', 'Ajustes']] },

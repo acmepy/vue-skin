@@ -139,6 +139,10 @@ El nombre/scoping npm definitivo puede cambiar si no está disponible públicame
 
 `@vue-skin/layouts` es opcional e independiente de los adapters. Contiene composiciones reutilizables que usan slots y componentes públicos de Vue Skin, sin importar Bootstrap ni Basecoat.
 
+La navegación lateral de `UiAppLayout` incluye el buscador de `UiList` para filtrar sus secciones y layouts por nombre.
+
+El slot `header` de `UiAppLayout` se pasa al encabezado de `UiSidebar` y tiene prioridad sobre la prop de texto `header`. Admite templates Vue con imágenes, logos, texto en varias líneas y componentes interactivos. Sin el slot, se conserva el encabezado de texto. La altura mínima coincide con el navbar, pero puede crecer según el contenido personalizado.
+
 Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-model` para la sección activa. Integra `UiSidebar`, `UiNavbar`, el switcher lateral y `UiThemeSwitcher`; las vistas de la aplicación aportan únicamente el contenido principal. Cada entrada de `sections` puede ser un par `[id, título]` o un objeto; un objeto con `groupTitle: true` se renderiza como encabezado no interactivo. `UiLogin` es otra composición reutilizable: integra los controles de formulario del adapter activo y emite las credenciales al enviar el formulario.
 
 ---
@@ -160,6 +164,8 @@ Ejemplo conceptual:
 ```
 
 Cada adapter debe ser un paquete independiente dentro del mismo repositorio.
+
+Durante esta etapa, los paquetes de `packages/` tienen versiones sincronizadas con el `package.json` raíz. `npm run version:sync` copia esa versión a sus manifiestos y a los metadatos correspondientes del lockfile, sin modificar dependencias ni la versión privada del playground. Es una política de releases conjuntos; el script no incrementa versiones ni publica paquetes.
 
 Una aplicación debe poder instalar solamente:
 
@@ -581,11 +587,11 @@ Con `type="number"`, el valor no vacío emitido por `v-model` es un número; vac
 Lista de contenido general; los adapters determinan el markup y estilo de cada item.
 
 ```text
-UiList props: title, divided, bordered
+UiList props: title, divided, bordered, filter
 
 UiListItem props:
 href, target, header, title, subtitle, text, footer, after,
-badge, badgeVariant, active, disabled, groupTitle, tooltip
+badge, badgeVariant, active, disabled, groupTitle, tooltip, filterText
 
 UiListItem events: click
 UiListItem slots: media, default, end
@@ -607,6 +613,14 @@ Props: name, label, size
 La presencia del slot `media` indica que el item contiene contenido multimedia. Las características de router, swipeout, sortable y smart select de Framework7 no son parte de este contrato.
 
 Cuando existe `badge`, ocupa la posición final del item y reemplaza visualmente a `after`.
+
+En Bootstrap, las listas y los items normales tienen fondo transparente para mostrar el fondo del contenedor. Los estados de selección y hover y los encabezados `groupTitle` conservan sus fondos de Bootstrap.
+
+`UiList filter` muestra un campo de búsqueda con botón Buscar. La búsqueda se aplica al pulsar el botón o Enter, ignora mayúsculas y acentos, y vaciar el campo restaura todos los items. Busca en `header`, `title`, `subtitle`, `text`, `footer`, `after`, `badge` y `filterText`. Este último aporta palabras adicionales para contenido personalizado en slots, cuyo texto no se inspecciona automáticamente.
+
+Cada lista mantiene su propio filtro. Los items se mantienen montados al ocultarse, preservando el estado de sus slots. Un `groupTitle` encabeza los items siguientes hasta el próximo `groupTitle`; durante una búsqueda se oculta si ese grupo no tiene coincidencias. Si no hay resultados se muestra un mensaje accesible. Sin `filter`, el comportamiento existente se conserva.
+
+El formulario de búsqueda permanece visible en la parte superior del contenedor de scroll mediante posicionamiento sticky, con fondo opaco adaptado al tema para que los items no se vean a través del buscador.
 
 ---
 
@@ -770,6 +784,8 @@ Slots:
 
 Métodos internos y animaciones pueden ser diferentes entre adapters.
 
+El slot `header` recibe contenido Vue arbitrario, no una cadena HTML. En Bootstrap, su contenedor ocupa todo el ancho disponible, permite texto multilínea y tiene altura automática sin encogerse cuando el cuerpo hace scroll. El mismo contenido se utiliza en escritorio y en el offcanvas móvil.
+
 En Bootstrap, el sidebar es un offcanvas responsivo: por debajo de `breakpoint` funciona como panel superpuesto; desde ese punto se integra al layout como un `aside` que ocupa espacio junto al contenido principal.
 
 ---
@@ -815,7 +831,45 @@ Slots: panel ({ item })
 
 Cada elemento de `items` incluye `id`, `label`, `content` y opcionalmente `disabled`.
 
+### 19.3 `UiDataTable`
+
+Tabla de datos con búsqueda local, implementada inicialmente en Bootstrap.
+
+Props: `data` (array de objetos JSON), `header`, `title`, `footer`, `detailLabel`, `filter`, `showId`, `verticalBorders`, `horizontalBorders`, `scroll` y `striped`.
+
+`header` es un objeto ordenado por campos: `{ nombre: { label: 'Nombre', align: 'start' }, saldo: { label: 'Saldo', align: 'end' } }`. `align` acepta `start`, `center` y `end` y se aplica al encabezado y sus celdas. Si se omite `header`, las columnas se infieren de las claves de los datos. `showId` controla la columna `id` real (no genera índices), oculta por defecto.
+
+`filter` muestra un input y botón Buscar. Buscar o Enter filtra por los valores de todos los campos, incluidos objetos anidados, sin distinguir mayúsculas ni acentos. Vaciar la búsqueda restaura todas las filas. No modifica `data`.
+
+Los bordes horizontales están activos por defecto; los verticales y las filas rayadas (`striped`) son opcionales. `scroll` admite `true` (altura máxima de `24rem`) o una altura CSS como `"20rem"`; la tabla también permite desplazamiento horizontal en pantallas estrechas. El título y los colores respetan el tema del adapter.
+
+`footer` admite texto, o puede reemplazarse con el slot `footer`, que recibe `{ data, total }`: filas filtradas y cantidad original de filas.
+
+El slot `detail` recibe `{ row, index }` por fila y añade una columna final de contenido personalizado, destinada a acciones CRUD. `detailLabel` permite cambiar su encabezado (por defecto `Acciones`). Sin ese slot no se agrega ninguna columna. El índice corresponde a las filas filtradas; la aplicación debe usar el ID real para identificar registros.
+
+### 19.4 `UiDataTableButton`
+
+Renderiza botones o enlaces para las acciones de una fila. Recibe `items`, un array de objetos `{ label, icon?, link?, value?, variant?, disabled? }`, y las props comunes `size` (por defecto `sm`) y `variant` (por defecto `outline-secondary`). Cada opción con `link` se renderiza como enlace; las demás como botones. `disabled` impide navegar o ejecutar la acción.
+
+Al pulsar un botón sin `link`, emite `select` con el objeto original. La aplicación vincula la acción a la fila desde el slot: `<template #detail="{ row }"><UiDataTableButton :items="acciones" @select="ejecutar($event, row)" /></template>`. El componente no modifica datos ni realiza peticiones por sí mismo.
+
+Los iconos usan `UiIcon`. Como `icon-forge` detecta referencias estáticas, los nombres dinámicos provenientes del array deben estar incluidos entre las referencias que escanea el proyecto. El playground incluye referencias literales de sus tres iconos junto a las opciones.
+
+Si una opción tiene `icon`, muestra únicamente el icono y utiliza `label` como tooltip nativo (`title`) y nombre accesible (`aria-label`). Sin icono, muestra el texto de `label`.
+
 ---
+
+### 19.5 `UiChart`
+
+Gráfico responsivo. Contrato: props `type`, `data`, `options`, `title`, `label` y `height`; evento `error` con el error de inicialización o actualización.
+
+`type` admite `bar` (predeterminado), `line`, `doughnut`, `pie`, `radar`, `polarArea`, `scatter` y `bubble`. Un gráfico de área usa `line` con `fill: true` en el dataset. `data` contiene `{ labels, datasets }`; cada dataset contiene `label`, `data` y opciones visuales. `options` permite personalizar la configuración del motor. En Bootstrap se utiliza el formato oficial de Chart.js.
+
+`height` es un número en píxeles (320 por defecto) o una dimensión CSS como `"20rem"`. El ancho se adapta al contenedor. `title` muestra un título; `label` permite un nombre accesible más descriptivo. Se incluye una tabla de datos accesible alternativa al canvas.
+
+La implementación inicial Bootstrap carga Chart.js al montar el componente; la dependencia está aislada en ese paquete, no en core. Los cambios profundos de datos y opciones actualizan el gráfico sin modificar los objetos de la aplicación. Cambiar `type` recrea la instancia. Al desmontar, se destruye la instancia y se desconecta el observer del tema. Textos y grilla siguen el tema Bootstrap; las opciones explícitas del usuario tienen prioridad. Los colores de las series son configurables por dataset y no cambian automáticamente con el tema.
+
+El playground incluye barras, línea, dona, pastel y área, un botón para actualizar datos y el código completo de los ejemplos.
 
 ## 20. `UiModal`
 

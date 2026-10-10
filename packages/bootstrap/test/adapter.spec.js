@@ -4,6 +4,21 @@ import { createVueSkin } from '@vue-skin/core'
 import BootstrapSkin from '../src/index.js'
 
 describe('Bootstrap adapter', () => {
+  it('renders an unrestricted sidebar header template independently of the body', () => {
+    const wrapper = mount(BootstrapSkin.components.Sidebar, {
+      slots: {
+        header: '<img src="/logo.svg" alt="Logo"><div><strong>Mi aplicación</strong><p>Descripción en otra línea</p></div>',
+        default: '<p>Contenido de navegación</p>'
+      }
+    })
+    const header = wrapper.get('.offcanvas-header .ui-sidebar-header-content')
+    expect(header.get('img').attributes('alt')).toBe('Logo')
+    expect(header.get('strong').text()).toBe('Mi aplicación')
+    expect(header.get('p').text()).toBe('Descripción en otra línea')
+    expect(wrapper.get('.ui-sidebar-body').text()).toBe('Contenido de navegación')
+    wrapper.unmount()
+  })
+
   it('satisfies and installs the Vue Skin contract', () => {
     const wrapper = mount({ template: '<UiButton>Guardar</UiButton>' }, {
       global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] }
@@ -26,6 +41,29 @@ describe('Bootstrap adapter', () => {
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(input.attributes('aria-describedby')).toContain('-help')
     expect(wrapper.text()).toContain('Requerido')
+  })
+
+  it('shows and clears errors supplied by the application without changing the value', async () => {
+    const wrapper = mount(BootstrapSkin.components.Input, {
+      props: { modelValue: 'ana@ejemplo.com', type: 'email', label: 'Correo', error: 'Este correo ya está registrado.', help: 'Usa otro correo.' }
+    })
+    const input = wrapper.get('input')
+    expect(wrapper.text()).toContain('Este correo ya está registrado.')
+    expect(input.classes()).toContain('is-invalid')
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(await wrapper.vm.validate()).toBe(false)
+    await wrapper.setProps({ error: null })
+    expect(wrapper.text()).not.toContain('Este correo ya está registrado.')
+    expect(wrapper.text()).toContain('Usa otro correo.')
+    expect(input.classes()).not.toContain('is-invalid')
+    expect(input.attributes('aria-invalid')).toBeUndefined()
+    expect(input.element.value).toBe('ana@ejemplo.com')
+    expect(await wrapper.vm.validate()).toBe(true)
+    await wrapper.setProps({ error: 'Otro error' })
+    expect(wrapper.text()).toContain('Otro error')
+    await wrapper.setProps({ error: '' })
+    expect(input.classes()).not.toContain('is-invalid')
+    wrapper.unmount()
   })
 
   it('exposes async validate and renders a validator error', async () => {

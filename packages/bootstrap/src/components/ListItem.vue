@@ -1,8 +1,9 @@
 <script setup>
 import { Tooltip } from 'bootstrap'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import { UiIcon } from '@vue-skin/core'
 import Badge from './Badge.vue'
+import { listContextKey } from './listContext.js'
 
 defineOptions({ inheritAttrs: false })
 const props = defineProps({
@@ -19,10 +20,15 @@ const props = defineProps({
   active: Boolean,
   disabled: Boolean,
   groupTitle: Boolean,
-  tooltip: String
+  tooltip: String,
+  filterText: String
 })
 const emit = defineEmits(['click'])
 const element = ref()
+const list = inject(listContextKey, null)
+const itemId = Symbol('list-item')
+list?.register(itemId, { props, element })
+const visible = computed(() => list?.visibility.value.get(itemId) ?? true)
 const tag = computed(() => props.href ? 'a' : 'div')
 const hasDetails = computed(() => props.header || props.subtitle || props.text || props.footer)
 let tooltipInstance
@@ -34,18 +40,18 @@ function click(event) {
 onMounted(() => {
   if (props.tooltip && element.value) tooltipInstance = Tooltip.getOrCreateInstance(element.value)
 })
-onBeforeUnmount(() => tooltipInstance?.dispose())
+onBeforeUnmount(() => { list?.unregister(itemId); tooltipInstance?.dispose() })
 </script>
 
 <template>
-  <div v-if="groupTitle" v-bind="$attrs" class="list-group-item list-group-item-secondary fw-semibold" role="heading">{{ title }}</div>
+  <div v-if="groupTitle" v-show="visible" ref="element" v-bind="$attrs" class="list-group-item list-group-item-secondary fw-semibold" role="heading" aria-level="2">{{ title }}</div>
   <component
     v-else
     :is="tag"
     ref="element"
     v-bind="$attrs"
-    class="list-group-item d-flex align-items-start"
-    :class="[{ 'list-group-item-action': href, active, disabled }, href ? 'text-decoration-none' : null]"
+    class="ui-list-item list-group-item align-items-start"
+    :class="[{ 'd-flex': visible, 'd-none': !visible, 'list-group-item-action': href, active, disabled }, href ? 'text-decoration-none' : null]"
     :href="href || undefined"
     :target="target"
     :aria-current="active ? 'true' : undefined"
@@ -73,3 +79,7 @@ onBeforeUnmount(() => tooltipInstance?.dispose())
     </div>
   </component>
 </template>
+
+<style>
+.ui-list-item { --bs-list-group-bg: transparent; }
+</style>

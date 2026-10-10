@@ -26,13 +26,21 @@ export interface UiCheckboxProps { modelValue?: unknown; label?: string; help?: 
 export interface UiRadioProps { modelValue?: string | number | boolean; value: string | number | boolean; name?: string; label?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean }
 export interface UiSwitchProps extends UiCheckboxProps {}
 export interface UiTextareaProps { modelValue?: string | number; label?: string; name?: string; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; readonly?: boolean; required?: boolean; rows?: number; maxlength?: number }
-export interface UiListProps { title?: string; divided?: boolean; bordered?: boolean }
-export interface UiListItemProps { href?: string; target?: string; header?: string; title?: string; subtitle?: string; text?: string; footer?: string; after?: string; badge?: string | number; badgeVariant?: Variant; active?: boolean; disabled?: boolean; groupTitle?: boolean; tooltip?: string }
+export interface UiListProps { title?: string; divided?: boolean; bordered?: boolean; filter?: boolean }
+export interface UiListItemProps { href?: string; target?: string; header?: string; title?: string; subtitle?: string; text?: string; footer?: string; after?: string; badge?: string | number; badgeVariant?: Variant; active?: boolean; disabled?: boolean; groupTitle?: boolean; tooltip?: string; filterText?: string }
 export interface UiLinkProps { href?: string; target?: string; disabled?: boolean }
 export interface UiNavbarProps { title?: string; fixed?: boolean; sticky?: boolean }
 export interface UiThemeSwitcherProps { modelValue?: Theme | null; storageKey?: string; persist?: boolean }
 export interface UiSidebarProps { modelValue?: boolean; position?: SuggestedValue<'start' | 'end'>; width?: string; breakpoint?: SuggestedValue<'sm' | 'md' | 'lg' | 'xl' | 'xxl'> }
 export interface UiCardProps { title?: string }
+export type ChartType = 'bar' | 'line' | 'doughnut' | 'pie' | 'radar' | 'polarArea' | 'scatter' | 'bubble'
+export interface UiChartDataset { label?: string; data: unknown[]; [option: string]: unknown }
+export interface UiChartData { labels?: unknown[]; datasets: UiChartDataset[] }
+export interface UiChartProps { type?: ChartType; data?: UiChartData; options?: Record<string, unknown>; title?: string; label?: string; height?: number | string }
+export interface UiDataTableColumn { label?: string; align?: 'start' | 'center' | 'end' }
+export interface UiDataTableProps { data?: Record<string, unknown>[]; header?: Record<string, UiDataTableColumn>; footer?: string; title?: string; detailLabel?: string; filter?: boolean; showId?: boolean; verticalBorders?: boolean; horizontalBorders?: boolean; scroll?: boolean | string; striped?: boolean }
+export interface UiDataTableButtonItem { label: string; icon?: string; link?: string; value?: unknown; variant?: Variant; disabled?: boolean }
+export interface UiDataTableButtonProps { items?: UiDataTableButtonItem[]; size?: ControlSize; variant?: Variant }
 export interface UiAccordionItem { id: string | number; title: string; content: string }
 export interface UiAccordionProps { modelValue?: string | number | null; items?: UiAccordionItem[]; flush?: boolean }
 export interface UiTabItem { id: string | number; label: string; content: string; disabled?: boolean }
@@ -79,6 +87,9 @@ declare module 'vue' {
     UiThemeSwitcher: ComponentOf<UiThemeSwitcherProps>
     UiSidebar: ComponentOf<UiSidebarProps>
     UiCard: ComponentOf<UiCardProps>
+    UiChart: ComponentOf<UiChartProps>
+    UiDataTable: ComponentOf<UiDataTableProps>
+    UiDataTableButton: ComponentOf<UiDataTableButtonProps>
     UiAccordion: ComponentOf<UiAccordionProps>
     UiTabs: ComponentOf<UiTabsProps>
     UiModal: ComponentOf<UiModalProps>
