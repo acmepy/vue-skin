@@ -9,6 +9,12 @@ describe('adapter contract', () => {
     expect(Object.keys(componentContracts)).toEqual(requiredComponents)
     expect(componentContracts.Modal.props).toEqual(['modelValue', 'title', 'size', 'centered', 'closable'])
     expect(componentContracts.Input.props).toContain('error')
+    expect(componentContracts.Container.props).toEqual(['fluid'])
+    expect(componentContracts.Row.props).toEqual(['gap'])
+    expect(componentContracts.Col.props).toEqual(['span', 'sm', 'md', 'lg', 'xl', 'xxl'])
+    expect(componentContracts.DataTable.slots).toContain('actions')
+    expect(requiredComponents).toContain('DataTableColumnButton')
+    expect(requiredComponents).not.toContain('DataTableButton')
   })
 
   it('rejects an adapter missing a required component', () => {

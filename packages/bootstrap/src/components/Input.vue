@@ -6,11 +6,12 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps({
   modelValue: [String, Number], id: String, label: String, type: { type: String, default: 'text' }, name: String,
   placeholder: String, help: String, tooltip: String, error: [String, Boolean], validator: Function, disabled: Boolean,
-  readonly: Boolean, required: Boolean, autocomplete: String
+  readonly: Boolean, required: Boolean, autocomplete: String, floating: Boolean
 })
 const emit = defineEmits(['update:modelValue', 'input', 'change', 'focus', 'blur'])
 const validationError = ref('')
 const displayedError = computed(() => props.error || validationError.value)
+const isFloating = computed(() => props.floating && Boolean(props.label) && ['text', 'password', 'email', 'search', 'tel', 'url', 'number', 'date', 'time', 'datetime-local'].includes(props.type))
 let validationRun = 0
 async function validate() {
   if (!props.validator) return !displayedError.value
@@ -34,9 +35,9 @@ defineExpose({ validate })
 </script>
 
 <template>
-  <FormField v-bind="props" :error="displayedError" v-slot="field">
+  <FormField v-bind="props" :floating="isFloating" :error="displayedError" v-slot="field">
     <input v-bind="$attrs" :id="field.inputId" class="form-control" :class="{ 'is-invalid': displayedError }" :type="type"
-      :name="name" :value="modelValue" :placeholder="placeholder" :disabled="disabled" :readonly="readonly"
+      :name="name" :value="modelValue" :placeholder="isFloating ? (placeholder || label) : placeholder" :disabled="disabled" :readonly="readonly"
       :required="required" :autocomplete="autocomplete" :aria-invalid="displayedError ? 'true' : undefined"
       :aria-describedby="field.describedBy" @input="update" @change="emit('change', $event)"
       @focus="emit('focus', $event)" @blur="validate(); emit('blur', $event)" />

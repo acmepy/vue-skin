@@ -1,17 +1,20 @@
 <script setup>
 import FormField from './FormField.vue'
+import { useAttrs } from 'vue'
 
 defineOptions({ inheritAttrs: false })
 const props = defineProps({
   modelValue: [String, Number], id: String, label: String, options: { type: Array, default: () => [] }, placeholder: String,
-  help: String, tooltip: String, error: [String, Boolean], disabled: Boolean, required: Boolean
+  help: String, tooltip: String, error: [String, Boolean], disabled: Boolean, required: Boolean, floating: Boolean
 })
+const attrs = useAttrs()
+const isFloating = () => props.floating && Boolean(props.label) && (attrs.multiple == null || attrs.multiple === false) && attrs.size == null
 const emit = defineEmits(['update:modelValue', 'change'])
 function update(event) { emit('update:modelValue', event.target.value); emit('change', event) }
 </script>
 
 <template>
-  <FormField v-bind="props" v-slot="field">
+  <FormField v-bind="props" :floating="isFloating()" v-slot="field">
     <select v-bind="$attrs" :id="field.inputId" class="form-select" :class="{ 'is-invalid': error }" :value="modelValue"
       :disabled="disabled" :required="required" :aria-invalid="error ? 'true' : undefined" :aria-describedby="field.describedBy" @change="update">
       <option v-if="placeholder" value="" disabled>{{ placeholder }}</option>

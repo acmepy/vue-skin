@@ -4,6 +4,7 @@ import { createRequire } from 'node:module'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createVueSkin } from '@vue-skin/core'
 import BootstrapSkin from '../src/index.js'
+import App from '../../../playground/src/App.vue'
 const bootstrapCss = readFileSync(createRequire(import.meta.url).resolve('bootstrap/dist/css/bootstrap.css'), 'utf8')
 
 let stylesheet
@@ -23,10 +24,59 @@ async function search(wrapper, text) {
 }
 
 describe('UiList filter', () => {
-  it('searches on submit, ignores case and accents, and restores items when cleared', async () => {
+  it('filters from two characters and restores all items and groups below that threshold', async () => {
+    const wrapper = render({ template: '<UiList><UiListItem group-title title="Grupo A" /><UiListItem title="Ana" /><UiListItem group-title title="Grupo B" /><UiListItem title="Luis" /></UiList>' })
+    try {
+      await search(wrapper, 'z')
+      expect(visibleItems(wrapper)).toHaveLength(4)
+      expect(wrapper.find('[role="status"]').exists()).toBe(false)
+      await wrapper.get('input').setValue(' an ')
+      expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['Grupo A', 'Ana'])
+      await wrapper.get('input').setValue('a')
+      expect(visibleItems(wrapper)).toHaveLength(4)
+      await wrapper.get('form').trigger('submit')
+      expect(visibleItems(wrapper)).toHaveLength(4)
+      await search(wrapper, 'zz')
+      expect(visibleItems(wrapper)).toHaveLength(0)
+      expect(wrapper.find('[role="status"]').exists()).toBe(true)
+      await wrapper.get('input').setValue(' z ')
+      expect(visibleItems(wrapper)).toHaveLength(4)
+      expect(wrapper.find('[role="status"]').exists()).toBe(false)
+    } finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('supports a configurable minimum and responds to threshold changes', async () => {
+    const wrapper = render({
+      data: () => ({ minimum: 3 }),
+      template: '<UiList filter :min-length="minimum"><UiListItem title="Ana" /><UiListItem title="Luis" /></UiList>'
+    })
+    try {
+      await search(wrapper, 'an')
+      expect(visibleItems(wrapper)).toHaveLength(2)
+      await search(wrapper, 'ana')
+      expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['Ana'])
+      wrapper.vm.minimum = 4
+      await wrapper.vm.$nextTick()
+      expect(visibleItems(wrapper)).toHaveLength(2)
+      wrapper.vm.minimum = 1
+      await wrapper.vm.$nextTick()
+      await search(wrapper, 'l')
+      expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['Luis'])
+      wrapper.vm.minimum = 0
+      await wrapper.vm.$nextTick()
+      await search(wrapper, '')
+      expect(visibleItems(wrapper)).toHaveLength(2)
+    } finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('searches while typing, ignores case and accents, and keeps submit harmless', async () => {
     const wrapper = render({ template: '<UiList filter><UiListItem title="María" subtitle="Administración" /><UiListItem title="Luis" subtitle="Ventas" /></UiList>' })
     await wrapper.get('input').setValue('ADMINISTRACION')
-    expect(visibleItems(wrapper)).toHaveLength(2)
+    expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['MaríaAdministración'])
     await wrapper.get('form').trigger('submit')
     expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['MaríaAdministración'])
     await search(wrapper, 'inexistente')
@@ -72,7 +122,7 @@ describe('UiList filter', () => {
   it('isolates filters between lists and stops filtering when disabled', async () => {
     const wrapper = render({
       data: () => ({ enabled: true, name: 'Ana' }),
-      template: '<div><UiList :filter="enabled"><UiListItem :title="name" /></UiList><UiList><UiListItem title="Luis" /></UiList></div>'
+      template: '<div><UiList :filter="enabled"><UiListItem :title="name" /></UiList><UiList :filter="false"><UiListItem title="Luis" /></UiList></div>'
     })
     await search(wrapper, 'Luis')
     expect(visibleItems(wrapper).map((item) => item.text())).toEqual(['Luis'])
@@ -85,5 +135,26 @@ describe('UiList filter', () => {
     expect(visibleItems(wrapper)).toHaveLength(2)
     expect(wrapper.find('form').exists()).toBe(false)
     wrapper.unmount()
+  })
+
+  it('filters the real playground list as soon as two characters are typed', async () => {
+    const wrapper = render(App)
+    try {
+      await wrapper.get('a[href="#list"]').trigger('click')
+      const list = wrapper.findAll('main .ui-list')[0]
+      const input = list.get('input[type="search"]')
+      await input.setValue('q')
+      expect(visibleItems(list)).toHaveLength(3)
+      await input.setValue('qu')
+      expect(visibleItems(list)).toHaveLength(1)
+      expect(visibleItems(list)[0].text()).toContain('Queen')
+      await input.setValue('beATles')
+      expect(visibleItems(list)).toHaveLength(1)
+      expect(visibleItems(list)[0].text()).toContain('Yellow Submarine')
+      await input.setValue('')
+      expect(visibleItems(list)).toHaveLength(3)
+    } finally {
+      wrapper.unmount()
+    }
   })
 })

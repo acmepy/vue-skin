@@ -44,7 +44,8 @@ watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
 <template>
   <section class="ui-data-table">
     <h2 v-if="title" class="h5 mb-3">{{ title }}</h2>
-    <form v-if="filter" class="mb-3" role="search" @submit.prevent="appliedQuery = query">
+    <div v-if="filter || $slots.actions" class="ui-data-table-toolbar col-12 col-lg-6 d-flex flex-wrap align-items-start gap-2">
+    <form v-if="filter" class="ui-data-table-filter" role="search" @submit.prevent="appliedQuery = query">
       <InputGroup v-model="query" type="search" aria-label="Buscar en la tabla" placeholder="Buscar en los datos…">
         <template #suffix>
           <Button type="submit" variant="outline-secondary" class="bg-body text-body border d-flex align-items-center justify-content-center" aria-label="Buscar" title="Buscar">
@@ -53,6 +54,10 @@ watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
         </template>
       </InputGroup>
     </form>
+      <div v-if="$slots.actions" class="ui-data-table-actions d-flex flex-wrap gap-2 mb-3">
+        <slot name="actions" :data="rows" :total="data.length" />
+      </div>
+    </div>
     <div class="table-responsive" :style="scrollStyle" :tabindex="scroll ? 0 : undefined" :role="scroll ? 'region' : undefined" :aria-label="scroll ? (title || 'Tabla de datos') : undefined">
       <table class="table align-middle mb-0" :class="{ 'table-striped': striped, 'table-bordered': verticalBorders, 'table-borderless': !horizontalBorders, 'ui-data-table-vertical-only': verticalBorders && !horizontalBorders }">
         <caption class="visually-hidden">{{ title || 'Tabla de datos' }}</caption>
@@ -72,6 +77,7 @@ watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
 
 <style>
 .ui-data-table { min-width: 0; }
+.ui-data-table-filter { flex: 1 1 16rem; min-width: 0; }
 .ui-data-table-vertical-only > :not(caption) > * { border-top-width: 0; border-bottom-width: 0; }
 .ui-data-table-vertical-only > :not(caption) > * > * { border-left-width: var(--bs-border-width); border-right-width: var(--bs-border-width); }
 </style>

@@ -3,13 +3,17 @@ import { toRaw } from 'vue'
 import { describe, expect, it } from 'vitest'
 import BootstrapSkin from '../src/index.js'
 
-describe('UiDataTableButton', () => {
+describe('UiDataTableColumnButton', () => {
   it('renders links and buttons, icons and emits the original selected option', async () => {
     const items = [
       { label: 'Ver', icon: 'mdi:eye', link: '#cliente-1' },
       { label: 'Editar', icon: 'mdi:pencil', value: 'edit' }
     ]
-    const wrapper = mount(BootstrapSkin.components.DataTableButton, { props: { items } })
+    const wrapper = mount(BootstrapSkin.components.DataTableColumnButton, { props: { items } })
+    expect(wrapper.classes()).toContain('btn-group')
+    expect(wrapper.classes()).toContain('btn-group-sm')
+    expect(wrapper.attributes('role')).toBe('group')
+    expect(wrapper.attributes('aria-label')).toBe('Acciones de fila')
     expect(wrapper.get('a').attributes('href')).toBe('#cliente-1')
     expect(wrapper.get('button').attributes('type')).toBe('button')
     expect(wrapper.get('button').attributes('aria-label')).toBe('Editar')
@@ -24,8 +28,27 @@ describe('UiDataTableButton', () => {
     expect(wrapper.emitted('select')).toHaveLength(1)
   })
 
+  it('groups text and icon actions, keeps labels as tooltips and updates group size', async () => {
+    const wrapper = mount(BootstrapSkin.components.DataTableColumnButton, { props: { items: [
+      { label: 'Editar', icon: 'mdi:pencil' },
+      { label: 'Archivar', value: 'archive' }
+    ] } })
+    try {
+      const buttons = wrapper.findAll('button')
+      expect(buttons[0].text()).toBe('')
+      expect(buttons[0].attributes('title')).toBe('Editar')
+      expect(buttons[0].attributes('aria-label')).toBe('Editar')
+      expect(buttons[1].text()).toBe('Archivar')
+      expect(buttons[1].attributes('title')).toBe('Archivar')
+      expect(buttons.every(button => button.element.parentElement === wrapper.element)).toBe(true)
+      await wrapper.setProps({ size: 'lg' })
+      expect(wrapper.classes()).toContain('btn-group-lg')
+      expect(wrapper.classes()).not.toContain('btn-group-sm')
+    } finally { wrapper.unmount() }
+  })
+
   it('blocks disabled actions and disabled links', async () => {
-    const wrapper = mount(BootstrapSkin.components.DataTableButton, { props: { items: [
+    const wrapper = mount(BootstrapSkin.components.DataTableColumnButton, { props: { items: [
       { label: 'Borrar', disabled: true },
       { label: 'Ver', link: '/clientes/1', disabled: true }
     ] } })

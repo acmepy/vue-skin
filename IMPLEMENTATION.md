@@ -139,6 +139,12 @@ El nombre/scoping npm definitivo puede cambiar si no está disponible públicame
 
 `@vue-skin/layouts` es opcional e independiente de los adapters. Contiene composiciones reutilizables que usan slots y componentes públicos de Vue Skin, sin importar Bootstrap ni Basecoat.
 
+`UiDashboard` organiza el contenido principal de un dashboard con CSS Grid responsivo agnóstico y componentes públicos `UiCard`, `UiBadge`, `UiChart` y `UiDataTable`. Se puede componer dentro de `UiAppLayout` para integrar navegación, navbar y tema, o utilizar por separado. No duplica el shell ni trae dependencias de gráficos propias.
+
+Props: `title` (por defecto `Dashboard`), `description`, `summary`, `charts` y `tables` (arrays vacíos por defecto). Cada entrada debe tener un `id` único en su colección. `summary` recibe `{ id, label, value, description?, trend?, variant? }`; `charts` recibe `{ id, title?, label?, type?, data, options?, height? }` con el contrato de `UiChart` (altura 280 por defecto); `tables` recibe `{ id, title?, data, header?, footer?, filter?, striped?, scroll?, showId?, verticalBorders?, horizontalBorders?, detailLabel? }` con el contrato de `UiDataTable`.
+
+Slots: `actions` en el encabezado, `summary` con `{ item }` para personalizar indicadores, `table-detail` con `{ table, row, index }` para acciones por fila y `default` para contenido adicional al final. No consulta servidores, calcula métricas ni modifica los datos recibidos; esa responsabilidad es de la aplicación. El playground incluye cuatro indicadores, gráficos de barras/línea/dona y tablas de pedidos/productos, además de una vista independiente `?layout=dashboard`.
+
 La navegación lateral de `UiAppLayout` incluye el buscador de `UiList` para filtrar sus secciones y layouts por nombre.
 
 El slot `header` de `UiAppLayout` se pasa al encabezado de `UiSidebar` y tiene prioridad sobre la prop de texto `header`. Admite templates Vue con imágenes, logos, texto en varias líneas y componentes interactivos. Sin el slot, se conserva el encabezado de texto. La altura mínima coincide con el navbar, pero puede crecer según el contenido personalizado.
@@ -450,7 +456,13 @@ Cuando existe un error:
 
 La ayuda normal y el error son conceptos distintos.
 
-### 11.4 Slots auxiliares
+### 11.4 Floating labels
+
+`UiInput` y `UiSelect` admiten la prop booleana `floating` (false por defecto). Requiere `label`; sin él se conserva el control normal. En Bootstrap, `form-floating` contiene directamente el control y luego su label asociado; ayuda y error quedan fuera de ese wrapper. No cambia `v-model`, eventos, validación, atributos o estados disabled/readonly.
+
+Para `UiInput`, se admite con `text`, `password`, `email`, `search`, `tel`, `url`, `number`, `date`, `time` y `datetime-local`; otros tipos conservan el label normal. Si falta un placeholder no vacío, se utiliza el label, ya que el CSS oficial depende de `:placeholder-shown`. Los campos de fecha/hora que no muestran placeholder nativo mantienen el label elevado. Para `UiSelect`, el label siempre está elevado; con atributos `multiple` o `size` se conserva el label normal, conforme a las limitaciones oficiales de Bootstrap. Esta primera opción se limita a Input/Select, no a InputGroup, Autocomplete o Textarea.
+
+### 11.5 Slots auxiliares
 
 Evaluar slots opcionales como:
 
@@ -552,6 +564,18 @@ Events:
 
 El componente expone `validate()`: ejecuta `validator`, muestra el error resultante y devuelve `Promise<boolean>`. También se ejecuta al perder foco. Las librerías externas se adaptan desde la aplicación; por ejemplo, una función puede llamar `schema.validateAt('nombre', { nombre: value })`.
 
+### `UiAutocomplete`
+
+Campo de texto con sugerencias locales y el mismo aspecto que `UiInput`. Props: `modelValue` (texto), `data`, `minLength` (2 por defecto), `requireMatch` (true por defecto), `id`, `name`, `label`, `placeholder`, `help`, `tooltip`, `error`, `validator`, `disabled`, `readonly`, `required` y `autocomplete` (atributo HTML; por defecto `off`). Eventos: `update:modelValue`, `select`, `input`, `change`, `focus` y `blur`.
+
+`data` acepta strings u objetos `{ label, value }` con campos adicionales opcionales. Filtra por cualquier parte de la etiqueta, ignorando mayúsculas y acentos, desde `minLength` caracteres de texto recortado. `minLength` admite 0 para mostrar todos al enfocar; valores negativos se consideran 0. No modifica `data`. Al elegir, `v-model` recibe la etiqueta y `select` emite el elemento original para acceder a su ID u otros campos. No realiza peticiones remotas.
+
+Las sugerencias se abren al enfocar o escribir si se alcanza el mínimo; se cierran al elegir, perder el foco, pulsar Escape o Tab. Flechas arriba/abajo recorren opciones y Enter selecciona la activa sin enviar el formulario. Enter sin opción activa conserva su comportamiento normal. No abre sugerencias con `disabled`, `readonly` o durante composición IME. Muestra «Sin resultados» cuando corresponde. Usa semántica combobox/listbox y conserva el foco en el campo al elegir con el puntero.
+
+Expone `validate()` y valida automáticamente al perder el foco. Por defecto (`requireMatch: true`), el texto no vacío debe coincidir con una etiqueta completa de `data`, ignorando mayúsculas, acentos y espacios externos. Una coincidencia parcial solo sirve para buscar; no es un valor válido. Se puede elegir una sugerencia o escribir su etiqueta completa. `select` solo se emite al elegir una opción, no al validar texto escrito. Para permitir texto libre, utiliza `:require-match="false"`. Un valor vacío es válido salvo con `required`. El mínimo de caracteres controla la búsqueda, no la validación de una etiqueta completa.
+
+Después de las comprobaciones de campo obligatorio y coincidencia, ejecuta el `validator` opcional; muestra sus mensajes y respeta `error` externo. Al editar se limpia el error interno y al perder foco se vuelve a validar. Los atributos HTML, `class` y `style` adicionales se aplican al input. Bootstrap usa `form-control` y los estilos oficiales `dropdown-menu` / `dropdown-item`, con un panel del ancho del campo y scroll propio. La implementación inicial se incluye en el adapter Bootstrap; el contrato permanece en core.
+
 ### 13.1 `UiInputGroup`
 
 Campo de texto con contenido antes o después del control.
@@ -587,7 +611,7 @@ Con `type="number"`, el valor no vacío emitido por `v-model` es un número; vac
 Lista de contenido general; los adapters determinan el markup y estilo de cada item.
 
 ```text
-UiList props: title, divided, bordered, filter
+UiList props: title, divided, bordered, filter, minLength
 
 UiListItem props:
 href, target, header, title, subtitle, text, footer, after,
@@ -616,9 +640,9 @@ Cuando existe `badge`, ocupa la posición final del item y reemplaza visualmente
 
 En Bootstrap, las listas y los items normales tienen fondo transparente para mostrar el fondo del contenedor. Los estados de selección y hover y los encabezados `groupTitle` conservan sus fondos de Bootstrap.
 
-`UiList filter` muestra un campo de búsqueda con botón Buscar. La búsqueda se aplica al pulsar el botón o Enter, ignora mayúsculas y acentos, y vaciar el campo restaura todos los items. Busca en `header`, `title`, `subtitle`, `text`, `footer`, `after`, `badge` y `filterText`. Este último aporta palabras adicionales para contenido personalizado en slots, cuyo texto no se inspecciona automáticamente.
+`UiList` tiene el buscador habilitado por defecto (`filter: true`); se puede ocultar y desactivar con `:filter="false"`. La búsqueda se aplica automáticamente al escribir desde `minLength` caracteres (2 por defecto), contando el texto sin espacios externos. No requiere pulsar Buscar ni Enter; ambos siguen disponibles y no envían ni recargan la página. Ignora mayúsculas y acentos. Al vaciar el campo o reducirlo por debajo del mínimo se restaura inmediatamente la lista completa, incluidos sus grupos, sin mostrar «Sin resultados». `minLength` es configurable y admite 0; los valores negativos se consideran 0. Busca en `header`, `title`, `subtitle`, `text`, `footer`, `after`, `badge` y `filterText`. Este último aporta palabras adicionales para contenido personalizado en slots, cuyo texto no se inspecciona automáticamente.
 
-Cada lista mantiene su propio filtro. Los items se mantienen montados al ocultarse, preservando el estado de sus slots. Un `groupTitle` encabeza los items siguientes hasta el próximo `groupTitle`; durante una búsqueda se oculta si ese grupo no tiene coincidencias. Si no hay resultados se muestra un mensaje accesible. Sin `filter`, el comportamiento existente se conserva.
+Cada lista mantiene su propio filtro. Los items se mantienen montados al ocultarse, preservando el estado de sus slots. Un `groupTitle` encabeza los items siguientes hasta el próximo `groupTitle`; durante una búsqueda se oculta si ese grupo no tiene coincidencias. Si no hay resultados se muestra un mensaje accesible. Con `:filter="false"` se muestran todos los items y no se renderiza el buscador.
 
 El formulario de búsqueda permanece visible en la parte superior del contenedor de scroll mediante posicionamiento sticky, con fondo opaco adaptado al tema para que los items no se vean a través del buscador.
 
@@ -723,6 +747,20 @@ error
 
 ---
 
+## 16.1. Componentes de estructura: `UiContainer`, `UiRow`, `UiCol`
+
+La grilla pertenece a los componentes del adapter, no a `@vue-skin/layouts`: define unidades de distribución reutilizables. Core centraliza la API y cada adapter realiza la conversión a su framework. Los layouts son composiciones completas y pueden usar estos componentes o CSS agnóstico interno cuando convenga. La implementación inicial es Bootstrap; Basecoat sigue pendiente, según la política Bootstrap-first.
+
+`UiContainer` tiene la prop `fluid` (false por defecto). Sin ella centra el contenido y limita su ancho progresivamente según el breakpoint; con `fluid` ocupa todo el ancho disponible, conservando padding lateral.
+
+`UiRow` recibe `gap`: `none`, `xs`, `sm`, `md` (por defecto), `lg`, `xl`. Controla la separación horizontal y vertical entre columnas. En Bootstrap se convierte respectivamente a `g-0`, `g-1`, `g-2`, `g-3`, `g-4`, `g-5`, cuyos valores predeterminados son 0, .25rem, .5rem, 1rem, 1.5rem y 3rem. Son valores nominales: personalizar el espaciado del framework modifica sus tamaños físicos.
+
+`UiCol` recibe `span`, `sm`, `md`, `lg`, `xl`, `xxl`. Cada valor admite un entero de 1 a 12 (también como string) o `auto`. `span` es el ancho inicial; sin él, reparte el espacio disponible por igual con las demás columnas flexibles. `auto` utiliza el ancho del contenido. Las props responsive se aplican desde su breakpoint, heredándose hacia arriba hasta otra sobrescritura. Breakpoints comunes mínimos: sm 576px, md 768px, lg 992px, xl 1200px, xxl 1400px. El ancho numérico representa esa fracción de una fila de 12 columnas; las columnas pasan a otra línea cuando no caben. Una columna sin props responsive no se apila automáticamente: utiliza `span="12"` para ocupar una fila completa en móvil.
+
+Los tres componentes reciben el slot `default` y propagan atributos HTML, `class` y `style` a su raíz. La jerarquía de uso es Container → Row → Col; las filas anidadas van dentro de una Col. Bootstrap utiliza únicamente `container` / `container-fluid`, `row`, `g-*` y `col-*` oficiales, sin CSS de grilla a medida. El playground agrupa estos componentes en la sección Grid con ejemplos y su fuente completa.
+
+---
+
 ## 17. `UiNavbar`
 
 Debe abstraer comportamiento, no estructura HTML.
@@ -788,6 +826,8 @@ El slot `header` recibe contenido Vue arbitrario, no una cadena HTML. En Bootstr
 
 En Bootstrap, el sidebar es un offcanvas responsivo: por debajo de `breakpoint` funciona como panel superpuesto; desde ese punto se integra al layout como un `aside` que ocupa espacio junto al contenido principal.
 
+El cuerpo de `UiSidebar` en Bootstrap no tiene padding superior, de modo que el contenido comienza inmediatamente debajo del header, también en el offcanvas móvil. Conserva los márgenes laterales y el scroll propio; un filtro de `UiList` permanece visible al desplazar la navegación. Este ajuste pertenece al sidebar, no a `UiAppLayout`.
+
 ---
 
 ## 19. `UiCard`
@@ -847,15 +887,23 @@ Los bordes horizontales están activos por defecto; los verticales y las filas r
 
 El slot `detail` recibe `{ row, index }` por fila y añade una columna final de contenido personalizado, destinada a acciones CRUD. `detailLabel` permite cambiar su encabezado (por defecto `Acciones`). Sin ese slot no se agrega ninguna columna. El índice corresponde a las filas filtradas; la aplicación debe usar el ID real para identificar registros.
 
-### 19.4 `UiDataTableButton`
+El slot `actions` recibe `{ data, total }` (filas filtradas y cantidad original) y muestra acciones generales junto al filtro, fuera del formulario de búsqueda. También funciona con `filter: false`. La barra se adapta a pantallas estrechas pasando las acciones a otra línea; no agrega columnas ni altera el filtrado. Agregar, exportar o cualquier otra acción se implementa en la aplicación mediante componentes públicos como `UiButton`. El ejemplo permite agregar clientes de demostración y exportar las filas filtradas a JSON.
+
+En Bootstrap, la barra completa (filtro y acciones juntos) ocupa el 50% del ancho de la tabla desde `lg` (992px) y el 100% en pantallas menores, mediante `col-12 col-lg-6` oficiales. El ancho de la tabla y de sus columnas no cambia.
+
+### 19.4 `UiDataTableColumnButton`
+
+Renombrado desde `UiDataTableButton`; actualizar usos y tipos al nuevo nombre. Es un componente público de acciones por fila, distinto del slot `actions` de la tabla.
 
 Renderiza botones o enlaces para las acciones de una fila. Recibe `items`, un array de objetos `{ label, icon?, link?, value?, variant?, disabled? }`, y las props comunes `size` (por defecto `sm`) y `variant` (por defecto `outline-secondary`). Cada opción con `link` se renderiza como enlace; las demás como botones. `disabled` impide navegar o ejecutar la acción.
 
-Al pulsar un botón sin `link`, emite `select` con el objeto original. La aplicación vincula la acción a la fila desde el slot: `<template #detail="{ row }"><UiDataTableButton :items="acciones" @select="ejecutar($event, row)" /></template>`. El componente no modifica datos ni realiza peticiones por sí mismo.
+Al pulsar un botón sin `link`, emite `select` con el objeto original. La aplicación vincula la acción a la fila desde el slot: `<template #detail="{ row }"><UiDataTableColumnButton :items="acciones" @select="ejecutar($event, row)" /></template>`. El componente no modifica datos ni realiza peticiones por sí mismo.
 
 Los iconos usan `UiIcon`. Como `icon-forge` detecta referencias estáticas, los nombres dinámicos provenientes del array deben estar incluidos entre las referencias que escanea el proyecto. El playground incluye referencias literales de sus tres iconos junto a las opciones.
 
-Si una opción tiene `icon`, muestra únicamente el icono y utiliza `label` como tooltip nativo (`title`) y nombre accesible (`aria-label`). Sin icono, muestra el texto de `label`.
+Las opciones se renderizan dentro de un `UiButtonGroup` con nombre accesible «Acciones de fila» y el tamaño indicado por `size`; Bootstrap usa su `btn-group` oficial. Si una opción tiene `icon`, muestra únicamente el icono y utiliza `label` como tooltip nativo (`title`) y nombre accesible (`aria-label`). Sin icono, muestra el texto de `label`.
+
+El slot `actions` de la tabla admite un `UiButtonGroup` para agrupar acciones generales. En botones de solo icono se envía `title` y `aria-label` con su descripción, y `UiIcon` como contenido. El playground muestra Agregar/Exportar agrupados con iconos y tooltips, separados de las acciones por fila.
 
 ---
 
@@ -910,7 +958,7 @@ Props:
 
 ```text
 - modelValue
-- type: alert | confirm | prompt | preloader
+- type: alert | info | success | warning | error | confirm | prompt | preloader
 - title
 - message
 - label (prompt)
@@ -931,6 +979,10 @@ Eventos:
 ```
 
 El modo `preloader` debe bloquear la interacción con la pantalla y no puede cerrarse mediante backdrop o teclado. Además del uso declarativo, el plugin puede exponer un servicio por aplicación para `alert`, `confirm`, `prompt` y `preloader`; no debe ser un singleton global compartido entre aplicaciones.
+
+Los tipos `info`, `success`, `warning` y `error` muestran mensajes con un botón Aceptar, icono y color semántico en el header; el body conserva el fondo normal del modal. En Bootstrap, el header usa las variables oficiales `--bs-{info|success|warning|danger}-bg-subtle`, `-text-emphasis` y `-border-subtle`, adaptadas al tema. El icono acompaña al título. Si se omite `title`, muestran Información, Operación realizada, Advertencia o Error respectivamente. No renderizan HTML arbitrario a partir de `message`.
+
+El servicio también expone `uiDialog.info(message, title?, options?)`, `success(...)`, `warning(...)` y `error(...)`, que devuelven `Promise<void>` y se completan después del cierre, respetando la cola por aplicación. `success` confirma una operación realizada; `confirm` solicita una decisión con Aceptar y Cancelar y sigue devolviendo `Promise<boolean>`. Los nombres de tipos y métodos son comunes a todos los adapters; iconos y estilos pertenecen a cada implementación.
 
 ---
 

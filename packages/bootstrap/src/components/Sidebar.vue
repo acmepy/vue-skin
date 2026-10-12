@@ -49,6 +49,7 @@ onBeforeUnmount(() => {
 .ui-sidebar .offcanvas-header { display: flex !important; flex-shrink: 0; }
 .ui-sidebar-header-content { flex: 1 1 auto; min-width: 0; width: 100%; overflow-wrap: anywhere; }
 .ui-sidebar .ui-sidebar-body { display: block !important; flex: 1 1 auto !important; min-height: 0; overflow-y: auto !important; scrollbar-color: var(--ui-sidebar-scroll-thumb) var(--ui-sidebar-scroll-track); }
+.ui-sidebar .ui-sidebar-body { padding-top: 0; }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar { width: .75rem; }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar-track { background: var(--ui-sidebar-scroll-track); }
 .ui-sidebar .ui-sidebar-body::-webkit-scrollbar-thumb { background: var(--ui-sidebar-scroll-thumb); border: .2rem solid var(--ui-sidebar-scroll-track); border-radius: 999px; }

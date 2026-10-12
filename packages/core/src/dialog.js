@@ -50,6 +50,18 @@ export function createDialogService(adapter) {
     alert(message, title, options = {}) {
       return request('alert', { ...options, message, title })
     },
+    info(message, title, options = {}) {
+      return request('info', { ...options, message, title })
+    },
+    success(message, title, options = {}) {
+      return request('success', { ...options, message, title })
+    },
+    warning(message, title, options = {}) {
+      return request('warning', { ...options, message, title })
+    },
+    error(message, title, options = {}) {
+      return request('error', { ...options, message, title })
+    },
     confirm(message, title, options = {}) {
       return request('confirm', { ...options, message, title })
     },

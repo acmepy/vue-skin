@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/bootstrap",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Adapter Bootstrap para Vue Skin.",
   "type": "module",
   "files": [

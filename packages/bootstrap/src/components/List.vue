@@ -1,17 +1,17 @@
 <script setup>
-import { computed, onUpdated, provide, ref, shallowReactive, shallowRef, watch } from 'vue'
+import { computed, onUpdated, provide, ref, shallowReactive, shallowRef } from 'vue'
 import Button from './Button.vue'
 import InputGroup from './InputGroup.vue'
 import { UiIcon } from '@vue-skin/core'
 import { listContextKey } from './listContext.js'
 
-const props = defineProps({ title: String, divided: { type: Boolean, default: true }, bordered: { type: Boolean, default: true }, filter: Boolean })
+const props = defineProps({ title: String, divided: { type: Boolean, default: true }, bordered: { type: Boolean, default: true }, filter: { type: Boolean, default: true }, minLength: { type: Number, default: 2 } })
 const query = ref('')
-const appliedQuery = ref('')
 const items = shallowReactive(new Map())
 const order = shallowRef([])
 const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase()
-const term = computed(() => props.filter ? normalize(appliedQuery.value.trim()) : '')
+const threshold = computed(() => Number.isFinite(props.minLength) ? Math.max(0, Math.floor(props.minLength)) : 2)
+const term = computed(() => props.filter && query.value.trim().length >= threshold.value ? normalize(query.value.trim()) : '')
 
 function refreshOrder() {
   const next = [...items.keys()].sort((a, b) => {
@@ -48,13 +48,12 @@ provide(listContextKey, {
   unregister(id) { items.delete(id); refreshOrder() }
 })
 onUpdated(refreshOrder)
-watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
 </script>
 
 <template>
   <section class="ui-list">
     <h2 v-if="title" class="h6 mb-2">{{ title }}</h2>
-    <form v-if="filter" class="ui-list-filter sticky-top mb-3" role="search" @submit.prevent="appliedQuery = query">
+    <form v-if="filter" class="ui-list-filter sticky-top mb-3" role="search" @submit.prevent>
       <InputGroup v-model="query" type="search" aria-label="Buscar en la lista" placeholder="Buscar en la lista…">
         <template #suffix>
           <Button type="submit" variant="outline-secondary" class="bg-body text-body border d-flex align-items-center justify-content-center" aria-label="Buscar" title="Buscar">

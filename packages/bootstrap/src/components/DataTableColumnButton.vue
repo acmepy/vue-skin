@@ -2,6 +2,7 @@
 import { UiIcon } from '@vue-skin/core'
 import Button from './Button.vue'
 import Link from './Link.vue'
+import ButtonGroup from './ButtonGroup.vue'
 
 defineProps({
   items: { type: Array, default: () => [] },
@@ -15,7 +16,7 @@ function select(item) {
 </script>
 
 <template>
-  <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+  <ButtonGroup :size="size" label="Acciones de fila">
     <component v-for="(item, index) in items" :key="index" :is="item.link ? Link : Button"
       :href="item.link" :type="item.link ? undefined : 'button'" :disabled="item.disabled"
       :variant="item.link ? undefined : (item.variant || variant)" :size="item.link ? undefined : size"
@@ -24,5 +25,5 @@ function select(item) {
       <UiIcon v-if="item.icon" :name="item.icon" size="sm" class="align-middle" />
       <span v-else>{{ item.label }}</span>
     </component>
-  </div>
+  </ButtonGroup>
 </template>

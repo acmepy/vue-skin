@@ -1,6 +1,6 @@
 {
   "name": "vue-skin",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Una capa de abstracción de UI para Vue 3.",
   "license": "MIT",
   "author": "hugo",
@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "version:sync": "node scripts/sync-versions.js",
-    "dev": "npm run version:sync && npm run dev --workspace @vue-skin/playground",
-    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspace @vue-skin/playground",
+    "build": "npm run version:sync && npm run build --workspaces --if-present",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -9,24 +9,31 @@ export type InputType = SuggestedValue<'text' | 'password' | 'email' | 'search' 
 export type ButtonType = SuggestedValue<'button' | 'submit' | 'reset'>
 export type ModalSize = SuggestedValue<'sm' | 'lg' | 'xl' | 'fullscreen'>
 export type ToastPosition = 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'
-export type DialogType = 'alert' | 'confirm' | 'prompt' | 'preloader'
+export type DialogType = 'alert' | 'info' | 'success' | 'warning' | 'error' | 'confirm' | 'prompt' | 'preloader'
 export type Theme = 'light' | 'dark'
 export type ComponentOf<Props> = DefineComponent<Props, {}, {}, {}, {}, {}, {}, string[]>
 
 export interface UiButtonProps { variant?: Variant; size?: ControlSize; disabled?: boolean; loading?: boolean; type?: ButtonType }
 export interface UiButtonGroupProps { size?: ControlSize; vertical?: boolean; label?: string }
+export type GridGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+export type GridSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | 'auto'
+export interface UiContainerProps { fluid?: boolean }
+export interface UiRowProps { gap?: GridGap }
+export interface UiColProps { span?: GridSpan; sm?: GridSpan; md?: GridSpan; lg?: GridSpan; xl?: GridSpan; xxl?: GridSpan }
 export interface UiIconProps { name: string; label?: string; size?: IconSize }
 export type ValidatorResult = boolean | string | null | undefined | void
 export type Validator = (value: unknown) => ValidatorResult | Promise<ValidatorResult>
-export interface UiInputProps { modelValue?: string | number; label?: string; type?: InputType; name?: string; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; validator?: Validator; disabled?: boolean; readonly?: boolean; required?: boolean; autocomplete?: string }
-export interface UiInputGroupProps extends UiInputProps { prefix?: string; suffix?: string }
+export interface UiInputProps { modelValue?: string | number; label?: string; type?: InputType; name?: string; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; validator?: Validator; disabled?: boolean; readonly?: boolean; required?: boolean; autocomplete?: string; floating?: boolean }
+export interface UiInputGroupProps extends Omit<UiInputProps, 'floating'> { prefix?: string; suffix?: string }
+export interface UiAutocompleteOption { label: string; value?: unknown; [field: string]: unknown }
+export interface UiAutocompleteProps extends Omit<UiInputProps, 'modelValue' | 'type' | 'floating'> { modelValue?: string; data?: Array<string | UiAutocompleteOption>; minLength?: number; requireMatch?: boolean; id?: string }
 export interface UiSelectOption { value: string | number; label: string }
-export interface UiSelectProps { modelValue?: string | number; label?: string; options?: UiSelectOption[]; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean }
+export interface UiSelectProps { modelValue?: string | number; label?: string; options?: UiSelectOption[]; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean; floating?: boolean }
 export interface UiCheckboxProps { modelValue?: unknown; label?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean; trueValue?: unknown; falseValue?: unknown }
 export interface UiRadioProps { modelValue?: string | number | boolean; value: string | number | boolean; name?: string; label?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; required?: boolean }
 export interface UiSwitchProps extends UiCheckboxProps {}
 export interface UiTextareaProps { modelValue?: string | number; label?: string; name?: string; placeholder?: string; help?: string; tooltip?: string; error?: string | boolean | null; disabled?: boolean; readonly?: boolean; required?: boolean; rows?: number; maxlength?: number }
-export interface UiListProps { title?: string; divided?: boolean; bordered?: boolean; filter?: boolean }
+export interface UiListProps { title?: string; divided?: boolean; bordered?: boolean; filter?: boolean; minLength?: number }
 export interface UiListItemProps { href?: string; target?: string; header?: string; title?: string; subtitle?: string; text?: string; footer?: string; after?: string; badge?: string | number; badgeVariant?: Variant; active?: boolean; disabled?: boolean; groupTitle?: boolean; tooltip?: string; filterText?: string }
 export interface UiLinkProps { href?: string; target?: string; disabled?: boolean }
 export interface UiNavbarProps { title?: string; fixed?: boolean; sticky?: boolean }
@@ -38,9 +45,10 @@ export interface UiChartDataset { label?: string; data: unknown[]; [option: stri
 export interface UiChartData { labels?: unknown[]; datasets: UiChartDataset[] }
 export interface UiChartProps { type?: ChartType; data?: UiChartData; options?: Record<string, unknown>; title?: string; label?: string; height?: number | string }
 export interface UiDataTableColumn { label?: string; align?: 'start' | 'center' | 'end' }
+/** Slots: actions/footer ({ data: filtered rows, total: original count }), detail ({ row, index }). */
 export interface UiDataTableProps { data?: Record<string, unknown>[]; header?: Record<string, UiDataTableColumn>; footer?: string; title?: string; detailLabel?: string; filter?: boolean; showId?: boolean; verticalBorders?: boolean; horizontalBorders?: boolean; scroll?: boolean | string; striped?: boolean }
-export interface UiDataTableButtonItem { label: string; icon?: string; link?: string; value?: unknown; variant?: Variant; disabled?: boolean }
-export interface UiDataTableButtonProps { items?: UiDataTableButtonItem[]; size?: ControlSize; variant?: Variant }
+export interface UiDataTableColumnButtonItem { label: string; icon?: string; link?: string; value?: unknown; variant?: Variant; disabled?: boolean }
+export interface UiDataTableColumnButtonProps { items?: UiDataTableColumnButtonItem[]; size?: ControlSize; variant?: Variant }
 export interface UiAccordionItem { id: string | number; title: string; content: string }
 export interface UiAccordionProps { modelValue?: string | number | null; items?: UiAccordionItem[]; flush?: boolean }
 export interface UiTabItem { id: string | number; label: string; content: string; disabled?: boolean }
@@ -60,7 +68,7 @@ export const componentContracts: Readonly<Record<string, { props: readonly strin
 
 export interface VueSkinAdapter { name: string; components: Record<string, Component>; install?: (app: App, options?: unknown) => void }
 export interface DialogOptions { label?: string; initialValue?: string; placeholder?: string; acceptText?: string; cancelText?: string }
-export interface DialogService { alert(message: string, title?: string, options?: DialogOptions): Promise<void>; confirm(message: string, title?: string, options?: DialogOptions): Promise<boolean>; prompt(message: string, title?: string, options?: DialogOptions): Promise<string | null>; preloader(title?: string, options?: DialogOptions): { close(): void }; Host: Component }
+export interface DialogService { alert(message: string, title?: string, options?: DialogOptions): Promise<void>; info(message: string, title?: string, options?: DialogOptions): Promise<void>; success(message: string, title?: string, options?: DialogOptions): Promise<void>; warning(message: string, title?: string, options?: DialogOptions): Promise<void>; error(message: string, title?: string, options?: DialogOptions): Promise<void>; confirm(message: string, title?: string, options?: DialogOptions): Promise<boolean>; prompt(message: string, title?: string, options?: DialogOptions): Promise<string | null>; preloader(title?: string, options?: DialogOptions): { close(): void }; Host: Component }
 export type VueSkin = Plugin & { dialog: DialogService }
 
 export function validateAdapter(adapter: VueSkinAdapter): VueSkinAdapter
@@ -72,9 +80,13 @@ declare module 'vue' {
   export interface GlobalComponents {
     UiButton: ComponentOf<UiButtonProps>
     UiButtonGroup: ComponentOf<UiButtonGroupProps>
+    UiContainer: ComponentOf<UiContainerProps>
+    UiRow: ComponentOf<UiRowProps>
+    UiCol: ComponentOf<UiColProps>
     UiIcon: ComponentOf<UiIconProps>
     UiInput: ComponentOf<UiInputProps>
     UiInputGroup: ComponentOf<UiInputGroupProps>
+    UiAutocomplete: ComponentOf<UiAutocompleteProps>
     UiSelect: ComponentOf<UiSelectProps>
     UiCheckbox: ComponentOf<UiCheckboxProps>
     UiRadio: ComponentOf<UiRadioProps>
@@ -89,7 +101,7 @@ declare module 'vue' {
     UiCard: ComponentOf<UiCardProps>
     UiChart: ComponentOf<UiChartProps>
     UiDataTable: ComponentOf<UiDataTableProps>
-    UiDataTableButton: ComponentOf<UiDataTableButtonProps>
+    UiDataTableColumnButton: ComponentOf<UiDataTableColumnButtonProps>
     UiAccordion: ComponentOf<UiAccordionProps>
     UiTabs: ComponentOf<UiTabsProps>
     UiModal: ComponentOf<UiModalProps>
