@@ -182,6 +182,8 @@ En Bootstrap se utiliza `form-floating` oficial; el input genera el placeholder 
 
 ## Vista independiente de layouts
 
+El ancho lateral de `UiAppLayout` se configura con `sidebar-width`, por ejemplo `<UiAppLayout sidebar-width="18rem" />` o `sidebar-width="280px"`. El valor predeterminado es `15rem` y se aplica al sidebar de escritorio y al panel móvil.
+
 Las secciones `UiAppLayout`, `UiLogin` y `UiDashboard` del playground incluyen un enlace para abrir cada layout en una pestaña nueva, sin el contenedor de documentación. También puedes acceder mediante `?layout=app-layout`, `?layout=login` y `?layout=dashboard`. La vista de aplicación tiene contenido y navegación de prueba para comprobar el sidebar, el scroll y los cambios de tamaño; la vista de login ocupa toda la altura y no realiza autenticación real. El dashboard muestra indicadores, gráficos de barras/línea/dona y tablas con datos de demostración.
 
 ### Dashboard

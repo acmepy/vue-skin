@@ -5,6 +5,7 @@ const props = defineProps({
   modelValue: [String, Number],
   title: String,
   header: String,
+  sidebarWidth: { type: String, default: '15rem' },
   sections: { type: Array, default: () => [] }
 })
 const emit = defineEmits(['update:modelValue', 'select'])
@@ -27,7 +28,7 @@ function selectSection(section, event) {
 <template>
   <div class="ui-app-layout">
     <div class="ui-app-layout-sidebar">
-      <UiSidebar v-model="sidebarOpen" class="bg-body-tertiary" width="15rem" aria-label="Navegación principal">
+      <UiSidebar v-model="sidebarOpen" class="bg-body-tertiary" :width="sidebarWidth" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
         <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--bs-tertiary-bg)" filter>
           <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)" />

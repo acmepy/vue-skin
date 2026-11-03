@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { UiAppLayout } from '../src/index.js'
 
 const components = {
-  UiSidebar: { props: ['modelValue'], template: '<aside><slot name="header" /><slot /></aside>' },
+  UiSidebar: { props: ['modelValue', 'width'], template: '<aside><slot name="header" /><slot /></aside>' },
   UiNavbar: { props: ['title'], template: '<nav>{{ title }}<slot name="start" /><slot name="end" /></nav>' },
   UiButton: { template: '<button><slot name="icon" /><slot /></button>' },
   UiIcon: { template: '<span />' },
@@ -14,6 +14,20 @@ const components = {
 }
 
 describe('UiAppLayout', () => {
+  it('defaults the sidebar width to 15rem and forwards reactive CSS widths', async () => {
+    const wrapper = mount(UiAppLayout, { global: { components } })
+    try {
+      const sidebar = wrapper.getComponent(components.UiSidebar)
+      expect(sidebar.props('width')).toBe('15rem')
+      await wrapper.setProps({ sidebarWidth: '18rem' })
+      expect(sidebar.props('width')).toBe('18rem')
+      await wrapper.setProps({ sidebarWidth: '280px' })
+      expect(sidebar.props('width')).toBe('280px')
+      await wrapper.setProps({ sidebarWidth: undefined })
+      expect(sidebar.props('width')).toBe('15rem')
+    } finally { wrapper.unmount() }
+  })
+
   it('forwards a custom header template instead of the text fallback', () => {
     const wrapper = mount(UiAppLayout, {
       props: { title: 'Proyecto', header: 'Texto predeterminado' },

@@ -147,6 +147,8 @@ Slots: `actions` en el encabezado, `summary` con `{ item }` para personalizar in
 
 La navegación lateral de `UiAppLayout` incluye el buscador de `UiList` para filtrar sus secciones y layouts por nombre.
 
+`UiAppLayout` admite `sidebarWidth` (string CSS, por defecto `15rem`), que se pasa a la prop `width` de `UiSidebar` tanto en escritorio como en el offcanvas móvil. Ejemplo: `<UiAppLayout sidebar-width="18rem" />`. Se puede cambiar reactivamente sin alterar la API de navegación.
+
 El slot `header` de `UiAppLayout` se pasa al encabezado de `UiSidebar` y tiene prioridad sobre la prop de texto `header`. Admite templates Vue con imágenes, logos, texto en varias líneas y componentes interactivos. Sin el slot, se conserva el encabezado de texto. La altura mínima coincide con el navbar, pero puede crecer según el contenido personalizado.
 
 Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-model` para la sección activa. Integra `UiSidebar`, `UiNavbar`, el switcher lateral y `UiThemeSwitcher`; las vistas de la aplicación aportan únicamente el contenido principal. Cada entrada de `sections` puede ser un par `[id, título]` o un objeto; un objeto con `groupTitle: true` se renderiza como encabezado no interactivo. `UiLogin` es otra composición reutilizable: integra los controles de formulario del adapter activo y emite las credenciales al enviar el formulario.
