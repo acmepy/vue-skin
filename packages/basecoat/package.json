@@ -1,16 +1,30 @@
 {
   "name": "@vue-skin/basecoat",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Adapter Basecoat para Vue Skin.",
   "type": "module",
   "files": [
-    "src"
+    "src",
+    "index.d.ts",
+    "scripts"
   ],
-  "exports": "./src/index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/prepare-css.js",
+    "prepack": "node scripts/prepare-css.js"
+  },
   "peerDependencies": {
     "vue": "^3.5.0"
   },
   "dependencies": {
+    "@vue-skin/core": "file:../core",
+    "chart.js": "^4.5.1",
     "basecoat-css": "^1.0.2"
   }
 }

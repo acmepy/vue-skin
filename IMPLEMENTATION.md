@@ -1002,6 +1002,8 @@ Los tipos `info`, `success`, `warning` y `error` muestran mensajes con un botón
 
 El servicio también expone `uiDialog.info(message, title?, options?)`, `success(...)`, `warning(...)` y `error(...)`, que devuelven `Promise<void>` y se completan después del cierre, respetando la cola por aplicación. `success` confirma una operación realizada; `confirm` solicita una decisión con Aceptar y Cancelar y sigue devolviendo `Promise<boolean>`. Los nombres de tipos y métodos son comunes a todos los adapters; iconos y estilos pertenecen a cada implementación.
 
+En Basecoat, el header coloreado de info/success/warning/error cubre todo el ancho y su padding, hasta los bordes superiores redondeados del modal. En estos casos el contenedor exterior no aporta padding: header, cuerpo y pie gestionan su propio espacio. Los modales normales y preloaders conservan su espaciado original; el cuerpo del mensaje no recibe el fondo semántico.
+
 ---
 
 ### 21.1 `UiDropdown`
@@ -1055,6 +1057,8 @@ Slots: default
 ```
 
 `position` usa posiciones semánticas como `top-end` o `bottom-center`; cada adapter decide cómo presentarlas.
+
+En Basecoat, `variant` colorea el elemento visible `.toast-content`, no solo su contenedor. Se admiten primary, secondary, success, danger, warning, info, light y dark. Los fondos son tenues, mezclados con `--background`: 10% del color semántico (14% en danger y dark), igual que los headers de Dialog para success/warning/info/danger. El texto usa el color semántico, con tonos más claros en modo oscuro; primary sigue los tokens del acento seleccionado. Sin variante (o con una no reconocida), se conserva el fondo popover normal de Basecoat. El título, el contenido personalizado y el cierre mantienen el color de texto correspondiente en claro y oscuro.
 
 ---
 
@@ -1556,6 +1560,18 @@ La primera versión se considera válida cuando:
 ---
 
 ## 45. Principio para decisiones futuras
+
+### Estado de la implementación Basecoat
+
+`@vue-skin/basecoat` implementa el contrato completo de `componentContracts` y exporta el adapter por defecto, sin importar código, CSS ni componentes de Bootstrap. Las convenciones nativas de Basecoat incluyen `btn` con `data-variant`/`data-size`, `card` con header/section/footer, controles input/select/textarea, tabs con roles y diálogo nativo `dialog`. Vue gestiona estado, eventos y limpieza de listeners; no se inicializa el bundle JavaScript global de Basecoat para evitar dos controladores sobre el mismo DOM.
+
+En Basecoat, el estilo de texto de `UiLink` se limita a enlaces que no tengan la clase nativa `btn`. Si se presenta como botón, conserva los colores de fondo y texto de Basecoat, sin forzar el texto primario sobre el fondo primario (por ejemplo, en los enlaces de vista independiente de layouts).
+
+La dependencia Basecoat ya existente se mantiene aislada en el paquete. Se distribuye su bundle CSS oficial precompilado y la licencia MIT mediante `scripts/prepare-css.js` (build/prepack), sin scripts de instalación en el consumidor y sin exigirle Tailwind. Los estilos de integración del adapter implementan grilla, floating labels, listas, autocompletado, sidebar responsivo, colores semánticos y demás requisitos sin equivalencia directa. Los tooltips simples son nativos con `title`; la grilla usa CSS Flex/Grid con los mismos spans, gaps y breakpoints públicos. Chart.js se declara en este paquete y se carga diferidamente.
+
+La apariencia Basecoat utiliza la clase `dark` y tokens propios (`--background`, `--foreground`, `--primary`, `--ring`, etc.), con la misma API `useTheme`, persistencia y controles de core. Los layouts siguen usando componentes públicos; el header del sidebar comparte una clase de integración para su altura. El playground selecciona un solo adapter en Vite mediante alias de build y `VITE_UI_SKIN`/modo `basecoat`. Sus utilidades de presentación heredadas se adaptan en un CSS exclusivo del playground, no en core ni en el paquete Basecoat. Un guard del build rechaza cualquier módulo Bootstrap en el bundle Basecoat.
+
+Verificación: pruebas del contrato, formularios, validación, autocomplete, listas/filtros, tablas/acciones, diálogos/servicio JS, menús, tabs, accordion, toast, sidebar móvil/escritorio, temas, los ocho tipos Chart y todas las secciones del playground. Se requiere un navegador moderno; las animaciones y apariencia exacta no se igualan artificialmente a Bootstrap. La revisión visual manual sigue siendo necesaria antes de declarar paridad visual de los ejemplos.
 
 Cuando exista duda sobre dónde implementar algo, aplicar esta regla:
 

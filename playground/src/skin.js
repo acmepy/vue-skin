@@ -1,5 +1,5 @@
 import { createVueSkin } from '@vue-skin/core'
-import BootstrapSkin from '@vue-skin/bootstrap'
+import Adapter from '#skin-adapter'
 
-export const skin = createVueSkin({ adapter: BootstrapSkin })
+export const skin = createVueSkin({ adapter: Adapter })
 export const uiDialog = skin.dialog

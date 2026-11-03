@@ -65,7 +65,7 @@ ${scope} {
   --bs-primary-text-emphasis: ${emphasis}; --bs-primary-bg-subtle: ${p.subtle}; --bs-primary-border-subtle: ${p.subtleBorder};
   --bs-body-bg: ${p.body}; --bs-body-bg-rgb: ${rgb(p.body).join(', ')};
   --bs-secondary-bg: ${p.secondary}; --bs-secondary-bg-rgb: ${rgb(p.secondary).join(', ')};
-  --bs-tertiary-bg: ${p.tertiary}; --bs-tertiary-bg-rgb: ${rgb(p.tertiary).join(', ')};
+  --bs-tertiary-bg: ${p.tertiary}; --bs-tertiary-bg-rgb: ${rgb(p.tertiary).join(', ')}; --ui-layout-surface: ${p.tertiary};
   --bs-border-color: ${p.border}; --bs-link-color: ${p.link}; --bs-link-color-rgb: ${rgb(p.link).join(', ')};
   --bs-link-hover-color: ${p.link}; --bs-link-hover-color-rgb: ${rgb(p.link).join(', ')};
 }

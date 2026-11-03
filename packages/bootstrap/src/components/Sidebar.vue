@@ -36,7 +36,7 @@ onBeforeUnmount(() => {
 
 <template>
   <aside ref="element" class="ui-sidebar" :class="[`offcanvas-${placement}`, `offcanvas-${breakpoint}`, modelValue ? `d-${breakpoint}-flex` : `d-${breakpoint}-none`]" :style="width ? { width } : undefined" tabindex="-1">
-    <header v-if="$slots.header" class="offcanvas-header">
+    <header v-if="$slots.header" class="offcanvas-header ui-sidebar-header">
       <div class="ui-sidebar-header-content"><slot name="header" /></div>
     </header>
     <div class="offcanvas-body ui-sidebar-body" style="flex: 1 1 auto; min-height: 0; overflow-y: auto"><slot /></div>

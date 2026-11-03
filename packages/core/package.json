@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/core",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Contrato y plugin agnósticos de Vue Skin.",
   "type": "module",
   "files": [

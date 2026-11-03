@@ -28,9 +28,9 @@ function selectSection(section, event) {
 <template>
   <div class="ui-app-layout">
     <div class="ui-app-layout-sidebar">
-      <UiSidebar v-model="sidebarOpen" class="bg-body-tertiary" :width="sidebarWidth" aria-label="Navegación principal">
+      <UiSidebar v-model="sidebarOpen" class="ui-app-layout-navigation" :width="sidebarWidth" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
-        <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--bs-tertiary-bg)" filter>
+        <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--ui-layout-surface, var(--bs-tertiary-bg))" filter>
           <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)" />
         </UiList>
       </UiSidebar>
@@ -55,7 +55,8 @@ function selectSection(section, event) {
 .ui-app-layout-sidebar > * { height: 100%; }
 .ui-app-layout-sidebar > .ui-sidebar { border-inline-end: 1px solid var(--ui-sidebar-scroll-thumb) !important; }
 .ui-app-layout-navbar { min-height: var(--ui-app-layout-header-height); }
-.ui-app-layout-sidebar .offcanvas-header { min-height: var(--ui-app-layout-header-height); padding-block: .5rem; }
+.ui-app-layout-navigation { background:var(--ui-layout-surface, var(--bs-tertiary-bg, #f8f9fa)); }
+.ui-app-layout-sidebar .ui-sidebar-header { min-height: var(--ui-app-layout-header-height); padding-block: .5rem; }
 .ui-app-layout-content { grid-column: 2; min-width: 0; }
 .ui-app-layout-heading { margin: 0; font-size: 1rem; }
 

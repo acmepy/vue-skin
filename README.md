@@ -2,7 +2,18 @@
 
 Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter controla su propio HTML, CSS y JavaScript.
 
-> Estado: implementación inicial. El contrato y la infraestructura están listos; los componentes se incorporarán progresivamente en ambos adapters.
+> Estado: adapters Bootstrap y Basecoat implementados contra el contrato común. El proyecto continúa en etapa experimental.
+
+## Elegir adapter en el playground
+
+```sh
+npm run dev:bootstrap
+npm run dev:basecoat
+```
+
+El mismo playground y los layouts funcionan con ambos adapters. La selección se hace antes de arrancar, no durante la ejecución. También se admite `VITE_UI_SKIN=bootstrap` o `VITE_UI_SKIN=basecoat` en el entorno o en un archivo `.env.local` del playground. `npm run build` construye el playground Bootstrap; `npm run build:basecoat` construye Basecoat y verifica que ningún módulo Bootstrap entre en su bundle. Basecoat publica además su pequeño script de preparación del CSS, sin ejecutarlo al instalar la librería.
+
+`@vue-skin/basecoat` incluye los componentes del contrato completo y el CSS precompilado oficial de Basecoat; no requiere Bootstrap ni un pipeline Tailwind en la aplicación consumidora. Sus controles interactivos son Vue y sus modales usan `dialog` nativo. Usa los tokens y variantes de Basecoat; la apariencia exacta puede diferir, pero props, slots y eventos conservan la API común. La documentación completa está en `packages/basecoat/README.md`.
 
 ## Apariencia en Bootstrap
 
