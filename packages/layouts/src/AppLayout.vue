@@ -41,7 +41,7 @@ function selectSection(section, event) {
             <template #icon><UiIcon name="lucide:sidebar" size="18" /></template>
           </UiButton>
         </template>
-        <template #end><UiThemeSwitcher /></template>
+        <template #end><div class="d-flex align-items-center gap-2"><UiThemeSwitcher /><UiThemeSelector /></div></template>
       </UiNavbar>
       <slot />
     </div>

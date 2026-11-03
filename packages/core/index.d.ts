@@ -11,6 +11,25 @@ export type ModalSize = SuggestedValue<'sm' | 'lg' | 'xl' | 'fullscreen'>
 export type ToastPosition = 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'
 export type DialogType = 'alert' | 'info' | 'success' | 'warning' | 'error' | 'confirm' | 'prompt' | 'preloader'
 export type Theme = 'light' | 'dark'
+export type ThemeMode = Theme | 'system'
+export type ThemeColor = SuggestedValue<'blue' | 'indigo' | 'purple' | 'pink' | 'red' | 'orange' | 'teal' | 'green'>
+export interface ThemePreferences { mode: ThemeMode; color: ThemeColor; vibrant: boolean; monochrome: boolean }
+export interface ThemeOptions extends Partial<ThemePreferences> { persist?: boolean; storageKey?: string; target?: HTMLElement }
+export interface ThemeColorOption { value: string; label: string; color: string }
+export interface ThemeService {
+  state: Readonly<ThemePreferences>
+  resolvedMode: ComputedRef<Theme>
+  colors: ReadonlyArray<Readonly<ThemeColorOption>>
+  persist: boolean
+  storageKey: string
+  setTheme(preferences: Partial<ThemePreferences>, remember?: boolean): void
+  setMode(mode: ThemeMode, remember?: boolean): void
+  setColor(color: ThemeColor): void
+  setVibrant(vibrant: boolean): void
+  setMonochrome(monochrome: boolean): void
+  reset(): void
+}
+export interface ThemeAdapter { colors: ThemeColorOption[]; create(options: { target?: HTMLElement }): { apply(state: ThemePreferences & { resolvedMode: Theme }): void; dispose(): void } }
 export type ComponentOf<Props> = DefineComponent<Props, {}, {}, {}, {}, {}, {}, string[]>
 
 export interface UiButtonProps { variant?: Variant; size?: ControlSize; disabled?: boolean; loading?: boolean; type?: ButtonType }
@@ -38,6 +57,7 @@ export interface UiListItemProps { href?: string; target?: string; header?: stri
 export interface UiLinkProps { href?: string; target?: string; disabled?: boolean }
 export interface UiNavbarProps { title?: string; fixed?: boolean; sticky?: boolean }
 export interface UiThemeSwitcherProps { modelValue?: Theme | null; storageKey?: string; persist?: boolean }
+export interface UiThemeSelectorProps { modelValue?: Partial<ThemePreferences>; inline?: boolean; label?: string }
 export interface UiSidebarProps { modelValue?: boolean; position?: SuggestedValue<'start' | 'end'>; width?: string; breakpoint?: SuggestedValue<'sm' | 'md' | 'lg' | 'xl' | 'xxl'> }
 export interface UiCardProps { title?: string }
 export type ChartType = 'bar' | 'line' | 'doughnut' | 'pie' | 'radar' | 'polarArea' | 'scatter' | 'bubble'
@@ -66,13 +86,14 @@ export const UiIcon: ComponentOf<UiIconProps>
 export const requiredComponents: readonly string[]
 export const componentContracts: Readonly<Record<string, { props: readonly string[]; events?: readonly string[]; slots?: readonly string[] }>>
 
-export interface VueSkinAdapter { name: string; components: Record<string, Component>; install?: (app: App, options?: unknown) => void }
+export interface VueSkinAdapter { name: string; components: Record<string, Component>; theme?: ThemeAdapter; install?: (app: App, options?: unknown) => void }
 export interface DialogOptions { label?: string; initialValue?: string; placeholder?: string; acceptText?: string; cancelText?: string }
 export interface DialogService { alert(message: string, title?: string, options?: DialogOptions): Promise<void>; info(message: string, title?: string, options?: DialogOptions): Promise<void>; success(message: string, title?: string, options?: DialogOptions): Promise<void>; warning(message: string, title?: string, options?: DialogOptions): Promise<void>; error(message: string, title?: string, options?: DialogOptions): Promise<void>; confirm(message: string, title?: string, options?: DialogOptions): Promise<boolean>; prompt(message: string, title?: string, options?: DialogOptions): Promise<string | null>; preloader(title?: string, options?: DialogOptions): { close(): void }; Host: Component }
-export type VueSkin = Plugin & { dialog: DialogService }
+export type VueSkin = Plugin & { dialog: DialogService; theme: ThemeService }
 
 export function validateAdapter(adapter: VueSkinAdapter): VueSkinAdapter
-export function createVueSkin(options: { adapter: VueSkinAdapter }): VueSkin
+export function createVueSkin(options: { adapter: VueSkinAdapter; theme?: ThemeOptions }): VueSkin
+export function useTheme(): ThemeService
 export function createDialogService(adapter: VueSkinAdapter): DialogService
 export function useFieldIds(id?: MaybeRef<string | undefined>, help?: MaybeRef<unknown>, error?: MaybeRef<unknown>): { inputId: ComputedRef<string>; helpId: ComputedRef<string | undefined>; errorId: ComputedRef<string | undefined>; describedBy: ComputedRef<string | undefined> }
 
@@ -97,6 +118,7 @@ declare module 'vue' {
     UiLink: ComponentOf<UiLinkProps>
     UiNavbar: ComponentOf<UiNavbarProps>
     UiThemeSwitcher: ComponentOf<UiThemeSwitcherProps>
+    UiThemeSelector: ComponentOf<UiThemeSelectorProps>
     UiSidebar: ComponentOf<UiSidebarProps>
     UiCard: ComponentOf<UiCardProps>
     UiChart: ComponentOf<UiChartProps>

@@ -18,6 +18,7 @@ export const componentContracts = Object.freeze({
   Textarea: Object.freeze({ props: ['modelValue', 'label', 'name', 'placeholder', 'help', 'tooltip', 'error', 'disabled', 'readonly', 'required', 'rows', 'maxlength'], events: ['update:modelValue', 'input', 'change', 'focus', 'blur'] }),
   Navbar: Object.freeze({ props: ['title', 'fixed', 'sticky'], slots: ['brand', 'default', 'start', 'end'] }),
   ThemeSwitcher: Object.freeze({ props: ['modelValue', 'storageKey', 'persist'], events: ['update:modelValue', 'change'] }),
+  ThemeSelector: Object.freeze({ props: ['modelValue', 'inline', 'label'], events: ['update:modelValue', 'change'] }),
   Sidebar: Object.freeze({ props: ['modelValue', 'position', 'width', 'breakpoint'], events: ['update:modelValue', 'open', 'close'], slots: ['header', 'default', 'footer'] }),
   Card: Object.freeze({ props: ['title'], slots: ['header', 'default', 'list', 'footer'] }),
   Chart: Object.freeze({ props: ['type', 'data', 'options', 'title', 'label', 'height'], events: ['error'] }),

@@ -8,6 +8,7 @@ const components = {
   UiButton: { template: '<button><slot name="icon" /><slot /></button>' },
   UiIcon: { template: '<span />' },
   UiThemeSwitcher: { template: '<button aria-label="Tema" />' },
+  UiThemeSelector: { template: '<button aria-label="Apariencia" />' },
   UiList: { template: '<div><slot /></div>' },
   UiListItem: { props: ['title', 'active'], emits: ['click'], template: '<button data-test="section" :data-active="active" @click="$emit(\'click\', $event)">{{ title }}</button>' }
 }
@@ -25,6 +26,7 @@ describe('UiAppLayout', () => {
     expect(wrapper.get('aside .brand button').text()).toBe('Perfil')
     expect(wrapper.get('aside').text()).not.toContain('Texto predeterminado')
     expect(wrapper.get('nav').text()).toContain('Proyecto')
+    expect(wrapper.get('nav button[aria-label="Apariencia"]').exists()).toBe(true)
     wrapper.unmount()
   })
 

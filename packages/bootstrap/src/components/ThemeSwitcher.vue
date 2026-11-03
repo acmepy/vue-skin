@@ -1,26 +1,33 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { UiIcon } from '@vue-skin/core'
+import { onMounted, watch } from 'vue'
+import { UiIcon, useTheme } from '@vue-skin/core'
 
 const props = defineProps({ modelValue: String, storageKey: { type: String, default: 'themeMode' }, persist: { type: Boolean, default: true } })
 const emit = defineEmits(['update:modelValue', 'change'])
-const currentTheme = ref(props.modelValue)
-const validTheme = (value) => value === 'dark' || value === 'light'
-const preferredTheme = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-const storedTheme = () => { try { return localStorage.getItem(props.storageKey) } catch { return null } }
-function setTheme(theme, notify = false, remember = false) {
-  if (!validTheme(theme)) return
-  currentTheme.value = theme
-  document.documentElement.setAttribute('data-bs-theme', theme)
-  if (remember && props.persist) { try { localStorage.setItem(props.storageKey, theme) } catch {} }
-  if (notify) { emit('update:modelValue', theme); emit('change', theme) }
+const theme = useTheme()
+const currentTheme = theme.resolvedMode
+const validTheme = value => value === 'dark' || value === 'light'
+function toggle() {
+  const mode = currentTheme.value === 'dark' ? 'light' : 'dark'
+  theme.setMode(mode, props.persist)
+  if (props.persist && theme.persist) {
+    try { localStorage.setItem(props.storageKey, mode) } catch { /* Storage can be unavailable. */ }
+  }
+  emit('change', mode)
 }
-function toggle() { setTheme(currentTheme.value === 'dark' ? 'light' : 'dark', true, true) }
-watch(() => props.modelValue, (theme) => { if (validTheme(theme)) setTheme(theme) })
+watch(() => props.modelValue, mode => {
+  if (validTheme(mode) && mode !== currentTheme.value) theme.setMode(mode, false)
+})
+watch(currentTheme, mode => emit('update:modelValue', mode), { flush: 'sync' })
 onMounted(() => {
-  const theme = validTheme(props.modelValue) ? props.modelValue : validTheme(storedTheme()) ? storedTheme() : preferredTheme()
-  setTheme(theme)
-  if (theme !== props.modelValue) emit('update:modelValue', theme)
+  if (validTheme(props.modelValue)) theme.setMode(props.modelValue, false)
+  else if (props.persist && theme.persist && props.storageKey !== 'themeMode') {
+    try {
+      const mode = localStorage.getItem(props.storageKey)
+      if (validTheme(mode)) theme.setMode(mode, false)
+    } catch { /* Storage can be unavailable. */ }
+  }
+  if (props.modelValue !== currentTheme.value) emit('update:modelValue', currentTheme.value)
 })
 </script>
 

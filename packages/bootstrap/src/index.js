@@ -30,10 +30,13 @@ import Switch from './components/Switch.vue'
 import Tabs from './components/Tabs.vue'
 import Textarea from './components/Textarea.vue'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
+import ThemeSelector from './components/ThemeSelector.vue'
+import { colors, createBootstrapTheme } from './theme.js'
 import Toast from './components/Toast.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default {
   name: 'bootstrap',
-  components: { Accordion, Alert, Autocomplete, Badge, Button, ButtonGroup, Card, Chart, Checkbox, Col, Container, Row, DataTable, DataTableColumnButton, Dialog, Dropdown, Icon, Input, InputGroup, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, ThemeSwitcher, Toast }
+  theme: { colors, create: createBootstrapTheme },
+  components: { Accordion, Alert, Autocomplete, Badge, Button, ButtonGroup, Card, Chart, Checkbox, Col, Container, Row, DataTable, DataTableColumnButton, Dialog, Dropdown, Icon, Input, InputGroup, Link, List, ListItem, Modal, Navbar, Radio, Select, Sidebar, Spinner, Switch, Tabs, Textarea, ThemeSelector, ThemeSwitcher, Toast }
 }

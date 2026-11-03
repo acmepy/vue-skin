@@ -4,6 +4,43 @@ Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter 
 
 > Estado: implementación inicial. El contrato y la infraestructura están listos; los componentes se incorporarán progresivamente en ambos adapters.
 
+## Apariencia en Bootstrap
+
+`UiThemeSelector` permite elegir Claro/Oscuro/Sistema, color de acento, Vibrant y Monochrome. Comparte estado con todos los `UiThemeSwitcher` de la aplicación y recuerda la elección.
+
+Por defecto muestra un botón cuadrado de paleta que abre un modal pequeño y centrado. `UiAppLayout` lo integra en el navbar junto al switcher rápido. Los colores se eligen con muestras circulares sin texto, con tooltip, nombre accesible y selección marcada. Para mostrar el panel directamente en una página de ajustes, usa `<UiThemeSelector inline />`. `label` personaliza el título del modal y el nombre del botón (por defecto «Apariencia»).
+
+La sección Apariencia usa tres botones de solo icono: sol (Claro), luna (Oscuro) y círculo de dos mitades (Sistema). Sus nombres se conservan como tooltip y etiqueta accesible; el modo elegido se indica con `aria-pressed` y estado visual activo.
+
+```vue
+<template>
+  <UiThemeSelector />
+</template>
+```
+
+También se puede configurar desde JavaScript:
+
+```js
+const skin = createVueSkin({
+  adapter: BootstrapSkin,
+  theme: { mode: 'system', color: 'blue', vibrant: false, monochrome: true }
+})
+app.use(skin)
+
+skin.theme.setColor('purple')
+skin.theme.setVibrant(true)
+skin.theme.setMonochrome(false)
+skin.theme.setMode('dark')
+```
+
+En `setup`, `useTheme()` de `@vue-skin/core` obtiene ese mismo servicio. `theme.state` es readonly; `theme.resolvedMode.value` indica claro/oscuro efectivo. `UiThemeSelector` admite `v-model` opcional para las preferencias y `change` para interacción.
+
+Vibrant activado hace el acento más vivo; apagado, más suave. Monochrome activado mantiene fondos neutros; apagado les da un tinte ligero del color elegido. El modo claro/oscuro sigue funcionando en ambos casos. Los colores de éxito, advertencia y error se conservan. Hay ocho acentos: blue, indigo, purple, pink, red, orange, teal y green.
+
+Se guarda el objeto completo en `localStorage['vue-skin:theme']`; se lee `themeMode` como migración cuando no hay preferencias nuevas. Puedes configurar `theme.storageKey` o desactivar el almacenamiento con `theme.persist: false`. Los valores iniciales explícitos del plugin tienen prioridad sobre lo guardado; omítelos si quieres restaurar libremente la elección del usuario.
+
+La apariencia es global al documento por defecto. Para aplicaciones coexistentes con estilos distintos, usa `theme.target` con elementos raíz separados. El adapter genera CSS dinámico acotado a esa raíz y lo limpia al desmontar; no cambia datasets de gráficos ni colores explícitos definidos por la aplicación. Si tu CSP bloquea estilos dinámicos, debes autorizar este mecanismo. El ejemplo completo está en la sección `UiThemeSelector` del playground.
+
 ## Versiones de los paquetes
 
 Por ahora, los paquetes de `packages/` utilizan la misma versión que el `package.json` raíz. Después de cambiar esa versión, ejecuta:

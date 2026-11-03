@@ -7,10 +7,12 @@ import { uiDialog } from './skin.js'
 import { layoutPreviewHref } from './layoutPreview.js'
 import GridExample from './GridExample.vue'
 import gridExampleCode from './GridExample.vue?raw'
+import ThemeExample from './ThemeExample.vue'
+import themeExampleCode from './ThemeExample.vue?raw'
 
 const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['input-group', 'UiInputGroup'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
-  ['autocomplete', 'UiAutocomplete'], ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
+  ['autocomplete', 'UiAutocomplete'], ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['theme-selector', 'UiThemeSelector'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
   ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
   ['data-table', 'UiDataTable'], ['data-table-column-button', 'UiDataTableColumnButton'], ['chart', 'UiChart'], ['grid', 'Grid / Container / Row / Col'],
   { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin'], ['dashboard', 'UiDashboard']
@@ -331,6 +333,7 @@ const roles = [{ value: 'admin', label: 'Administración' }, { value: 'editor', 
   grid: gridExampleCode,
   navbar: '<UiNavbar title="Proyecto Atlas"><template #start>...</template><template #end>...</template></UiNavbar>',
   'theme-switcher': '<UiThemeSwitcher v-model="theme" />',
+  'theme-selector': themeExampleCode,
   dropdown: '<UiDropdown label="Acciones" :items="dropdownItems" align="end" @select="dropdownResult = $event.label" />',
   sidebar: '<UiSidebar v-model="open" breakpoint="lg"><template #header>...</template><UiList>...</UiList></UiSidebar>',
   'app-layout': `// Dentro de script setup
@@ -774,6 +777,8 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
           <template #end><UiDropdown label="Cuenta" size="sm" variant="outline-secondary" align="end" :items="[{ label: 'Mi perfil', value: 'profile' }, { label: 'Cerrar sesión', value: 'logout' }]" /></template>
         </UiNavbar>
       </UiCard>
+
+      <ThemeExample v-else-if="active === 'theme-selector'" />
 
       <UiCard v-else-if="active === 'theme-switcher'" title="Tema">
         <UiThemeSwitcher v-model="theme" />

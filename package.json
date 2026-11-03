@@ -1,6 +1,6 @@
 {
   "name": "vue-skin",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Una capa de abstracción de UI para Vue 3.",
   "license": "MIT",
   "author": "hugo",
