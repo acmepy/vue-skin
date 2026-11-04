@@ -15,6 +15,8 @@ El import incluye el CSS. No requiere Tailwind, Bootstrap, Basecoat ni otro adap
 
 El CSS oficial está incluido en `src/styles/vendor/terminal.css`, conservando su licencia MIT. Corresponde al archivo v0.0.4 del repositorio [letieu/terminal.css](https://github.com/letieu/terminal.css), blob `e47f33a66bae8287a34a7550e36f5e183678df97`. Se omitió únicamente la importación remota de Google Fonts para permitir uso sin red; se usa la fuente monoespaciada disponible en el sistema. El JavaScript global de Terminal no se carga: Vue gestiona dropdown, accordion y toast, evitando controladores duplicados.
 
+La tipografía prioriza JetBrains Mono, Cascadia Mono/Code y Consolas, con fallbacks monoespaciados. Se aplica al documento o target local y se hereda en botones, campos y menús. `--tc-font-family` permite personalizar la pila; `--ui-font-family` la comunica al playground para evitar que su estilo global de body la reemplace por `system-ui`. No se descargan fuentes externas.
+
 `src/styles/integration.css` completa el contrato de Vue Skin: formularios accesibles con validación y floating labels, autocomplete, grilla responsiva, búsqueda, acciones de tabla, modal nativo, diálogos desde JavaScript y sidebar persistente/overlay. Los layouts de `@vue-skin/layouts` se usan sin cambios.
 
 `UiThemeSelector`, `UiThemeSwitcher` y `useTheme()` mantienen la API compartida. El adapter convierte las preferencias a variables nativas (`--terminal-bg`, `--terminal-fg`, `--primary`, `--surface`, `--border-color`), con claro/oscuro/sistema, acento, Vibrant y Monochrome. La apariencia se persiste con la misma clave que los demás adapters.

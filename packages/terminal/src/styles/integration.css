@@ -63,9 +63,9 @@
 .tc-autocomplete,.tc-dropdown { position:relative; }
 .tc-autocomplete-popover,.tc-dropdown-popover { position:absolute; top:100%; left:0; min-width:100%; z-index:30; margin-top:.25rem; padding:.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--popover); color:var(--popover-foreground); box-shadow:0 4px 12px #0002; }
 .tc-autocomplete-popover { max-height:16rem; overflow-y:auto; }
-.tc-autocomplete-popover [role=option],.tc-dropdown [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
-.tc-autocomplete-popover [aria-selected=true],.tc-dropdown [role=menuitem]:focus,.tc-dropdown [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
-.tc-dropdown [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
+.tc-autocomplete-popover [role=option],.tc-dropdown-popover [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
+.tc-autocomplete-popover [aria-selected=true],.tc-dropdown-popover [role=menuitem]:focus,.tc-dropdown-popover [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
+.tc-dropdown-popover [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
 .tc-data-table h2 { font-size:1.1rem; font-weight:600; margin-bottom:1rem; }
 .tc-table-toolbar { display:flex; align-items:start; gap:.5rem; flex-wrap:wrap; }
 .tc-table-toolbar > form { flex:1 1 12rem; min-width:0; }
@@ -247,7 +247,10 @@
 
 
 /* Adapter-owned presentation for normalized controls without a framework equivalent. */
-:where([data-ui-terminal]) { --radius:0px; font-family:ui-monospace, Consolas, monospace; }
+[data-ui-terminal] { --radius:0px; --tc-font-family:"JetBrains Mono", "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", "Courier New", monospace; --ui-font-family:var(--tc-font-family); font-family:var(--tc-font-family); }
+/* Keep the adapter font when an application gives body a sans-serif font. */
+[data-ui-terminal] body { font-family:inherit; }
+[data-ui-terminal] :is(button,input,select,textarea) { font-family:inherit; }
 body { margin:0; background:var(--background); color:var(--foreground); }
 *,*::before,*::after { box-sizing:border-box; }
 button,input,select,textarea { font:inherit; }
@@ -279,7 +282,7 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .tc-card > section,.tc-card-body { padding:1rem; }
 .tc-card > footer { border-top:1px solid var(--border); }
 .tc-field-control { min-width:0; }
-.tc-dropdown [role=menuitem],.tc-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
+.tc-dropdown-popover [role=menuitem],.tc-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
 .tc-dropdown { display:inline-block; }
 .tc-table { width:100%; border-collapse:collapse; }
 .tc-table th { text-align:start; font-weight:600; }
@@ -334,3 +337,12 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .tc-modal > .tc-modal-fullscreen { border-radius:0; max-height:100dvh; }
 .tc-square-button.button,.button.ui-app-layout-sidebar-switcher { min-height:2rem; }
 .tc-list-active .tc-list-content { font-weight:inherit; }
+
+/* Anchored dropdowns stay in normal component ancestry; cards must not clip them. */
+.tc-dropdown { display:inline-block; position:relative; vertical-align:middle; }
+.tc-dropdown-popover { position:absolute; inset:auto; top:100%; left:0; z-index:30; display:block; width:max-content; min-width:max(100%,12rem); max-width:calc(100vw - 1rem); margin-top:.25rem; }
+.tc-dropdown[data-align=end] > .tc-dropdown-popover { left:auto; right:0; }
+.tc-dropdown-popover [role=menuitem] { overflow-wrap:anywhere; }
+.tc-card { overflow:visible; }
+.tc-card > :first-child { border-start-start-radius:inherit; border-start-end-radius:inherit; }
+.tc-card > :last-child { border-end-start-radius:inherit; border-end-end-radius:inherit; }

@@ -926,7 +926,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
 </template>
 
 <style scoped>
-:global(body) { margin: 0; background: var(--bs-body-bg); color: var(--bs-body-color); font-family: system-ui, sans-serif; }
+:global(body) { margin: 0; background: var(--bs-body-bg); color: var(--bs-body-color); font-family: var(--ui-font-family, system-ui, sans-serif); }
 .documentation-main { width: 100%; padding: 2rem 3rem; min-width: 0; }
 .documentation-main h1 { margin-top: 0; }
 .eyebrow { color: #6c757d; font-size: .875rem; margin: 0 0 .5rem; }

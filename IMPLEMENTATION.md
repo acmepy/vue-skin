@@ -1025,6 +1025,10 @@ Events: select, show, shown, hide, hidden
 
 Cada item puede incluir `label`, `value`, `href` y `disabled`. Si no tiene `href`, el adapter lo trata como una acción de botón.
 
+En Basecoat, Terminal, Konsta y Slate, `UiDropdown` renderiza el menú dentro del componente. CSS lo coloca debajo del disparador con `position: absolute`, aplica `align` y `z-index`, y limita su ancho. Las cards usan `overflow: visible` para permitir que el menú sobresalga; sus hijos conservan las esquinas redondeadas. El menú hereda directamente el tema y permanece en el mismo contexto del modal. El JavaScript gestiona apertura/cierre, opciones deshabilitadas, selección, eventos, flechas, Escape, Tab y pulsación fuera. Basecoat conserva `dropdown-menu` en la raíz para utilizar sus estilos oficiales. La aplicación controla el overflow de sus contenedores personalizados; esta implementación utiliza la colocación CSS normal debajo del botón.
+
+En Terminal, la clase nativa `tabs` se aplica únicamente al `tablist`, no al contenedor que incluye los paneles. Su scroll horizontal queda así limitado a los botones de pestaña y no recorta dropdowns ni otro contenido que sobresalga de los ejemplos. La prueba de regresión carga tanto el CSS oficial como el de integración y comprueba la cadena de contenedores de un dropdown dentro de Tabs y Card.
+
 ---
 
 ## 22. `UiAlert`
@@ -1094,6 +1098,8 @@ Debe incluir una alternativa accesible para indicar carga.
 Ambos paquetes implementan todos los componentes de `componentContracts`, incluyendo formularios, validación, listas con búsqueda, autocomplete, grilla, tablas y acciones, Chart.js diferido, diálogos desde JavaScript, temas y sidebar responsivo. Sus componentes y estilos son locales al paquete; no importan ni heredan componentes internos de otro adapter.
 
 Terminal usa el CSS oficial v0.0.4 incluido junto con la licencia MIT. Se retira su importación remota de fuente para evitar peticiones de red; la tipografía utiliza monospace del sistema. Se respetan sus clases nativas (`button`, `is-*`, `tag`, `card`, `list-item`) y se completan los comportamientos con Vue. No se carga su controlador JavaScript global ni Tailwind.
+
+Su pila tipográfica (`--tc-font-family`) prioriza JetBrains Mono, Cascadia Mono/Code y Consolas, con fallbacks monospace. El documento y los controles heredan esa familia desde el target de tema. El playground usa `--ui-font-family` con fallback `system-ui`, para respetar la fuente proporcionada por Terminal sin cambiar la tipografía de los otros adapters.
 
 Konsta declara `konsta` como dependencia y utiliza sus componentes Vue oficiales Button/Card/Badge/ListItem/Preloader. Su contexto se proporciona durante la instalación del adapter, con tema iOS, soporte oscuro y sin requerir `k-app` a la aplicación consumidora. Los controles normalizados sin equivalente directo utilizan DOM accesible y estilos propios del adapter. El modal usa `dialog` nativo para el foco, bloqueo e interacción con teclado. La preferencia claro/oscuro/sistema es independiente del tema visual iOS de Konsta.
 
@@ -1592,6 +1598,8 @@ La primera versión se considera válida cuando:
 En Basecoat, el estilo de texto de `UiLink` se limita a enlaces que no tengan la clase nativa `btn`. Si se presenta como botón, conserva los colores de fondo y texto de Basecoat, sin forzar el texto primario sobre el fondo primario (por ejemplo, en los enlaces de vista independiente de layouts).
 
 La dependencia Basecoat ya existente se mantiene aislada en el paquete. Se distribuye su bundle CSS oficial precompilado y la licencia MIT mediante `scripts/prepare-css.js` (build/prepack), sin scripts de instalación en el consumidor y sin exigirle Tailwind. Los estilos de integración del adapter implementan grilla, floating labels, listas, autocompletado, sidebar responsivo, colores semánticos y demás requisitos sin equivalencia directa. Los tooltips simples son nativos con `title`; la grilla usa CSS Flex/Grid con los mismos spans, gaps y breakpoints públicos. Chart.js se declara en este paquete y se carga diferidamente.
+
+La preparación normaliza únicamente la regla inválida `[data-tooltip]:before:has()` presente en el bundle de Basecoat 1.0.2, eliminándola completa. El navegador ya la descarta y el resto del CSS queda intacto. Esta corrección evita el warning de minificación sin silenciar diagnósticos ni modificar la dependencia instalada; una prueba minifica el CSS normalizado con esbuild y comprueba que no haya advertencias de sintaxis.
 
 La apariencia Basecoat utiliza la clase `dark` y tokens propios (`--background`, `--foreground`, `--primary`, `--ring`, etc.), con la misma API `useTheme`, persistencia y controles de core. Los layouts siguen usando componentes públicos; el header del sidebar comparte una clase de integración para su altura. El playground permite seleccionar el adapter mediante navegación completa entre entradas independientes; la entrada inicial utiliza el alias de build y `VITE_UI_SKIN`/modo `basecoat`. Sus utilidades de presentación heredadas se adaptan en un CSS exclusivo del playground, no en core ni en el paquete Basecoat. Un guard del build rechaza cualquier módulo Bootstrap en las dependencias de la página Basecoat, y viceversa.
 

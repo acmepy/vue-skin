@@ -63,9 +63,9 @@
 .bc-autocomplete,.bc-dropdown { position:relative; }
 .bc-autocomplete-popover,.bc-dropdown-popover { position:absolute; top:100%; left:0; min-width:100%; z-index:30; margin-top:.25rem; padding:.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--popover); color:var(--popover-foreground); box-shadow:0 4px 12px #0002; }
 .bc-autocomplete-popover { max-height:16rem; overflow-y:auto; }
-.bc-autocomplete-popover [role=option],.bc-dropdown [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
-.bc-autocomplete-popover [aria-selected=true],.bc-dropdown [role=menuitem]:focus,.bc-dropdown [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
-.bc-dropdown [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
+.bc-autocomplete-popover [role=option],.bc-dropdown-popover [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
+.bc-autocomplete-popover [aria-selected=true],.bc-dropdown-popover [role=menuitem]:focus,.bc-dropdown-popover [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
+.bc-dropdown-popover [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
 .bc-data-table h2 { font-size:1.1rem; font-weight:600; margin-bottom:1rem; }
 .bc-table-toolbar { display:flex; align-items:start; gap:.5rem; flex-wrap:wrap; }
 .bc-table-toolbar > form { flex:1 1 12rem; min-width:0; }
@@ -244,4 +244,17 @@
 .bc-col-xxl-12 { flex:0 0 calc(100% - var(--bc-gap, 0px) * 0); width:calc(100% - var(--bc-gap, 0px) * 0); }
 .bc-col-xxl-auto { flex:0 0 auto; width:auto; }
 }
+
+
+
+
+
+/* Anchored dropdowns stay in normal component ancestry; cards must not clip them. */
+.bc-dropdown { display:inline-block; position:relative; vertical-align:middle; }
+.bc-dropdown-popover { position:absolute; inset:auto; top:100%; left:0; z-index:30; display:block; width:max-content; min-width:max(100%,12rem); max-width:calc(100vw - 1rem); margin-top:.25rem; }
+.bc-dropdown[data-align=end] > .bc-dropdown-popover { left:auto; right:0; }
+.bc-dropdown-popover [role=menuitem] { overflow-wrap:anywhere; }
+.bc-card { overflow:visible; }
+.bc-card > :first-child { border-start-start-radius:inherit; border-start-end-radius:inherit; }
+.bc-card > :last-child { border-end-start-radius:inherit; border-end-end-radius:inherit; }
 

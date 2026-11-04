@@ -63,9 +63,9 @@
 .sl-autocomplete,.sl-dropdown { position:relative; }
 .sl-autocomplete-popover,.sl-dropdown-popover { position:absolute; top:100%; left:0; min-width:100%; z-index:30; margin-top:.25rem; padding:.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--popover); color:var(--popover-foreground); box-shadow:0 4px 12px #0002; }
 .sl-autocomplete-popover { max-height:16rem; overflow-y:auto; }
-.sl-autocomplete-popover [role=option],.sl-dropdown [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
-.sl-autocomplete-popover [aria-selected=true],.sl-dropdown [role=menuitem]:focus,.sl-dropdown [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
-.sl-dropdown [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
+.sl-autocomplete-popover [role=option],.sl-dropdown-popover [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
+.sl-autocomplete-popover [aria-selected=true],.sl-dropdown-popover [role=menuitem]:focus,.sl-dropdown-popover [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
+.sl-dropdown-popover [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
 .sl-data-table h2 { font-size:1.1rem; font-weight:600; margin-bottom:1rem; }
 .sl-table-toolbar { display:flex; align-items:start; gap:.5rem; flex-wrap:wrap; }
 .sl-table-toolbar > form { flex:1 1 12rem; min-width:0; }
@@ -279,7 +279,7 @@
 .sl-card > section,.sl-card-body { padding:1rem; }
 .sl-card > footer { border-top:1px solid var(--border); }
 .sl-field-control { min-width:0; }
-.sl-dropdown [role=menuitem],.sl-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
+.sl-dropdown-popover [role=menuitem],.sl-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
 .sl-dropdown { display:inline-block; }
 .sl-table { width:100%; border-collapse:collapse; }
 .sl-table th { text-align:start; font-weight:600; }
@@ -390,7 +390,7 @@
 .sl-field input[role=switch]:checked::before { transform:translateX(1rem); }
 .sl-check-row { gap:.65rem; }
 .sl-dropdown-popover,.sl-autocomplete-popover { border-radius:.8rem; padding:.35rem; background:var(--popover); box-shadow:0 4px 12px #10203a0a,0 16px 32px #10203a14; }
-.sl-dropdown [role=menuitem],.sl-autocomplete [role=option] { font-size:.85rem; border-radius:.5rem; padding:.55rem .7rem; }
+.sl-dropdown-popover [role=menuitem],.sl-autocomplete [role=option] { font-size:.85rem; border-radius:.5rem; padding:.55rem .7rem; }
 .sl-autocomplete-popover ul { list-style:none; margin:0; padding:0; }
 .sl-table th { background:var(--sl-chrome); color:var(--muted-foreground); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; padding:.8rem; }
 .sl-table td { font-size:.85rem; padding:.85rem .8rem; }
@@ -441,3 +441,12 @@
 :where([data-ui-slate]) [data-tone=warning],:where([data-ui-slate]) [data-tone=outline-warning] { --sl-semantic:var(--sl-warning); --sl-semantic-foreground:var(--sl-warning-foreground); }
 :where([data-ui-slate]) [data-tone=info],:where([data-ui-slate]) [data-tone=outline-info] { --sl-semantic:var(--sl-info); --sl-semantic-foreground:var(--sl-info-foreground); }
 @media(prefers-reduced-motion:reduce) { :where([data-ui-slate]) * { scroll-behavior:auto !important; } .sl-button,.sl-theme-swatch,.sl-field input,.sl-field select,.sl-field textarea { transition:none; } .sl-button:active:not(:disabled) { transform:none; } }
+
+/* Anchored dropdowns stay in normal component ancestry; cards must not clip them. */
+.sl-dropdown { display:inline-block; position:relative; vertical-align:middle; }
+.sl-dropdown-popover { position:absolute; inset:auto; top:100%; left:0; z-index:30; display:block; width:max-content; min-width:max(100%,12rem); max-width:calc(100vw - 1rem); margin-top:.25rem; }
+.sl-dropdown[data-align=end] > .sl-dropdown-popover { left:auto; right:0; }
+.sl-dropdown-popover [role=menuitem] { overflow-wrap:anywhere; }
+.sl-card { overflow:visible; }
+.sl-card > :first-child { border-start-start-radius:inherit; border-start-end-radius:inherit; }
+.sl-card > :last-child { border-end-start-radius:inherit; border-end-end-radius:inherit; }

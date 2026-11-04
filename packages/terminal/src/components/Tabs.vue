@@ -17,7 +17,7 @@ function move(event, item) {
 }
 </script>
 <template>
-  <div class="tabs tc-tabs"><nav role="tablist" :class="{ 'tc-tabs-justified': justified }"><button v-for="item in items" :key="item.id" type="button" role="tab" :id="id + '-tab-' + item.id" :aria-controls="id + '-panel-' + item.id" :aria-selected="active === item.id" :disabled="item.disabled" :tabindex="active === item.id ? 0 : -1" @click="select(item)" @keydown="move($event,item)">{{ item.label }}</button></nav>
+  <div class="tc-tabs"><nav role="tablist" class="tabs" :class="{ 'tc-tabs-justified': justified }"><button v-for="item in items" :key="item.id" type="button" role="tab" :id="id + '-tab-' + item.id" :aria-controls="id + '-panel-' + item.id" :aria-selected="active === item.id" :disabled="item.disabled" :tabindex="active === item.id ? 0 : -1" @click="select(item)" @keydown="move($event,item)">{{ item.label }}</button></nav>
     <section v-for="item in items" :key="item.id" :hidden="active !== item.id" role="tabpanel" :id="id + '-panel-' + item.id" :aria-labelledby="id + '-tab-' + item.id"><slot name="panel" :item="item">{{ item.content }}</slot></section>
   </div>
 </template>

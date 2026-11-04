@@ -63,9 +63,9 @@
 .ks-autocomplete,.ks-dropdown { position:relative; }
 .ks-autocomplete-popover,.ks-dropdown-popover { position:absolute; top:100%; left:0; min-width:100%; z-index:30; margin-top:.25rem; padding:.25rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--popover); color:var(--popover-foreground); box-shadow:0 4px 12px #0002; }
 .ks-autocomplete-popover { max-height:16rem; overflow-y:auto; }
-.ks-autocomplete-popover [role=option],.ks-dropdown [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
-.ks-autocomplete-popover [aria-selected=true],.ks-dropdown [role=menuitem]:focus,.ks-dropdown [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
-.ks-dropdown [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
+.ks-autocomplete-popover [role=option],.ks-dropdown-popover [role=menuitem] { display:block; width:100%; padding:.5rem .65rem; cursor:pointer; text-align:start; border-radius:.25rem; white-space:normal; }
+.ks-autocomplete-popover [aria-selected=true],.ks-dropdown-popover [role=menuitem]:focus,.ks-dropdown-popover [role=menuitem]:hover { background:var(--accent); color:var(--accent-foreground); outline:none; }
+.ks-dropdown-popover [aria-disabled=true] { opacity:.5; cursor:not-allowed; }
 .ks-data-table h2 { font-size:1.1rem; font-weight:600; margin-bottom:1rem; }
 .ks-table-toolbar { display:flex; align-items:start; gap:.5rem; flex-wrap:wrap; }
 .ks-table-toolbar > form { flex:1 1 12rem; min-width:0; }
@@ -279,7 +279,7 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .ks-card > section,.ks-card-body { padding:1rem; }
 .ks-card > footer { border-top:1px solid var(--border); }
 .ks-field-control { min-width:0; }
-.ks-dropdown [role=menuitem],.ks-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
+.ks-dropdown-popover [role=menuitem],.ks-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
 .ks-dropdown { display:inline-block; }
 .ks-table { width:100%; border-collapse:collapse; }
 .ks-table th { text-align:start; font-weight:600; }
@@ -333,3 +333,12 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .ks-list-active,.ks-list-active > div { background:var(--primary); color:var(--primary-foreground); }
 .ks-list-active a,.ks-list-active [class*=text-] { color:inherit; }
 .ks-list-entry [class*=text-black],.ks-list-entry [class*=text-white] { color:var(--foreground); }
+
+/* Anchored dropdowns stay in normal component ancestry; cards must not clip them. */
+.ks-dropdown { display:inline-block; position:relative; vertical-align:middle; }
+.ks-dropdown-popover { position:absolute; inset:auto; top:100%; left:0; z-index:30; display:block; width:max-content; min-width:max(100%,12rem); max-width:calc(100vw - 1rem); margin-top:.25rem; }
+.ks-dropdown[data-align=end] > .ks-dropdown-popover { left:auto; right:0; }
+.ks-dropdown-popover [role=menuitem] { overflow-wrap:anywhere; }
+.ks-card { overflow:visible; }
+.ks-card > :first-child { border-start-start-radius:inherit; border-start-end-radius:inherit; }
+.ks-card > :last-child { border-end-start-radius:inherit; border-end-end-radius:inherit; }

@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/konsta",
-  "version": "0.1.1",
+  "version": "0.4.1",
   "description": "Adapter Konsta UI para Vue Skin.",
   "type": "module",
   "license": "MIT",

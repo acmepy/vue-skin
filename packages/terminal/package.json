@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/terminal",
-  "version": "0.1.1",
+  "version": "0.4.1",
   "description": "Adapter Terminal.css para Vue Skin.",
   "type": "module",
   "license": "MIT",

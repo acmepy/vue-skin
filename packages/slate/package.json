@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/slate",
-  "version": "0.1.1",
+  "version": "0.4.1",
   "description": "Adapter original Slate para Vue Skin: superficies suaves y diseño propio sin framework CSS.",
   "type": "module",
   "license": "MIT",

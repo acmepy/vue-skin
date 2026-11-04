@@ -1,4 +1,4 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, DOMWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { afterEach, beforeAll, afterAll, describe, expect, it, vi } from 'vitest'
 import { createVueSkin, requiredComponents, componentContracts, validateAdapter } from '@vue-skin/core'
@@ -233,12 +233,13 @@ describe('Basecoat adapter contract', () => {
   it('opens menus by keyboard, skips disabled items and emits the original selected option', async () => {
     const items = [{ label: 'Uno', value: 1 }, { label: 'No', disabled: true }, { label: 'Dos', value: 2 }]
     const { wrapper } = render(Basecoat.components.Dropdown, { label: 'Acciones', items })
+    const surface = new DOMWrapper(wrapper.element.closest('[data-ui-basecoat]'))
     await wrapper.get('button').trigger('keydown', { key: 'ArrowUp' })
     expect(wrapper.get('button[aria-haspopup]').attributes('aria-expanded')).toBe('true')
     expect(document.activeElement.textContent).toBe('Dos')
-    await wrapper.findAll('[role="menuitem"]').at(-1).trigger('click')
+    await surface.findAll('[role="menuitem"]').at(-1).trigger('click')
     expect(wrapper.emitted('select')[0][0]).toEqual(items[2])
-    expect(wrapper.find('[role="menu"]').exists()).toBe(false)
+    expect(surface.find('[role="menu"]').exists()).toBe(false)
   })
 
   it('supports tabs, keyboard navigation and disabled tabs', async () => {

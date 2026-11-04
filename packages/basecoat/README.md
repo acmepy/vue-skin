@@ -13,6 +13,8 @@ Implementa todos los nombres del contrato público de core, incluidos formulario
 
 Se incluye el CSS precompilado oficial de Basecoat, por lo que la aplicación no necesita instalar Tailwind ni configurar un compilador para los componentes. `scripts/prepare-css.js` copia ese archivo y su licencia desde la dependencia instalada durante build y prepack; no se ejecutan scripts de instalación en el consumidor. Los estilos de integración añaden comportamientos del contrato que Basecoat no ofrece directamente: grilla normalizada, labels flotantes, listas multimedia y variantes semánticas. Los tooltips simples usan el atributo nativo `title`.
 
+Durante esa preparación se elimina una regla inválida incluida en Basecoat 1.0.2 (`[data-tooltip]:before:has()`), que el navegador ya descarta. El resto del CSS se conserva; así la minificación no genera el warning `Unexpected ")"`. La corrección se aplica al archivo distribuido, sin modificar `node_modules`.
+
 Los gráficos utilizan Chart.js, aislado en este paquete y cargado de forma diferida. El tema utiliza tokens Basecoat/shadcn y la clase `dark`, con el servicio común de core. Se conservan modo sistema, persistencia, acento, Vibrant y Monochrome.
 
 El playground común puede ejecutarse con `npm run dev:basecoat` desde la raíz. Las utilidades de presentación de sus ejemplos antiguos viven únicamente en el playground y no forman parte del paquete.

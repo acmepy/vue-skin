@@ -1,4 +1,4 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, DOMWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { afterEach, beforeAll, afterAll, describe, expect, it, vi } from 'vitest'
 import { createVueSkin, componentContracts, validateAdapter } from '@vue-skin/core'
@@ -124,12 +124,13 @@ export function adapterSuite(adapter, prefix) {
     })
 
     it('opens dropdowns, supports keyboard navigation and emits selection', async () => {
-      const { wrapper } = render(adapter.components.Dropdown, { label:'Opciones', items:[{label:'Editar',value:1},{label:'Deshabilitado',disabled:true},{label:'Documentación',href:'/docs'}] })
+      const { wrapper, target } = render(adapter.components.Dropdown, { label:'Opciones', items:[{label:'Editar',value:1},{label:'Deshabilitado',disabled:true},{label:'Documentación',href:'/docs'}] })
+      const surface = new DOMWrapper(target)
       await wrapper.get('button').trigger('click')
-      expect(wrapper.findAll('[role="menuitem"]')).toHaveLength(3)
-      await wrapper.get('[role="menuitem"]').trigger('click')
+      expect(surface.findAll('[role="menuitem"]')).toHaveLength(3)
+      await surface.get('[role="menuitem"]').trigger('click')
       expect(wrapper.emitted('select').at(-1)[0].value).toBe(1)
-      expect(wrapper.find('[role="menu"]').exists()).toBe(false)
+      expect(surface.find('[role="menu"]').exists()).toBe(false)
     })
 
     it('changes tabs with keyboard and preserves ARIA associations', async () => {
