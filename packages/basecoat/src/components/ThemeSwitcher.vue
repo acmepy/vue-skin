@@ -31,6 +31,6 @@ onMounted(() => {
 })
 </script>
 <template>
-<button type="button" class="btn bc-square-button" data-variant="outline" :aria-label="currentTheme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'" :title="currentTheme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'" @click="toggle"><UiIcon v-if="currentTheme === 'dark'" name="mdi:weather-sunny" size="16" /><UiIcon v-else name="mdi:weather-night" size="16" /></button>
+<button type="button" class="btn bc-square-button" data-variant="outline" :aria-pressed="currentTheme === 'dark'" :aria-label="currentTheme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'" :title="currentTheme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'" @click="toggle"><UiIcon v-if="currentTheme === 'dark'" key="light" name="mdi:weather-sunny" size="16" /><UiIcon v-else key="dark" name="mdi:weather-night" size="16" /></button>
 </template>
 

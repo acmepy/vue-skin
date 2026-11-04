@@ -2,16 +2,18 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { UiAppLayout, UiLogin, UiDashboard } from '@vue-skin/layouts'
 import { dashboardExample } from './dashboardExample.js'
+import AdapterSelector from './AdapterSelector.vue'
+import { currentPlaygroundPath, initialSection } from './adapters.js'
 
 const props = defineProps({ layout: { type: String, default: 'app-layout' } })
-const active = ref('home')
 const sections = [
   ['home', 'Inicio'], ['settings', 'Configuración'],
   { id: 'reports', title: 'Reportes', groupTitle: true },
   ...Array.from({ length: 24 }, (_, index) => [`report-${index + 1}`, `Reporte ${index + 1}`])
 ]
+const active = ref(initialSection(props.layout === 'dashboard' ? [['home','Dashboard'],['orders','Pedidos'],['products','Productos']] : sections, window.location.search, 'home'))
 const activeTitle = computed(() => sections.find((section) => Array.isArray(section) && section[0] === active.value)?.[1] ?? 'Inicio')
-const documentationHref = import.meta.env.BASE_URL
+const documentationHref = currentPlaygroundPath(window.location.pathname, import.meta.env.BASE_URL)
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
@@ -26,6 +28,7 @@ function login(credentials) {
 
 <template>
   <UiAppLayout v-if="layout === 'app-layout'" v-model="active" title="Proyecto de ejemplo" :sections="sections">
+    <template #navbar-actions><AdapterSelector :section="active" /></template>
     <template #header>
       <div class="d-flex align-items-center gap-3">
         <UiIcon name="mdi:home" size="32" class="text-primary flex-shrink-0" />
@@ -49,6 +52,7 @@ function login(credentials) {
     </main>
   </UiAppLayout>
   <UiAppLayout v-else-if="layout === 'dashboard'" v-model="active" title="Dashboard" header="Mi negocio" :sections="[['home', 'Dashboard'], ['orders', 'Pedidos'], ['products', 'Productos']]">
+    <template #navbar-actions><AdapterSelector :section="active" /></template>
     <UiDashboard v-if="active === 'home'" v-bind="dashboardExample">
       <template #actions><UiLink :href="documentationHref" class="btn btn-outline-secondary">Volver a la documentación</UiLink></template>
     </UiDashboard>
@@ -57,7 +61,7 @@ function login(credentials) {
     </UiDashboard>
   </UiAppLayout>
   <template v-else>
-    <div class="position-fixed top-0 end-0 p-3"><UiThemeSwitcher /></div>
+    <div class="position-fixed top-0 end-0 p-3 d-flex align-items-center gap-2"><AdapterSelector /><UiThemeSwitcher /></div>
     <UiLogin v-model:email="email" v-model:password="password" v-model:remember="remember" @submit="login">
       <template #footer>
         <p class="small text-body-secondary text-center mt-3">Formulario de demostración, sin autenticación real.</p>

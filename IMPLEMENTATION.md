@@ -1225,6 +1225,10 @@ La selección ocurre antes de montar Vue.
 
 No es necesario cambiar de skin en caliente.
 
+El playground incluye un dropdown Adapter que navega a `/bootstrap.html` o `/basecoat.html`, recargando el documento completo. Conserva mediante parámetros de URL la sección activa y el layout independiente, si existe. Ambas entradas montan las mismas vistas Vue; cada una importa exclusivamente su adapter y CSS. Se generan juntas en cada build, mientras `/` conserva la selección inicial por modo o `VITE_UI_SKIN`. El guard de build recorre las dependencias estáticas de cada entrada y rechaza módulos del otro framework.
+
+`UiAppLayout` ofrece el slot opcional `navbar-actions`, antes de los controles de tema integrados, para controles de la aplicación. El selector de adapter pertenece al playground y utiliza ese slot; los layouts no conocen los adapters disponibles.
+
 ---
 
 ## 29. Pantalla de demostración
@@ -1569,7 +1573,7 @@ En Basecoat, el estilo de texto de `UiLink` se limita a enlaces que no tengan la
 
 La dependencia Basecoat ya existente se mantiene aislada en el paquete. Se distribuye su bundle CSS oficial precompilado y la licencia MIT mediante `scripts/prepare-css.js` (build/prepack), sin scripts de instalación en el consumidor y sin exigirle Tailwind. Los estilos de integración del adapter implementan grilla, floating labels, listas, autocompletado, sidebar responsivo, colores semánticos y demás requisitos sin equivalencia directa. Los tooltips simples son nativos con `title`; la grilla usa CSS Flex/Grid con los mismos spans, gaps y breakpoints públicos. Chart.js se declara en este paquete y se carga diferidamente.
 
-La apariencia Basecoat utiliza la clase `dark` y tokens propios (`--background`, `--foreground`, `--primary`, `--ring`, etc.), con la misma API `useTheme`, persistencia y controles de core. Los layouts siguen usando componentes públicos; el header del sidebar comparte una clase de integración para su altura. El playground selecciona un solo adapter en Vite mediante alias de build y `VITE_UI_SKIN`/modo `basecoat`. Sus utilidades de presentación heredadas se adaptan en un CSS exclusivo del playground, no en core ni en el paquete Basecoat. Un guard del build rechaza cualquier módulo Bootstrap en el bundle Basecoat.
+La apariencia Basecoat utiliza la clase `dark` y tokens propios (`--background`, `--foreground`, `--primary`, `--ring`, etc.), con la misma API `useTheme`, persistencia y controles de core. Los layouts siguen usando componentes públicos; el header del sidebar comparte una clase de integración para su altura. El playground permite seleccionar el adapter mediante navegación completa entre entradas independientes; la entrada inicial utiliza el alias de build y `VITE_UI_SKIN`/modo `basecoat`. Sus utilidades de presentación heredadas se adaptan en un CSS exclusivo del playground, no en core ni en el paquete Basecoat. Un guard del build rechaza cualquier módulo Bootstrap en las dependencias de la página Basecoat, y viceversa.
 
 Verificación: pruebas del contrato, formularios, validación, autocomplete, listas/filtros, tablas/acciones, diálogos/servicio JS, menús, tabs, accordion, toast, sidebar móvil/escritorio, temas, los ocho tipos Chart y todas las secciones del playground. Se requiere un navegador moderno; las animaciones y apariencia exacta no se igualan artificialmente a Bootstrap. La revisión visual manual sigue siendo necesaria antes de declarar paridad visual de los ejemplos.
 

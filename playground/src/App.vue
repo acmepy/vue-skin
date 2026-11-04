@@ -1,9 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import yep from 'yep'
 import { UiAppLayout, UiLogin, UiDashboard } from '@vue-skin/layouts'
 import { dashboardExample, dashboardExampleCode } from './dashboardExample.js'
-import { uiDialog } from './skin.js'
+import AdapterSelector from './AdapterSelector.vue'
+import { initialSection } from './adapters.js'
 import { layoutPreviewHref } from './layoutPreview.js'
 import GridExample from './GridExample.vue'
 import gridExampleCode from './GridExample.vue?raw'
@@ -17,7 +18,9 @@ const sections = [
   ['data-table', 'UiDataTable'], ['data-table-column-button', 'UiDataTableColumnButton'], ['chart', 'UiChart'], ['grid', 'Grid / Container / Row / Col'],
   { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin'], ['dashboard', 'UiDashboard']
 ]
-const active = ref('button')
+const uiDialog = inject('uiDialog')
+const adapter = inject('playgroundAdapter', __VUE_SKIN_ADAPTER__)
+const active = ref(initialSection(sections, window.location.search, 'button'))
 const activeName = computed(() => {
   const section = sections.find((item) => (Array.isArray(item) ? item[0] : item.id) === active.value)
   return Array.isArray(section) ? section[1] : section?.title
@@ -603,8 +606,10 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
       </div>
     </template>
 
+    <template #navbar-actions><AdapterSelector :section="active" /></template>
+
     <main class="documentation-main">
-      <p class="eyebrow">Adapter activo: Bootstrap</p>
+      <p class="eyebrow">Adapter activo: {{ adapter === 'basecoat' ? 'Basecoat' : 'Bootstrap' }}</p>
       <h1>{{ activeName }}</h1>
 
       <UiTabs v-model="documentationTab" :items="documentationTabs">

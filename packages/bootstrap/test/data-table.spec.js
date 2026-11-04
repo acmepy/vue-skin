@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { createVueSkin } from '@vue-skin/core'
 import BootstrapSkin from '../src/index.js'
 import App from '../../../playground/src/App.vue'
-import { uiDialog } from '../../../playground/src/skin.js'
+import { skin, uiDialog } from '../../../playground/src/skin.js'
 
 const data = [
   { id: 1, name: 'María', balance: 0, details: { city: 'Asunción' } },
@@ -60,7 +60,7 @@ describe('UiDataTable', () => {
 
   it('demonstrates general actions and the renamed row buttons in the playground', async () => {
     const prompt = vi.spyOn(uiDialog, 'prompt').mockResolvedValue('Nuevo cliente')
-    const wrapper = mount(App, { global: { plugins: [createVueSkin({ adapter: BootstrapSkin })] } })
+    const wrapper = mount(App, { global: { plugins: [skin] } })
     try {
       await wrapper.get('a[href="#data-table-column-button"]').trigger('click')
       expect(wrapper.find('a[href="#data-table-button"]').exists()).toBe(false)

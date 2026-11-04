@@ -11,7 +11,9 @@ npm run dev:bootstrap
 npm run dev:basecoat
 ```
 
-El mismo playground y los layouts funcionan con ambos adapters. La selección se hace antes de arrancar, no durante la ejecución. También se admite `VITE_UI_SKIN=bootstrap` o `VITE_UI_SKIN=basecoat` en el entorno o en un archivo `.env.local` del playground. `npm run build` construye el playground Bootstrap; `npm run build:basecoat` construye Basecoat y verifica que ningún módulo Bootstrap entre en su bundle. Basecoat publica además su pequeño script de preparación del CSS, sin ejecutarlo al instalar la librería.
+El dropdown **Adapter** de la barra superior permite elegir Bootstrap o Basecoat. La selección navega a otra página y recarga Vue, conservando el componente o layout abierto. También está disponible en las vistas independientes de layouts. No requiere reiniciar Vite.
+
+Las páginas `/bootstrap.html` y `/basecoat.html` comparten los mismos ejemplos, pero cada una carga únicamente su adapter y sus estilos. Ambas se generan en cada build. La página `/` usa Bootstrap por defecto; `npm run dev:basecoat` y `npm run build:basecoat` cambian ese valor inicial a Basecoat. También se admite `VITE_UI_SKIN=bootstrap` o `VITE_UI_SKIN=basecoat` en el entorno o en un archivo `.env.local` del playground. El build verifica el aislamiento de los módulos por página. Basecoat publica además su pequeño script de preparación del CSS, sin ejecutarlo al instalar la librería.
 
 `@vue-skin/basecoat` incluye los componentes del contrato completo y el CSS precompilado oficial de Basecoat; no requiere Bootstrap ni un pipeline Tailwind en la aplicación consumidora. Sus controles interactivos son Vue y sus modales usan `dialog` nativo. Usa los tokens y variantes de Basecoat; la apariencia exacta puede diferir, pero props, slots y eventos conservan la API común. La documentación completa está en `packages/basecoat/README.md`.
 

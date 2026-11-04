@@ -382,4 +382,37 @@ describe('Basecoat adapter contract', () => {
     expect(wrapper.find('dialog').exists()).toBe(false)
     expect(wrapper.get('button[aria-label="Activar modo claro"]').exists()).toBe(true)
   })
+
+  it('keeps every switcher icon synchronized with modal choices in both directions', async () => {
+    const { wrapper, skin } = render('<UiThemeSelector /><UiThemeSwitcher /><UiThemeSwitcher />')
+    await wrapper.get('button[aria-label="Apariencia"]').trigger('click')
+    for (const [label, mode, action, icon] of [
+      ['Oscuro', 'dark', 'Activar modo claro', 'mdi:weather-sunny'],
+      ['Claro', 'light', 'Activar modo oscuro', 'mdi:weather-night'],
+      ['Oscuro', 'dark', 'Activar modo claro', 'mdi:weather-sunny']
+    ]) {
+      await wrapper.get(`dialog button[aria-label="${label}"]`).trigger('click')
+      expect(skin.theme.resolvedMode.value).toBe(mode)
+      const switches = wrapper.findAll(`button[aria-label="${action}"]`)
+      expect(switches).toHaveLength(2)
+      for (const button of switches) {
+        expect(button.attributes('aria-pressed')).toBe(String(mode === 'dark'))
+        expect(button.get('span').classes()).toContain(`icon:${icon}`)
+      }
+    }
+    await wrapper.get('button[aria-label="Activar modo claro"]').trigger('click')
+    expect(wrapper.get('dialog button[aria-label="Claro"]').attributes('aria-pressed')).toBe('true')
+  })
+
+  it('reserves space for selection outlines inside the scrollable appearance panel', () => {
+    const stylesheet = document.createElement('style')
+    stylesheet.textContent = integrationCss
+    document.head.append(stylesheet)
+    try {
+      const { wrapper } = render('<UiThemeSelector inline />')
+      const options = wrapper.get('.bc-theme-options').element
+      expect(getComputedStyle(options).paddingLeft).toBe('0.25rem')
+      expect(getComputedStyle(options).paddingRight).toBe('0.25rem')
+    } finally { stylesheet.remove() }
+  })
 })

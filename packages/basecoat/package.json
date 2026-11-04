@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/basecoat",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Adapter Basecoat para Vue Skin.",
   "type": "module",
   "files": [

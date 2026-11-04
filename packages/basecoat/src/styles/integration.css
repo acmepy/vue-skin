@@ -133,7 +133,7 @@
 .bc-toast[data-tone] > .toast-content > footer .btn:hover { background:color-mix(in srgb,currentColor 15%,transparent); color:inherit; }
 .bc-theme-panel fieldset { margin-bottom:1.25rem; }
 .bc-theme-panel legend { font-weight:600; font-size:.875rem; margin-bottom:.65rem; }
-.bc-theme-options { display:flex; flex-wrap:wrap; gap:.5rem; }
+.bc-theme-options { display:flex; flex-wrap:wrap; gap:.5rem; padding:.25rem; }
 .bc-theme-swatch { width:2rem; height:2rem; border:1px solid var(--border); border-radius:50%; }
 .bc-theme-options [aria-pressed=true] { outline:2px solid var(--foreground); outline-offset:2px; }
 .bc-theme-options [aria-pressed=true].btn { background:var(--secondary); }

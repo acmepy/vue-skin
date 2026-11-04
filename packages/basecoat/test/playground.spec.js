@@ -14,7 +14,7 @@ import { skin } from '../../../playground/src/skin.js'
 
 describe('Basecoat playground', () => {
   it('renders every documentation section with the real Basecoat adapter', async () => {
-    const wrapper = mount(App, { global: { plugins: [skin] } })
+    const wrapper = mount(App, { global: { plugins: [skin], provide: { playgroundAdapter:'basecoat' } } })
     try {
       expect(wrapper.find('.bc-navbar').exists()).toBe(true)
       const ids = wrapper.findAll('aside a[href^="#"]').map(link => link.attributes('href'))
