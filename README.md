@@ -2,7 +2,7 @@
 
 Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter controla su propio HTML, CSS y JavaScript.
 
-> Estado: adapters Bootstrap y Basecoat implementados contra el contrato común. El proyecto continúa en etapa experimental.
+> Estado: adapters Bootstrap, Basecoat, Terminal.css, Konsta UI y Slate implementados contra el contrato común. El proyecto continúa en etapa experimental.
 
 ## Elegir adapter en el playground
 
@@ -11,9 +11,13 @@ npm run dev:bootstrap
 npm run dev:basecoat
 ```
 
-El dropdown **Adapter** de la barra superior permite elegir Bootstrap o Basecoat. La selección navega a otra página y recarga Vue, conservando el componente o layout abierto. También está disponible en las vistas independientes de layouts. No requiere reiniciar Vite.
+El dropdown **Adapter** de la barra superior permite elegir Bootstrap, Basecoat, Terminal, Konsta UI o Slate. La selección navega a otra página y recarga Vue, conservando el componente o layout abierto. También está disponible en las vistas independientes de layouts. No requiere reiniciar Vite.
 
-Las páginas `/bootstrap.html` y `/basecoat.html` comparten los mismos ejemplos, pero cada una carga únicamente su adapter y sus estilos. Ambas se generan en cada build. La página `/` usa Bootstrap por defecto; `npm run dev:basecoat` y `npm run build:basecoat` cambian ese valor inicial a Basecoat. También se admite `VITE_UI_SKIN=bootstrap` o `VITE_UI_SKIN=basecoat` en el entorno o en un archivo `.env.local` del playground. El build verifica el aislamiento de los módulos por página. Basecoat publica además su pequeño script de preparación del CSS, sin ejecutarlo al instalar la librería.
+**Slate** (`@vue-skin/slate`) es nuestro diseño propio, sin framework CSS: fondos suaves, cards elevadas, acentos azules, bordes discretos y tipografía de sistema. Incluye el contrato completo y los temas compartidos. Usa `npm run dev:slate`, `/slate.html` o `VITE_UI_SKIN=slate`. Consulta [su documentación](packages/slate/README.md).
+
+`npm run dev:terminal` y `npm run dev:konsta` arrancan directamente con esos adapters; también se admiten `VITE_UI_SKIN=terminal` y `VITE_UI_SKIN=konsta`. Cada build genera las páginas de adapters disponibles con dependencias aisladas. Terminal incluye su CSS oficial localmente; Konsta usa componentes Vue oficiales y CSS precompilado, sin exigir Tailwind al consumidor. Consulta [Terminal](packages/terminal/README.md) y [Konsta](packages/konsta/README.md) para instalación, alcance y detalles de integración.
+
+Las páginas `/bootstrap.html`, `/basecoat.html`, `/terminal.html`, `/konsta.html` y `/slate.html` comparten los mismos ejemplos, pero cada una carga únicamente su adapter y sus estilos. Todas se generan en cada build. La página `/` usa Bootstrap por defecto; los scripts `dev:<adapter>` y `build:<adapter>` disponibles cambian ese valor inicial. `VITE_UI_SKIN` también se admite en el entorno o en un archivo `.env.local` del playground. El build verifica el aislamiento de los módulos por página. Basecoat publica además su pequeño script de preparación del CSS, sin ejecutarlo al instalar la librería.
 
 `@vue-skin/basecoat` incluye los componentes del contrato completo y el CSS precompilado oficial de Basecoat; no requiere Bootstrap ni un pipeline Tailwind en la aplicación consumidora. Sus controles interactivos son Vue y sus modales usan `dialog` nativo. Usa los tokens y variantes de Basecoat; la apariencia exacta puede diferir, pero props, slots y eventos conservan la API común. La documentación completa está en `packages/basecoat/README.md`.
 
@@ -64,7 +68,7 @@ npm run version:sync
 
 El script actualiza los `package.json` de esos paquetes y sus versiones en `package-lock.json`, incluida la entrada raíz. No cambia la versión privada del playground, las dependencias ni sus rangos, y no requiere conexión a internet. No incrementa versiones, crea tags ni publica paquetes. Si no hay lockfile, solo actualiza los manifiestos; si el lockfile no incluye algún paquete, solicita ejecutar `npm install` antes de modificar archivos.
 
-Los cuatro paquetes de librería declaran `files` para publicar únicamente `src` y, donde existe, `index.d.ts`, además de los archivos que npm incluye automáticamente (como `package.json`). Los tests quedan en el repositorio, pero no se descargan con el paquete publicado. El playground es privado y no se publica.
+Los paquetes de librería declaran `files` para publicar su código y tipos, además de los scripts de preparación de estilos cuando corresponda y los archivos que npm incluye automáticamente (como `package.json`). Los tests quedan en el repositorio, pero no se descargan con el paquete publicado. El playground es privado y no se publica.
 
 ## Ejemplo de uso
 

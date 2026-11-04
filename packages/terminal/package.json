@@ -1,0 +1,25 @@
+{
+  "name": "@vue-skin/terminal",
+  "version": "0.1.1",
+  "description": "Adapter Terminal.css para Vue Skin.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "src",
+    "index.d.ts"
+  ],
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@vue-skin/core": "file:../core",
+    "chart.js": "^4.5.1"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@vue-skin/konsta",
+  "version": "0.1.1",
+  "description": "Adapter Konsta UI para Vue Skin.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "src",
+    "index.d.ts",
+    "scripts"
+  ],
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/prepare-css.js",
+    "prepack": "node scripts/prepare-css.js"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/cli": "^4.1.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@vue-skin/core": "file:../core",
+    "chart.js": "^4.5.1",
+    "konsta": "^5.5.0"
+  }
+}

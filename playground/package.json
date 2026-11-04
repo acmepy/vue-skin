@@ -12,6 +12,9 @@
     "@vue-skin/bootstrap": "file:../packages/bootstrap",
     "@vue-skin/core": "file:../packages/core",
     "@vue-skin/layouts": "file:../packages/layouts",
+    "@vue-skin/terminal": "file:../packages/terminal",
+    "@vue-skin/konsta": "file:../packages/konsta",
+    "@vue-skin/slate": "file:../packages/slate",
     "vue": "^3.5.0"
   },
   "devDependencies": {

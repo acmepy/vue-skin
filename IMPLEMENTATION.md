@@ -28,6 +28,14 @@ Adapters iniciales:
 - Basecoat
 - Bootstrap
 
+Adapters adicionales implementados por solicitud del proyecto: Terminal.css (`@vue-skin/terminal`) y Konsta UI (`@vue-skin/konsta`). Mantienen el mismo contrato público; core y layouts no dependen de ninguno de los cuatro frameworks.
+
+Slate (`@vue-skin/slate`) es un quinto adapter de diseño propio, sin framework CSS. Implementa el mismo contrato completo, con CSS local y clases `sl-*`, sin importar componentes, estilos ni temas de los otros adapters. Su dirección visual combina fondos gris azulados, cards diferenciadas, acentos azules, bordes suaves, controles compactos y tipografía de sistema; no requiere fuentes remotas ni herramientas adicionales de CSS.
+
+Su paleta convierte las preferencias de core a tokens para fondo, cards, navegación, campos, acento y estados semánticos. Claro/oscuro/sistema, ocho colores, Vibrant y Monochrome conservan la persistencia compartida. Las pruebas verifican contraste mínimo 4.5:1 para texto, texto secundario, labels primarios/semánticos, enlaces y selección en todas las combinaciones de preferencias. El tema admite target local y restaura atributos/estilos al desmontar. Las composiciones de layouts se utilizan sin cambios.
+
+El playground incorpora `/slate.html` al selector de adapters y al guard de aislamiento; `npm run dev:slate`, `npm run build:slate` y `VITE_UI_SKIN=slate` lo seleccionan como entrada inicial. Las cinco entradas comparten ejemplos y vistas independientes de layouts.
+
 Estos dos adapters se eligen deliberadamente porque sus estructuras y convenciones son suficientemente distintas para validar que el contrato común no está acoplado a un framework específico.
 
 ---
@@ -1080,6 +1088,18 @@ Debe incluir una alternativa accesible para indicar carga.
 ---
 
 ## 23. HTML propio por adapter
+
+### Terminal y Konsta
+
+Ambos paquetes implementan todos los componentes de `componentContracts`, incluyendo formularios, validación, listas con búsqueda, autocomplete, grilla, tablas y acciones, Chart.js diferido, diálogos desde JavaScript, temas y sidebar responsivo. Sus componentes y estilos son locales al paquete; no importan ni heredan componentes internos de otro adapter.
+
+Terminal usa el CSS oficial v0.0.4 incluido junto con la licencia MIT. Se retira su importación remota de fuente para evitar peticiones de red; la tipografía utiliza monospace del sistema. Se respetan sus clases nativas (`button`, `is-*`, `tag`, `card`, `list-item`) y se completan los comportamientos con Vue. No se carga su controlador JavaScript global ni Tailwind.
+
+Konsta declara `konsta` como dependencia y utiliza sus componentes Vue oficiales Button/Card/Badge/ListItem/Preloader. Su contexto se proporciona durante la instalación del adapter, con tema iOS, soporte oscuro y sin requerir `k-app` a la aplicación consumidora. Los controles normalizados sin equivalente directo utilizan DOM accesible y estilos propios del adapter. El modal usa `dialog` nativo para el foco, bloqueo e interacción con teclado. La preferencia claro/oscuro/sistema es independiente del tema visual iOS de Konsta.
+
+Konsta compila Tailwind y `konsta/vue/theme.css` en build/prepack, distribuyendo el CSS resultante y su licencia. Tailwind y su CLI son dependencias de desarrollo del paquete, no requisitos del proyecto consumidor; no hay scripts de instalación. El sidebar comparte la política del layout: integrado desde lg (992px) y overlay por debajo, sin limitar el ancho del main a un teléfono. La grilla y el scroll horizontal de tablas permiten uso en tablet y escritorio.
+
+El playground genera `/terminal.html` y `/konsta.html`, además de las entradas existentes. Todas montan las mismas vistas; el selector conserva sección/layout al recargar. El guard del build verifica las dependencias estáticas de cada una contra los demás adapters disponibles. Los modos `terminal` y `konsta` (o `VITE_UI_SKIN`) también seleccionan la entrada inicial. Las utilidades heredadas de los ejemplos se limitan al CSS del playground.
 
 Es requisito explícito que cada adapter pueda escribir su propio HTML.
 

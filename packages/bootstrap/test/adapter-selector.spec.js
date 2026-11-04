@@ -60,13 +60,13 @@ describe('playground adapter selection', () => {
 
 describe('adapter build isolation', () => {
   const chunk = (name, modules, imports = [], isEntry = false) => ({ type: 'chunk', name, fileName: name + '.js', modules: Object.fromEntries(modules.map(id => [id, {}])), imports, isEntry })
-  it.each(['bootstrap', 'basecoat'])('rejects a foreign adapter imported by the %s entry', selected => {
+  it.each(['bootstrap', 'basecoat', 'terminal', 'konsta', 'slate'])('rejects a foreign adapter imported by the %s entry', selected => {
     const other = selected === 'bootstrap' ? 'basecoat' : 'bootstrap'
     const bundle = { 'entry.js': chunk(selected, [], ['shared.js'], true), 'shared.js': chunk('shared', [`C:/repo/packages/${other}/src/index.js`]) }
     expect(() => verifyAdapterIsolation(bundle, selected)).toThrow(`módulo de ${other}`)
   })
-  it('allows both adapters in separate entry graphs', () => {
-    const bundle = Object.fromEntries(['bootstrap', 'basecoat'].map(name => [name + '.js', chunk(name, [`C:/repo/packages/${name}/src/index.js`], [], true)]))
+  it('allows all adapters in separate entry graphs', () => {
+    const bundle = Object.fromEntries(['bootstrap', 'basecoat', 'terminal', 'konsta', 'slate'].map(name => [name + '.js', chunk(name, [`C:/repo/packages/${name}/src/index.js`], [], true)]))
     expect(() => verifyAdapterIsolation(bundle, 'bootstrap')).not.toThrow()
   })
 })

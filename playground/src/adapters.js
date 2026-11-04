@@ -1,6 +1,9 @@
 export const availableAdapters = Object.freeze([
   Object.freeze({ value: 'bootstrap', label: 'Bootstrap', page: 'bootstrap.html' }),
-  Object.freeze({ value: 'basecoat', label: 'Basecoat', page: 'basecoat.html' })
+  Object.freeze({ value: 'basecoat', label: 'Basecoat', page: 'basecoat.html' }),
+  Object.freeze({ value: 'terminal', label: 'Terminal', page: 'terminal.html' }),
+  Object.freeze({ value: 'konsta', label: 'Konsta UI', page: 'konsta.html' }),
+  Object.freeze({ value: 'slate', label: 'Slate', page: 'slate.html' })
 ])
 
 export function adapterHref(value, currentHref, baseUrl = '/', section) {

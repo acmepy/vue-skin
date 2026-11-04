@@ -4,7 +4,7 @@ import yep from 'yep'
 import { UiAppLayout, UiLogin, UiDashboard } from '@vue-skin/layouts'
 import { dashboardExample, dashboardExampleCode } from './dashboardExample.js'
 import AdapterSelector from './AdapterSelector.vue'
-import { initialSection } from './adapters.js'
+import { availableAdapters, initialSection } from './adapters.js'
 import { layoutPreviewHref } from './layoutPreview.js'
 import GridExample from './GridExample.vue'
 import gridExampleCode from './GridExample.vue?raw'
@@ -373,7 +373,7 @@ const sections = [['home', 'Inicio'], ['settings', 'Configuración']]
 </UiCard>`,
   accordion: '<UiAccordion v-model="accordionOpen" :items="accordionItems" />',
   tabs: '<UiTabs v-model="activeTab" :items="tabItems" />',
-  modal: '<UiButton @click="modalOpen = true">Abrir modal</UiButton>\n<UiModal v-model="modalOpen" title="Ejemplo de modal">Este modal usa <code>v-model</code> y el JavaScript oficial de Bootstrap.<template #footer><UiButton @click="modalOpen = false">Cerrar</UiButton></template></UiModal>',
+  modal: '<UiButton @click="modalOpen = true">Abrir modal</UiButton>\n<UiModal v-model="modalOpen" title="Ejemplo de modal">Este modal usa <code>v-model</code> y la implementación del adapter activo.<template #footer><UiButton @click="modalOpen = false">Cerrar</UiButton></template></UiModal>',
   dialog: `<script setup>
 import { ref } from 'vue'
 import { uiDialog } from './skin.js'
@@ -609,7 +609,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
     <template #navbar-actions><AdapterSelector :section="active" /></template>
 
     <main class="documentation-main">
-      <p class="eyebrow">Adapter activo: {{ adapter === 'basecoat' ? 'Basecoat' : 'Bootstrap' }}</p>
+      <p class="eyebrow">Adapter activo: {{ availableAdapters.find(item => item.value === adapter)?.label ?? adapter }}</p>
       <h1>{{ activeName }}</h1>
 
       <UiTabs v-model="documentationTab" :items="documentationTabs">
@@ -919,7 +919,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
   </UiAppLayout>
 
   <UiModal v-model="modalOpen" title="Ejemplo de modal">
-    Este modal usa <code>v-model</code> y el JavaScript oficial de Bootstrap.
+    Este modal usa <code>v-model</code> y la implementación del adapter activo.
     <template #footer><UiButton @click="modalOpen = false">Cerrar</UiButton></template>
   </UiModal>
   <UiDialogHost />

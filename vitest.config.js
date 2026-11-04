@@ -7,6 +7,7 @@ export default defineConfig({
   define: { __VUE_SKIN_ADAPTER__: JSON.stringify('bootstrap') },
   plugins: [vue()],
   test: {
+    server: { deps: { inline: ['konsta'] } },
     environment: 'jsdom',
     include: ['packages/**/test/**/*.spec.js']
   }

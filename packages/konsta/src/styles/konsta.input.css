@@ -1,0 +1,4 @@
+@import 'tailwindcss' source(none);
+@import 'konsta/vue/theme.css';
+@source '../components';
+@custom-variant dark (&:where(.dark, .dark *));
