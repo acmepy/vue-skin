@@ -31,19 +31,19 @@ Antes de subir una versión, ejecuta `npm run build` desde la raíz y sube tambi
 
 ### Playground
 
-Todos los adapters implementan los 35 componentes del contrato común y funcionan con los layouts compartidos.
+Todos los adapters implementan los 36 componentes del contrato común y funcionan con los layouts compartidos.
 
 | Adapter | Paquete | Presentación y dependencias visuales |
 | --- | --- | --- |
 | [Bootstrap](packages/bootstrap/README.md) | `@vue-skin/bootstrap` | CSS oficial compilado por componente y base compartida; utiliza su JavaScript para las interacciones correspondientes. |
 | [Basecoat](packages/basecoat/README.md) | `@vue-skin/basecoat` | CSS oficial precompilado; Vue controla las interacciones y los modales usan `dialog` nativo. |
 | [Terminal](packages/terminal/README.md) | `@vue-skin/terminal` | CSS oficial de Terminal.css incluido localmente, bordes rectos y tipografía monoespaciada del sistema. |
-| [Konsta UI](packages/konsta/README.md) | `@vue-skin/konsta` | Componentes Vue oficiales con tema iOS y CSS precompilado; layout responsivo para móvil, tablet y escritorio. |
+| [Konsta UI](packages/konsta/README.md) | `@vue-skin/konsta` | Componentes Vue oficiales con tema Material (Android) y CSS precompilado; layout responsivo para móvil, tablet y escritorio. |
 | [Slate](packages/slate/README.md) | `@vue-skin/slate` | Diseño propio sin framework CSS: fondos suaves, cards elevadas, acentos azules y modo oscuro azul profundo. |
 
 Cada paquete importa sus estilos al instalarlo en la aplicación. Basecoat y Konsta distribuyen el CSS preparado; la aplicación consumidora no necesita configurar Tailwind. Terminal y Slate no requieren descargas de fuentes. Cada adapter mantiene sus dependencias aisladas y no importa los otros adapters.
 
-La tipografía también pertenece al adapter: Bootstrap usa `--bs-body-font-family`, Basecoat `--font-sans`, Konsta el token oficial `--font-ios`, Terminal su stack monoespaciado y Slate su stack de sistema. El playground y los layouts compartidos conservan esas fuentes sin imponer otra. Las alternativas disponibles en cada sistema operativo pueden producir diferencias visuales.
+La tipografía también pertenece al adapter: Bootstrap usa `--bs-body-font-family`, Basecoat `--font-sans`, Konsta el token oficial `--font-material`, Terminal su stack monoespaciado y Slate su stack de sistema. El playground y los layouts compartidos conservan esas fuentes sin imponer otra. Las alternativas disponibles en cada sistema operativo pueden producir diferencias visuales.
 
 Bootstrap distribuye CSS modular: cada componente importa solo sus estilos y dependencias visuales, con variables/reset/utilidades compartidas. La entrada completa registra todos los componentes e incluye sus estilos. Para utilizar un subconjunto, puedes importar directamente, por ejemplo, `import Button from '@vue-skin/bootstrap/components/Button'`. No se carga `bootstrap.min.css`, y el consumidor no necesita Sass. Los detalles están en [la documentación del adapter](packages/bootstrap/README.md).
 
@@ -72,7 +72,7 @@ Las páginas `/bootstrap.html`, `/basecoat.html`, `/terminal.html`, `/konsta.htm
 | --- | --- |
 | Acciones y contenido | `UiButton`, `UiButtonGroup`, `UiLink`, `UiIcon`, `UiBadge`, `UiCard` |
 | Formularios | `UiInput`, `UiInputGroup`, `UiAutocomplete`, `UiSelect`, `UiTextarea`, `UiCheckbox`, `UiRadio`, `UiSwitch` |
-| Estructura y navegación | `UiContainer`, `UiRow`, `UiCol`, `UiNavbar`, `UiSidebar`, `UiDropdown`, `UiTabs`, `UiStepper`, `UiAccordion` |
+| Estructura y navegación | `UiContainer`, `UiRow`, `UiCol`, `UiNavbar`, `UiToolbar`, `UiSidebar`, `UiDropdown`, `UiTabs`, `UiStepper`, `UiAccordion` |
 | Datos | `UiList`, `UiListItem`, `UiDataTable`, `UiDataTableColumnButton`, `UiChart` |
 | Mensajes y carga | `UiModal`, `UiDialog`, `UiAlert`, `UiToast`, `UiSpinner` |
 | Apariencia | `UiThemeSwitcher`, `UiThemeSelector` |
@@ -335,7 +335,7 @@ En Bootstrap se utiliza `form-floating` oficial; el input genera el placeholder 
 <UiStepper v-model="etapa" :items="etapas" orientation="vertical" />
 ```
 
-`UiWizard` se importa de `@vue-skin/layouts` y compone `UiStepper` con los botones Cancelar, Anterior y Siguiente/Finalizar del adapter activo. Por defecto avanza de forma lineal, salta etapas deshabilitadas y muestra el contenido mediante `#panel` (o el slot por defecto). Los datos del formulario pertenecen a la aplicación.
+`UiWizard` se importa de `@vue-skin/layouts` y compone `UiStepper` con los botones Cancelar, Anterior y Siguiente/Finalizar del adapter activo. Anterior y Siguiente/Finalizar se presentan dentro de `UiButtonGroup`, con Cancelar separado. Por defecto avanza de forma lineal, salta etapas deshabilitadas y muestra el contenido mediante `#panel` (o el slot por defecto). Los datos del formulario pertenecen a la aplicación.
 
 ```vue
 <script setup>
@@ -365,6 +365,32 @@ function validar({ from, direction }) {
 `beforeChange` recibe `{ from, to, fromIndex, toIndex, direction }`; la dirección es `next`, `back`, `step` o `finish` (en esta última, `to` y `toIndex` son null). Devuelve `false` para bloquear, un string para mostrar un error, o `true`/vacío para permitir. Puede ser asíncrono; los controles se bloquean hasta resolver y los errores lanzados muestran su `message`. Para validar campos expuestos, el callback puede esperar a `inputRef.value.validate()`.
 
 El wizard emite `change`, `finish`, `cancel` e `invalid`, además de `update:modelValue`. Cancelar emite la intención: la aplicación decide si cierra o abandona el flujo. `#complete` reemplaza el contenido al finalizar; `#step` personaliza el texto del stepper y `#actions` reemplaza los controles. Los slots de contenido/acciones reciben `{ item, index, busy, isFirst, isLast, next, back, goTo, finish, cancel, reset }`. También expone `next()`, `back()`, `goTo(id)`, `finish()` (promesas booleanas) y `reset()` para control desde una referencia. `:linear="false"` permite seleccionar cualquier etapa habilitada. El playground incluye ambos componentes con ejemplos horizontales/verticales y su código completo.
+
+## Toolbar
+
+`UiToolbar` está disponible con la misma API en los cinco adapters. Se inspira en [Tabbar de Konsta](https://konstaui.com/vue/tabbar); Bootstrap utiliza [Navs](https://getbootstrap.com/docs/5.3/components/navs-tabs/). La barra es navegación, no un contenedor de paneles como `UiTabs`.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const active = ref('home')
+const items = [
+  { id: 'home', label: 'Inicio', icon: 'mdi:home', to: '/' },
+  { id: 'profile', label: 'Perfil', icon: 'mdi:account', to: { name: 'profile' } },
+  { id: 'docs', label: 'Documentación', icon: 'mdi:open-in-new', href: 'https://example.com', target: '_blank' }
+]
+</script>
+
+<template>
+  <UiToolbar v-model="active" :items="items" position="bottom" fixed />
+</template>
+```
+
+Para SPA instala Vue Router y registra `app.use(router)` antes de montar la app; `to` usa su `RouterLink` y acepta rutas string u objetos. `href` sirve para enlaces externos, documentos o anclas. Sin router, `to` string funciona como enlace normal; las rutas con nombre requieren router. Sin `v-model`, los enlaces SPA se resaltan según la ruta actual. Un item sin href/to se comporta como botón y permite gestionar contenido local con `@select="(item, event) => ..."`.
+
+`position` admite `top`/`bottom` (por defecto bottom). `fixed` es false por defecto: la barra queda donde se coloque en el template. Con fixed se fija al borde de la ventana; reserva padding en el contenido para que no quede tapado. `:labels="false"` muestra iconos con nombre accesible y tooltip nativo; `:icons="false"` muestra texto. Cada item requiere `label` y un `id` único; `disabled` impide su activación. Si ambos modos se desactivan, se mantiene el texto. Los iconos usan `UiIcon` y la configuración habitual de icon-forge; sus nombres deben incluirse en las fuentes escaneadas.
+
+Los slots `icon` e `item` reciben `{ item, active }`; `default` permite aportar controles propios. Los cambios se emiten con `update:modelValue(id)` y `select(item, event)`. Los enlaces abiertos con modificadores o en otra ventana no cambian la selección local. El playground contiene una sección **UiToolbar** con ejemplos y código completo.
 
 ## Vista independiente de layouts
 

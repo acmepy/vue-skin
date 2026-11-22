@@ -101,10 +101,10 @@ defineExpose({ next, back, goTo, finish, reset })
     <footer v-if="!finished" class="ui-wizard-actions">
       <slot name="actions" v-bind="scope">
         <UiButton v-if="cancelable" variant="link" :disabled="disabled || busy" @click="cancel">{{ cancelText }}</UiButton>
-        <div class="ui-wizard-controls">
+        <UiButtonGroup class="ui-wizard-controls" label="Navegación entre etapas">
           <UiButton variant="outline-secondary" :disabled="disabled || busy || isFirst" @click="back">{{ backText }}</UiButton>
           <UiButton :disabled="disabled || busy || !current" :loading="busy" @click="next">{{ isLast ? finishText : nextText }}</UiButton>
-        </div>
+        </UiButtonGroup>
       </slot>
     </footer>
   </section>
@@ -117,7 +117,7 @@ defineExpose({ next, back, goTo, finish, reset })
 .ui-wizard-content { min-width:0; min-height:10rem; outline:none; }
 .ui-wizard-content:focus-visible { outline:2px solid var(--bs-primary,var(--primary,#0d6efd)); outline-offset:.5rem; border-radius:.25rem; }
 .ui-wizard-actions { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-top:2rem; }
-.ui-wizard-controls { display:flex; gap:.75rem; margin-inline-start:auto; }
+.ui-wizard-controls { margin-inline-start:auto; }
 .ui-wizard-error { color:var(--bs-danger,var(--destructive,#b91c1c)); margin-top:1rem; font-size:.875rem; }
 .ui-wizard[data-orientation=vertical] .ui-wizard-workspace { grid-template-columns:minmax(10rem,14rem) minmax(0,1fr); }
 @media(max-width:639px) { .ui-wizard[data-orientation=vertical] .ui-wizard-workspace { grid-template-columns:minmax(0,1fr); } }

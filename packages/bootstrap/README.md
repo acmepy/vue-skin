@@ -11,7 +11,7 @@ import Bootstrap from '@vue-skin/bootstrap'
 app.use(createVueSkin({ adapter: Bootstrap }))
 ```
 
-Cada componente importa su base compartida y los CSS que necesita. No se importa `bootstrap.min.css`. Esta entrada registra los 35 componentes, por lo que incluye sus estilos; no detecta qué etiquetas se utilizan en las plantillas de la aplicación. `Stepper` utiliza estilos propios porque Bootstrap no ofrece un componente equivalente, y conserva la API común horizontal/vertical.
+Cada componente importa su base compartida y los CSS que necesita. No se importa `bootstrap.min.css`. Esta entrada registra los 36 componentes, por lo que incluye sus estilos; no detecta qué etiquetas se utilizan en las plantillas de la aplicación. `Stepper` utiliza estilos propios porque Bootstrap no ofrece un componente equivalente, y conserva la API común horizontal/vertical. `Toolbar` compone los estilos oficiales de navegación (`nav`, `nav-pills`, `nav-justified`) con iconos, etiquetas y posición superior/inferior.
 
 ## Componentes individuales
 

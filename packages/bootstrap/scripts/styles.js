@@ -24,7 +24,7 @@ export const componentStyles = {
   Checkbox: ['FormField', 'Checkbox', 'Tooltip'], Radio: ['FormField', 'Checkbox', 'Tooltip'],
   Switch: ['FormField', 'Checkbox', 'Tooltip'],
   Link: ['Button'], List: ['List'], ListItem: ['List', 'Tooltip'],
-  Dropdown: ['Button', 'Dropdown'], Tabs: ['Tabs'], Stepper: [], Navbar: ['Container', 'Tabs', 'Navbar'],
+  Dropdown: ['Button', 'Dropdown'], Tabs: ['Tabs'], Stepper: [], Toolbar: ['Tabs'], Navbar: ['Container', 'Tabs', 'Navbar'],
   Modal: ['Modal', 'Close', 'Transitions'], Sidebar: ['Sidebar', 'Transitions'],
   Spinner: ['Spinner'], Toast: ['Toast', 'Close', 'Transitions'],
   Dialog: [], DataTable: ['DataTable'], DataTableColumnButton: [],

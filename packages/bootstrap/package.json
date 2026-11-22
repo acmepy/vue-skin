@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/bootstrap",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Adapter Bootstrap para Vue Skin.",
   "type": "module",
   "files": [
@@ -37,6 +37,7 @@
     "./components/Accordion": "./src/components/Accordion.vue",
     "./components/Tabs": "./src/components/Tabs.vue",
     "./components/Stepper": "./src/components/Stepper.vue",
+    "./components/Toolbar": "./src/components/Toolbar.vue",
     "./components/Modal": "./src/components/Modal.vue",
     "./components/Dialog": "./src/components/Dialog.vue",
     "./components/Dropdown": "./src/components/Dropdown.vue",

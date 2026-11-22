@@ -34,6 +34,9 @@ export type ComponentOf<Props> = DefineComponent<Props, {}, {}, {}, {}, {}, {}, 
 
 export interface UiButtonProps { variant?: Variant; size?: ControlSize; disabled?: boolean; loading?: boolean; type?: ButtonType }
 export interface UiButtonGroupProps { size?: ControlSize; vertical?: boolean; label?: string }
+export interface UiToolbarItem { id: string | number; label: string; icon?: string; href?: string; to?: string | Record<string, unknown>; target?: string; disabled?: boolean }
+export interface UiToolbarProps { modelValue?: string | number | null; items?: UiToolbarItem[]; position?: 'top' | 'bottom'; fixed?: boolean; icons?: boolean; labels?: boolean; label?: string }
+export function useToolbar(props: UiToolbarProps, emit: (...args: any[]) => void): { active(item: UiToolbarItem): boolean; component(item: UiToolbarItem): string; attributes(item: UiToolbarItem): Record<string, unknown>; select(item: UiToolbarItem, event: MouseEvent): void }
 export type GridGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type GridSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | 'auto'
 export interface UiContainerProps { fluid?: boolean }
@@ -132,6 +135,7 @@ declare module 'vue' {
     UiAccordion: ComponentOf<UiAccordionProps>
     UiTabs: ComponentOf<UiTabsProps>
     UiStepper: ComponentOf<UiStepperProps>
+    UiToolbar: ComponentOf<UiToolbarProps>
     UiModal: ComponentOf<UiModalProps>
     UiDialog: ComponentOf<UiDialogProps>
     UiDialogHost: ComponentOf<Record<string, never>>

@@ -14,7 +14,7 @@ describe('Adapter typography in the shared playground', () => {
 
   it.each([
     ['basecoat', 'var(--font-sans)'],
-    ['konsta', 'var(--font-ios)'],
+    ['konsta', 'var(--font-material)'],
     ['terminal', 'var(--tc-font-family)'],
     ['slate', '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif']
   ])('applies the %s font to local theme targets', (adapter, font) => {

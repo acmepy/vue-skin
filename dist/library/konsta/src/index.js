@@ -18,6 +18,7 @@ import Sidebar from './components/Sidebar.vue'
 import Dropdown from './components/Dropdown.vue'
 import Tabs from './components/Tabs.vue'
 import Stepper from './components/Stepper.vue'
+import Toolbar from './components/Toolbar.vue'
 import Accordion from './components/Accordion.vue'
 import Alert from './components/Alert.vue'
 import Toast from './components/Toast.vue'
@@ -33,8 +34,8 @@ export default {
   name: adapterName,
   install(app) {
     // Native Konsta controls use their official context without requiring a k-app wrapper.
-    app.provide('KonstaContext', computed(() => ({ theme: 'ios', dark: true, materialTouchRipple: false, iosHoverHighlight: true })))
+    app.provide('KonstaContext', computed(() => ({ theme: 'material', dark: true, materialTouchRipple: false, iosHoverHighlight: false })))
   },
   theme: { colors, create: createKonstaTheme },
-  components: { Stepper, Button, ButtonGroup, Badge, Spinner, Card, Link, Navbar, Container, Row, Col, Icon, Input, InputGroup, Select, Textarea, Checkbox, Radio, Switch, Autocomplete, List, ListItem, DataTable, DataTableColumnButton, Chart, Modal, Dialog, Sidebar, Dropdown, Tabs, Accordion, Alert, Toast, ThemeSwitcher, ThemeSelector }
+  components: { Toolbar, Stepper, Button, ButtonGroup, Badge, Spinner, Card, Link, Navbar, Container, Row, Col, Icon, Input, InputGroup, Select, Textarea, Checkbox, Radio, Switch, Autocomplete, List, ListItem, DataTable, DataTableColumnButton, Chart, Modal, Dialog, Sidebar, Dropdown, Tabs, Accordion, Alert, Toast, ThemeSwitcher, ThemeSelector }
 }

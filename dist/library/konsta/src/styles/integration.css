@@ -247,7 +247,7 @@
 
 
 /* Adapter-owned presentation for normalized controls without a framework equivalent. */
-:where([data-ui-konsta]) { --radius:.75rem; font-family:var(--font-ios); }
+:where([data-ui-konsta]) { --radius:.75rem; font-family:var(--font-material); }
 body { margin:0; background:var(--background); color:var(--foreground); }
 *,*::before,*::after { box-sizing:border-box; }
 button,input,select,textarea { font:inherit; }
@@ -336,7 +336,7 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .ks-card { margin:0; background:var(--card); color:var(--card-foreground); }
 .ks-card > div:first-child { color:inherit; }
 .ks-card h2 { font-size:1.1rem; font-weight:600; margin:0; }
-.ks-button { width:auto; flex-shrink:0; }
+.ks-button { width:auto; max-width:100%; height:auto; white-space:normal; overflow-wrap:anywhere; flex-shrink:0; }
 .ks-list-item { padding:0; color:inherit; }
 .ks-list-entry { min-width:0; }
 .ks-list-entry[aria-disabled=true] { opacity:.5; }

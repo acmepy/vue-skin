@@ -14,6 +14,17 @@ function render(props={}) {
 afterEach(()=>{wrapper?.unmount();target?.remove()})
 
 describe('UiWizard',()=>{
+  it('groups navigation buttons and keeps cancel separate', async()=>{
+    render()
+    const group = wrapper.get('[role="group"][aria-label="Navegación entre etapas"]')
+    expect(group.findAll('button').map(button => button.text())).toEqual(['Anterior', 'Siguiente'])
+    expect(group.get('button').element.disabled).toBe(true)
+    await group.findAll('button')[1].trigger('click')
+    await flushPromises()
+    expect(wrapper.emitted('update:modelValue').at(-1)).toEqual(['b'])
+    expect(group.get('button').element.disabled).toBe(false)
+    expect(wrapper.get('.ui-wizard-actions > button').text()).toBe('Cancelar')
+  })
   it('validates before moving, reports errors and prevents jumping forward in linear mode',async()=>{
     const beforeChange=vi.fn(()=> 'Complete los datos')
     render({beforeChange})

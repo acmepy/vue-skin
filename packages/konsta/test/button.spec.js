@@ -16,10 +16,10 @@ describe('Konsta loading button', () => {
     const button = wrapper.get('button')
     expect(button.element.disabled).toBe(true)
     expect(button.attributes('aria-busy')).toBe('true')
-    const preloader = button.get('.k-ios-preloader')
+    const preloader = button.get('.k-material-preloader')
     expect(preloader.classes()).toContain('text-current')
-    expect(preloader.classes()).not.toContain('text-primary')
-    expect(preloader.get('svg').attributes('fill')).toBe('currentcolor')
+    expect(preloader.classes()).not.toContain('text-md-light-primary')
+    expect(preloader.get('svg').attributes('stroke')).toBe('currentcolor')
     expect(button.text()).toBe('Guardando')
 
     await wrapper.setProps({ loading: false })

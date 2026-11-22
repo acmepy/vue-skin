@@ -14,7 +14,7 @@ describe('Konsta sidebar list typography', () => {
       const sidebarTitle = wrapper.get('aside .ks-list-item .text-base')
       expect(sidebarTitle.text()).toBe('Componentes')
       expect(wrapper.get('aside a').attributes('href')).toBe('#components')
-      expect(wrapper.get('main .ks-list-item').findAll('[class]').some(node => node.classes().includes('text-[17px]'))).toBe(true)
+      expect(wrapper.get('main .ks-list-item').findAll('[class]').some(node => node.classes().includes('text-[16px]'))).toBe(true)
     } finally { wrapper.unmount() }
   })
 })

@@ -12,13 +12,15 @@ import ThemeExample from './ThemeExample.vue'
 import themeExampleCode from './ThemeExample.vue?raw'
 import StepperExample from './StepperExample.vue'
 import stepperExampleCode from './StepperExample.vue?raw'
+import ToolbarExample from './ToolbarExample.vue'
+import toolbarExampleCode from './ToolbarExample.vue?raw'
 import WizardExample from './WizardExample.vue'
 import wizardExampleCode from './WizardExample.vue?raw'
 
 const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['input-group', 'UiInputGroup'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
   ['autocomplete', 'UiAutocomplete'], ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['theme-selector', 'UiThemeSelector'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
-  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['stepper', 'UiStepper'], ['wizard', 'UiWizard'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
+  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['toolbar', 'UiToolbar'], ['stepper', 'UiStepper'], ['wizard', 'UiWizard'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
   ['data-table', 'UiDataTable'], ['data-table-column-button', 'UiDataTableColumnButton'], ['chart', 'UiChart'], ['grid', 'Grid / Container / Row / Col'],
   { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin'], ['dashboard', 'UiDashboard']
 ]
@@ -342,6 +344,7 @@ const roles = [{ value: 'admin', label: 'Administración' }, { value: 'editor', 
   'theme-switcher': '<UiThemeSwitcher v-model="theme" />',
   'theme-selector': themeExampleCode,
   stepper: stepperExampleCode,
+  toolbar: toolbarExampleCode,
   wizard: wizardExampleCode,
   dropdown: '<UiDropdown label="Acciones" :items="dropdownItems" align="end" @select="dropdownResult = $event.label" />',
   sidebar: '<UiSidebar v-model="open" breakpoint="lg"><template #header>...</template><UiList>...</UiList></UiSidebar>',
@@ -627,6 +630,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
       </UiCard>
 
       <StepperExample v-else-if="active === 'stepper'" />
+      <ToolbarExample v-else-if="active === 'toolbar'" />
       <WizardExample v-else-if="active === 'wizard'" />
 
       <UiCard v-else-if="active === 'button-group'" title="Grupo de botones">
