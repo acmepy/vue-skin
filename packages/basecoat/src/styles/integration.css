@@ -1,6 +1,6 @@
 
 /* Vue Skin integrations for public behaviors not built into Basecoat. */
-:where([data-ui-basecoat]) { background: var(--background); color: var(--foreground); }
+:where([data-ui-basecoat]) { background: var(--background); color: var(--foreground); font-family:var(--font-sans); }
 .bc-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .bc-field { margin-bottom:1rem; display:grid; gap:.4rem; min-width:0; }
 .bc-field-control { position:relative; min-width:0; }

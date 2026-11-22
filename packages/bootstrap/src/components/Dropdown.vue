@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Button.css'
+import '../styles/Dropdown.css'
 import { Dropdown as BootstrapDropdown } from 'bootstrap'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 

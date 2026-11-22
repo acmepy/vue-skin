@@ -17,6 +17,7 @@ import Dialog from './components/Dialog.vue'
 import Sidebar from './components/Sidebar.vue'
 import Dropdown from './components/Dropdown.vue'
 import Tabs from './components/Tabs.vue'
+import Stepper from './components/Stepper.vue'
 import Accordion from './components/Accordion.vue'
 import Alert from './components/Alert.vue'
 import Toast from './components/Toast.vue'
@@ -30,5 +31,5 @@ export const adapterName = 'basecoat'
 export default {
   name: adapterName,
   theme: { colors, create: createBasecoatTheme },
-  components: { Button, ButtonGroup, Badge, Spinner, Card, Link, Navbar, Container, Row, Col, Icon, Input, InputGroup, Select, Textarea, Checkbox, Radio, Switch, Autocomplete, List, ListItem, DataTable, DataTableColumnButton, Chart, Modal, Dialog, Sidebar, Dropdown, Tabs, Accordion, Alert, Toast, ThemeSwitcher, ThemeSelector }
+  components: { Stepper, Button, ButtonGroup, Badge, Spinner, Card, Link, Navbar, Container, Row, Col, Icon, Input, InputGroup, Select, Textarea, Checkbox, Radio, Switch, Autocomplete, List, ListItem, DataTable, DataTableColumnButton, Chart, Modal, Dialog, Sidebar, Dropdown, Tabs, Accordion, Alert, Toast, ThemeSwitcher, ThemeSelector }
 }

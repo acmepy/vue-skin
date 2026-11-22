@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/List.css'
+import '../styles/Tooltip.css'
 import { Tooltip } from 'bootstrap'
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import { UiIcon } from '@vue-skin/core'

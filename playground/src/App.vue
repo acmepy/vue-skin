@@ -10,11 +10,15 @@ import GridExample from './GridExample.vue'
 import gridExampleCode from './GridExample.vue?raw'
 import ThemeExample from './ThemeExample.vue'
 import themeExampleCode from './ThemeExample.vue?raw'
+import StepperExample from './StepperExample.vue'
+import stepperExampleCode from './StepperExample.vue?raw'
+import WizardExample from './WizardExample.vue'
+import wizardExampleCode from './WizardExample.vue?raw'
 
 const sections = [
   ['button', 'UiButton'], ['button-group', 'UiButtonGroup'], ['badge', 'UiBadge'], ['icon', 'UiIcon'], ['link', 'UiLink'], ['list', 'UiList / UiListItem'], ['input', 'UiInput'], ['input-group', 'UiInputGroup'], ['select', 'UiSelect'], ['checkbox', 'UiCheckbox'], ['switch', 'UiSwitch'],
   ['autocomplete', 'UiAutocomplete'], ['textarea', 'UiTextarea'], ['radio', 'UiRadio'], ['navbar', 'UiNavbar'], ['theme-switcher', 'UiThemeSwitcher'], ['theme-selector', 'UiThemeSelector'], ['dropdown', 'UiDropdown'], ['sidebar', 'UiSidebar'], ['card', 'UiCard'],
-  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
+  ['accordion', 'UiAccordion'], ['tabs', 'UiTabs'], ['stepper', 'UiStepper'], ['wizard', 'UiWizard'], ['modal', 'UiModal'], ['dialog', 'UiDialog'], ['alert', 'UiAlert'], ['toast', 'UiToast'], ['spinner', 'UiSpinner'],
   ['data-table', 'UiDataTable'], ['data-table-column-button', 'UiDataTableColumnButton'], ['chart', 'UiChart'], ['grid', 'Grid / Container / Row / Col'],
   { id: 'layouts-group', title: 'Layouts', groupTitle: true }, ['app-layout', 'UiAppLayout'], ['login', 'UiLogin'], ['dashboard', 'UiDashboard']
 ]
@@ -337,6 +341,8 @@ const roles = [{ value: 'admin', label: 'Administración' }, { value: 'editor', 
   navbar: '<UiNavbar title="Proyecto Atlas"><template #start>...</template><template #end>...</template></UiNavbar>',
   'theme-switcher': '<UiThemeSwitcher v-model="theme" />',
   'theme-selector': themeExampleCode,
+  stepper: stepperExampleCode,
+  wizard: wizardExampleCode,
   dropdown: '<UiDropdown label="Acciones" :items="dropdownItems" align="end" @select="dropdownResult = $event.label" />',
   sidebar: '<UiSidebar v-model="open" breakpoint="lg"><template #header>...</template><UiList>...</UiList></UiSidebar>',
   'app-layout': `// Dentro de script setup
@@ -619,6 +625,9 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
       <UiCard v-if="active === 'button'" title="Botones">
         <div class="example-row"><UiButton>Primario</UiButton><UiButton variant="secondary">Secundario</UiButton><UiButton variant="danger">Eliminar</UiButton><UiButton loading>Guardando</UiButton></div>
       </UiCard>
+
+      <StepperExample v-else-if="active === 'stepper'" />
+      <WizardExample v-else-if="active === 'wizard'" />
 
       <UiCard v-else-if="active === 'button-group'" title="Grupo de botones">
         <UiButtonGroup label="Acciones de documento"><UiButton>Editar</UiButton><UiButton variant="secondary">Duplicar</UiButton><UiButton variant="danger">Eliminar</UiButton></UiButtonGroup>
@@ -926,7 +935,7 @@ function login({ email, remember }) { loginResult.value = `Enviado: ${email || '
 </template>
 
 <style scoped>
-:global(body) { margin: 0; background: var(--bs-body-bg); color: var(--bs-body-color); font-family: var(--ui-font-family, system-ui, sans-serif); }
+:global(body) { margin: 0; background: var(--bs-body-bg); color: var(--bs-body-color); }
 .documentation-main { width: 100%; padding: 2rem 3rem; min-width: 0; }
 .documentation-main h1 { margin-top: 0; }
 .eyebrow { color: #6c757d; font-size: .875rem; margin: 0 0 .5rem; }

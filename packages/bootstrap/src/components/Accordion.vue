@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Accordion.css'
+import '../styles/Transitions.css'
 import { Collapse } from 'bootstrap'
 import { computed, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 

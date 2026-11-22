@@ -1,4 +1,5 @@
 <script setup>
+import '../styles/base.css'
 import { computed, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 
 const props = defineProps({

@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Card.css'
 defineProps({ title: String })
 </script>
 

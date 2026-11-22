@@ -1,4 +1,8 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Toast.css'
+import '../styles/Close.css'
+import '../styles/Transitions.css'
 import { Toast as BootstrapToast } from 'bootstrap'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 

@@ -1,5 +1,7 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
+import { sidebarContextKey } from './listContext.js'
+provide(sidebarContextKey, true)
 const props = defineProps({ modelValue: Boolean, position: { default: 'start' }, width: String, breakpoint: { default: 'lg' } })
 const emit = defineEmits(['update:modelValue', 'open', 'close'])
 const panel = ref()

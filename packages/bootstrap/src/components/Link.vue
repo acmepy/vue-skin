@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Button.css'
 defineOptions({ inheritAttrs: false })
 const props = defineProps({ href: { type: String, default: '#' }, target: String, disabled: Boolean })
 const emit = defineEmits(['click'])

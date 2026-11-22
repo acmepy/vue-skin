@@ -81,6 +81,11 @@ export interface UiAlertProps { variant?: Variant; dismissible?: boolean }
 export interface UiBadgeProps { variant?: Variant; pill?: boolean }
 export interface UiToastProps { modelValue?: boolean; title?: string; message?: string; variant?: Variant; position?: ToastPosition; autohide?: boolean; delay?: number; closable?: boolean }
 export interface UiSpinnerProps { size?: ControlSize; label?: string }
+export type StepId = string | number
+export type StepOrientation = 'horizontal' | 'vertical'
+export interface UiStepItem { id: StepId; label: string; description?: string; disabled?: boolean; completed?: boolean }
+export interface UiStepperProps { modelValue?: StepId | null; items?: UiStepItem[]; orientation?: StepOrientation; linear?: boolean; readonly?: boolean; disabled?: boolean; label?: string }
+export function useStepState(props: { readonly items: UiStepItem[]; readonly modelValue?: StepId | null }): { activeIndex: ComputedRef<number>; current: ComputedRef<UiStepItem | undefined>; completed(index: number): boolean }
 
 export const UiIcon: ComponentOf<UiIconProps>
 export const requiredComponents: readonly string[]
@@ -126,6 +131,7 @@ declare module 'vue' {
     UiDataTableColumnButton: ComponentOf<UiDataTableColumnButtonProps>
     UiAccordion: ComponentOf<UiAccordionProps>
     UiTabs: ComponentOf<UiTabsProps>
+    UiStepper: ComponentOf<UiStepperProps>
     UiModal: ComponentOf<UiModalProps>
     UiDialog: ComponentOf<UiDialogProps>
     UiDialogHost: ComponentOf<Record<string, never>>

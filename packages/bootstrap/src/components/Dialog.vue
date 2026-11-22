@@ -1,4 +1,5 @@
 <script setup>
+import '../styles/base.css'
 import Button from './Button.vue'
 import Input from './Input.vue'
 import Modal from './Modal.vue'

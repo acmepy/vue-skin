@@ -227,6 +227,18 @@ Las `primitives` contienen únicamente lógica Vue agnóstica que haya demostrad
 
 ## 7. Contrato de adapter
 
+### Stepper y Wizard
+
+`Stepper` es un componente público requerido de cada adapter. Props: `modelValue` (ID string/number), `items` (array `{ id, label, description?, disabled?, completed? }` con IDs únicos), `orientation` (`horizontal` por defecto o `vertical`), `linear` (false), `readonly` (false), `disabled` y `label` (`Etapas`). Eventos: `update:modelValue` y `change(item)`. Slots: `item` y `marker`, con `{ item, index, active, completed }`. Marca las etapas anteriores habilitadas como completadas, admite completado explícito y usa `aria-current="step"`. Flechas/Home/End mueven el foco sin activar, Enter/Espacio seleccionan. `linear` bloquea seleccionar etapas posteriores a la activa; `readonly` impide selección. Cada adapter posee su DOM/CSS local, y el estado de orden/etapa actual se comparte en la primitive agnóstica `useStepState`.
+
+`UiWizard` pertenece a `@vue-skin/layouts`, como composición agnóstica que utiliza `UiStepper` y `UiButton`. No requiere una implementación adicional por adapter ni contiene clases de un framework. Comparte `items`, `modelValue` y `orientation`, y añade `title`, `linear` (true), `disabled`, `beforeChange`, `cancelable` (true), `cancelText`, `backText`, `nextText` y `finishText`. Avanza/salta etapas deshabilitadas y permite volver a las anteriores. En vertical presenta el indicador al lado del panel, con adaptación a una columna en pantallas estrechas.
+
+`beforeChange({ from, to, fromIndex, toIndex, direction })` valida navegación y finalización; `direction` es next/back/step/finish, y finalizar utiliza `to`/`toIndex` null. Un boolean false bloquea; un string o excepción se muestra como error; true/void permiten continuar. Se admite Promise y se bloquea interacción durante su resolución. Cambios externos de etapa/items, reset o desmontaje invalidan el resultado de validaciones pendientes. El wizard no consulta servicios ni valida datos de negocio sin el callback de la aplicación.
+
+Eventos: update:modelValue(id), change(context), finish(context), cancel({ item,index }) e invalid({ ...context,message }). Cancelar emite intención sin cerrar el layout. Métodos expuestos: next/back/goTo(id)/finish devuelven Promise<boolean>; reset vuelve al primer elemento habilitado. Slots: panel/default y actions reciben `{ item,index,busy,isFirst,isLast,next,back,goTo,finish,cancel,reset }`; complete recibe el mismo contexto al finalizar, y step se pasa al slot item de Stepper. Al avanzar se enfoca el panel para anunciar la nueva etapa. La finalización marca etapas habilitadas completas, muestra el slot complete y evita solicitudes repetidas hasta reset.
+
+El playground incorpora secciones Stepper y Wizard con ejemplos horizontal/vertical, validación, estado final y fuente completa. Ambos utilizan los temas de cada adapter y las APIs normalizadas.
+
 Cada adapter debe exportar una estructura común.
 
 Ejemplo conceptual:
@@ -1137,6 +1149,10 @@ El segundo enfoque solo debe utilizarse para lógica realmente agnóstica, nunca
 ## 24. CSS
 
 Cada adapter administra su propio CSS.
+
+El adapter Bootstrap distribuye CSS precompilado por módulo oficial, generado con Sass durante build/prepack. Cada SFC importa `base.css` (variables, reset, tipografía, helpers y utilidades) y los módulos que necesita; Grid, formularios, validación y otros estilos compartidos se compilan una sola vez. Los estilos propios del componente se mantienen en su SFC. Se elimina la importación de `bootstrap.min.css`. Sass es exclusivamente una dependencia de desarrollo del paquete.
+
+`@vue-skin/bootstrap` mantiene la instalación completa del adapter y, por ello, incorpora estilos de todos sus componentes registrados. Las entradas públicas `@vue-skin/bootstrap/components/Nombre` permiten importar cada componente por separado y cargar solo sus dependencias visuales. `Icon` reutiliza la primitive de core. Los componentes internos FormField y ThemeSelectorPanel no son entradas públicas. `@vue-skin/bootstrap/styles/Nombre.css` permite utilizar estilos con HTML propio. La importación individual de controles de apariencia sigue requiriendo el servicio de temas del plugin; no se modifica el contrato de core para admitir adapters incompletos.
 
 Ejemplo:
 

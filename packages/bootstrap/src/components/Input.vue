@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Input.css'
 import FormField from './FormField.vue'
 import { computed, ref } from 'vue'
 

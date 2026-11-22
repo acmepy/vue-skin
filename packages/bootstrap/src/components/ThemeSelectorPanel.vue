@@ -1,4 +1,5 @@
 <script setup>
+import '../styles/base.css'
 import { UiIcon, useTheme } from '@vue-skin/core'
 import Switch from './Switch.vue'
 import Button from './Button.vue'

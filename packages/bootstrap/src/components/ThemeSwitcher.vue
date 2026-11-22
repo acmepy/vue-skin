@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Button.css'
 import { onMounted, watch } from 'vue'
 import { UiIcon, useTheme } from '@vue-skin/core'
 

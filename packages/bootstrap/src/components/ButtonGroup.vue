@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/ButtonGroup.css'
 defineOptions({ inheritAttrs: false })
 defineProps({ size: String, vertical: Boolean, label: { type: String, default: 'Grupo de botones' } })
 </script>

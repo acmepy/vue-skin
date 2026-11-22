@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/DataTable.css'
 import { computed, ref, watch } from 'vue'
 import InputGroup from './InputGroup.vue'
 import Button from './Button.vue'

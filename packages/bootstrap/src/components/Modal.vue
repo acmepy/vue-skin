@@ -1,4 +1,8 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Modal.css'
+import '../styles/Close.css'
+import '../styles/Transitions.css'
 import { Modal as BootstrapModal } from 'bootstrap'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 

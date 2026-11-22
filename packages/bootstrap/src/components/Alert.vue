@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Alert.css'
+import '../styles/Close.css'
 import { Alert as BootstrapAlert } from 'bootstrap'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 

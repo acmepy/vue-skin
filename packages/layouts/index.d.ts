@@ -1,4 +1,10 @@
 import type { DefineComponent } from 'vue'
+import type { StepId, StepOrientation, UiStepItem } from '@vue-skin/core'
+
+export interface WizardTransition { from: UiStepItem; to: UiStepItem | null; fromIndex: number; toIndex: number | null; direction: 'next' | 'back' | 'step' | 'finish' }
+export interface UiWizardProps { modelValue?: StepId | null; items?: UiStepItem[]; title?: string; orientation?: StepOrientation; linear?: boolean; disabled?: boolean; beforeChange?: (transition: WizardTransition) => boolean | string | void | Promise<boolean | string | void>; cancelable?: boolean; cancelText?: string; backText?: string; nextText?: string; finishText?: string }
+/** Slots: panel/default, step, actions, complete. Methods: next, back, goTo, finish, reset. */
+export const UiWizard: DefineComponent<UiWizardProps>
 
 export interface AppLayoutSection { id: string | number; title?: string; label?: string; groupTitle?: boolean }
 /** Slots: default (main content), header (custom sidebar header; overrides the header prop), navbar-actions (extra controls before the theme buttons). */

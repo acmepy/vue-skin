@@ -26,6 +26,7 @@ export const componentContracts = Object.freeze({
   DataTableColumnButton: Object.freeze({ props: ['items', 'size', 'variant'], events: ['select'] }),
   Accordion: Object.freeze({ props: ['modelValue', 'items', 'flush'], events: ['update:modelValue'] }),
   Tabs: Object.freeze({ props: ['modelValue', 'items', 'justified'], events: ['update:modelValue', 'change'], slots: ['panel'] }),
+  Stepper: Object.freeze({ props: ['modelValue', 'items', 'orientation', 'linear', 'readonly', 'disabled', 'label'], events: ['update:modelValue', 'change'], slots: ['item', 'marker'] }),
   Modal: Object.freeze({ props: ['modelValue', 'title', 'size', 'centered', 'closable'], events: ['update:modelValue', 'open', 'opened', 'close', 'closed'], slots: ['header', 'default', 'footer'] }),
   Dialog: Object.freeze({ props: ['modelValue', 'type', 'title', 'message', 'label', 'inputValue', 'placeholder', 'acceptText', 'cancelText'], events: ['update:modelValue', 'update:inputValue', 'accept', 'cancel', 'closed'] }),
   Dropdown: Object.freeze({ props: ['label', 'items', 'variant', 'size', 'align', 'disabled'], events: ['select', 'show', 'shown', 'hide', 'hidden'] }),

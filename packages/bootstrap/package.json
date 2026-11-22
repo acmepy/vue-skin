@@ -1,12 +1,55 @@
 {
   "name": "@vue-skin/bootstrap",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Adapter Bootstrap para Vue Skin.",
   "type": "module",
   "files": [
-    "src"
+    "src",
+    "scripts"
   ],
-  "exports": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./components/Button": "./src/components/Button.vue",
+    "./components/ButtonGroup": "./src/components/ButtonGroup.vue",
+    "./components/Container": "./src/components/Container.vue",
+    "./components/Row": "./src/components/Row.vue",
+    "./components/Col": "./src/components/Col.vue",
+    "./components/Input": "./src/components/Input.vue",
+    "./components/InputGroup": "./src/components/InputGroup.vue",
+    "./components/Autocomplete": "./src/components/Autocomplete.vue",
+    "./components/Icon": "./src/components/Icon.js",
+    "./components/List": "./src/components/List.vue",
+    "./components/ListItem": "./src/components/ListItem.vue",
+    "./components/Link": "./src/components/Link.vue",
+    "./components/Select": "./src/components/Select.vue",
+    "./components/Checkbox": "./src/components/Checkbox.vue",
+    "./components/Radio": "./src/components/Radio.vue",
+    "./components/Switch": "./src/components/Switch.vue",
+    "./components/Textarea": "./src/components/Textarea.vue",
+    "./components/Navbar": "./src/components/Navbar.vue",
+    "./components/ThemeSwitcher": "./src/components/ThemeSwitcher.vue",
+    "./components/ThemeSelector": "./src/components/ThemeSelector.vue",
+    "./components/Sidebar": "./src/components/Sidebar.vue",
+    "./components/Card": "./src/components/Card.vue",
+    "./components/Chart": "./src/components/Chart.vue",
+    "./components/DataTable": "./src/components/DataTable.vue",
+    "./components/DataTableColumnButton": "./src/components/DataTableColumnButton.vue",
+    "./components/Accordion": "./src/components/Accordion.vue",
+    "./components/Tabs": "./src/components/Tabs.vue",
+    "./components/Stepper": "./src/components/Stepper.vue",
+    "./components/Modal": "./src/components/Modal.vue",
+    "./components/Dialog": "./src/components/Dialog.vue",
+    "./components/Dropdown": "./src/components/Dropdown.vue",
+    "./components/Alert": "./src/components/Alert.vue",
+    "./components/Badge": "./src/components/Badge.vue",
+    "./components/Toast": "./src/components/Toast.vue",
+    "./components/Spinner": "./src/components/Spinner.vue",
+    "./styles/*.css": "./src/styles/*.css"
+  },
+  "scripts": {
+    "build": "node scripts/prepare-css.js",
+    "prepack": "node scripts/prepare-css.js"
+  },
   "peerDependencies": {
     "vue": "^3.5.0"
   },
@@ -14,5 +57,8 @@
     "@vue-skin/core": "file:../core",
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1"
+  },
+  "devDependencies": {
+    "sass": "^1.108.2"
   }
 }

@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Sidebar.css'
+import '../styles/Transitions.css'
 import { Offcanvas } from 'bootstrap'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 

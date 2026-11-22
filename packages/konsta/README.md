@@ -13,6 +13,10 @@ createApp(App).use(createVueSkin({ adapter: Konsta })).mount('#app')
 
 No necesitas envolver la aplicación en `k-app`, configurar Tailwind ni agregar un plugin de Vite. El adapter proporciona el contexto requerido por sus controles nativos e importa su CSS precompilado. Konsta y Chart.js son dependencias del paquete; Bootstrap, Basecoat y Terminal no son necesarios.
 
+La tipografía usa el token oficial `--font-ios` de Konsta (fuente de sistema iOS y alternativas locales en otras plataformas). No descarga fuentes remotas. Los preloaders dentro de botones heredan el color de su texto para conservar el contraste en cada variante.
+
+Los títulos de `UiListItem` dentro de `UiSidebar` usan el tamaño base de texto (16 px por defecto), mediante la opción nativa de Konsta. Las listas fuera del sidebar conservan el tamaño iOS de 17 px; todas heredan la misma familia tipográfica.
+
 Los componentes sin correspondencia directa utilizan HTML accesible y CSS de integración propio: inputs con `validate()`/errores/floating labels, autocomplete, filtros, acciones de tabla, tabs, dropdown, accordion, modal nativo, toast y sidebar responsivo. `uiDialog` conserva los métodos compartidos de core. Los eventos y slots públicos mantienen el contrato de Vue Skin, aunque el DOM sea diferente.
 
 El sidebar se integra al espacio del layout desde el breakpoint `lg` (992px) y se convierte en overlay por debajo. Esto permite utilizar el mismo layout en tablets verticales, tablets horizontales y escritorio; las tablas admiten desplazamiento horizontal. No se fuerza un ancho de teléfono ni se utiliza un contenedor de altura fija para toda la aplicación.

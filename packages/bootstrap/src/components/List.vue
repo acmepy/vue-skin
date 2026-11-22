@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/List.css'
 import { computed, onUpdated, provide, ref, shallowReactive, shallowRef } from 'vue'
 import Button from './Button.vue'
 import InputGroup from './InputGroup.vue'

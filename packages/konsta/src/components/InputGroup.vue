@@ -20,7 +20,7 @@ defineExpose({ validate })
 </script>
 <template>
 <FormField :id="id" :label="label" :help="help" :tooltip="tooltip" :error="displayedError" v-slot="field">
-  <div class="input-group ks-input-group">
+  <div class="input-group ks-input-group" :class="{ 'ks-input-group-invalid': displayedError, 'ks-input-group-disabled': disabled }">
     <span v-if="prefix" class="ks-input-addon">{{ prefix }}</span><slot name="prefix" />
     <input v-bind="$attrs" class="input" :id="field.inputId" :type="type" :name="name" :value="modelValue" :placeholder="placeholder" :disabled="disabled" :readonly="readonly" :required="required" :autocomplete="autocomplete" :aria-invalid="displayedError ? 'true' : undefined" :aria-describedby="field.describedBy" @input="update" @change="emit('change', $event)" @focus="emit('focus', $event)" @blur="validate(); emit('blur', $event)" />
     <span v-if="suffix" class="ks-input-addon">{{ suffix }}</span><slot name="suffix" />

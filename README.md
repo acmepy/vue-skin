@@ -6,17 +6,21 @@ Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter 
 
 ## Elegir adapter en el playground
 
-Todos los adapters implementan los 34 componentes del contrato común y funcionan con los layouts compartidos.
+Todos los adapters implementan los 35 componentes del contrato común y funcionan con los layouts compartidos.
 
 | Adapter | Paquete | Presentación y dependencias visuales |
 | --- | --- | --- |
-| Bootstrap | `@vue-skin/bootstrap` | Componentes y grilla oficiales de Bootstrap; utiliza su JavaScript para las interacciones correspondientes. |
+| [Bootstrap](packages/bootstrap/README.md) | `@vue-skin/bootstrap` | CSS oficial compilado por componente y base compartida; utiliza su JavaScript para las interacciones correspondientes. |
 | [Basecoat](packages/basecoat/README.md) | `@vue-skin/basecoat` | CSS oficial precompilado; Vue controla las interacciones y los modales usan `dialog` nativo. |
 | [Terminal](packages/terminal/README.md) | `@vue-skin/terminal` | CSS oficial de Terminal.css incluido localmente, bordes rectos y tipografía monoespaciada del sistema. |
 | [Konsta UI](packages/konsta/README.md) | `@vue-skin/konsta` | Componentes Vue oficiales con tema iOS y CSS precompilado; layout responsivo para móvil, tablet y escritorio. |
 | [Slate](packages/slate/README.md) | `@vue-skin/slate` | Diseño propio sin framework CSS: fondos suaves, cards elevadas, acentos azules y modo oscuro azul profundo. |
 
 Cada paquete importa sus estilos al instalarlo en la aplicación. Basecoat y Konsta distribuyen el CSS preparado; la aplicación consumidora no necesita configurar Tailwind. Terminal y Slate no requieren descargas de fuentes. Cada adapter mantiene sus dependencias aisladas y no importa los otros adapters.
+
+La tipografía también pertenece al adapter: Bootstrap usa `--bs-body-font-family`, Basecoat `--font-sans`, Konsta el token oficial `--font-ios`, Terminal su stack monoespaciado y Slate su stack de sistema. El playground y los layouts compartidos conservan esas fuentes sin imponer otra. Las alternativas disponibles en cada sistema operativo pueden producir diferencias visuales.
+
+Bootstrap distribuye CSS modular: cada componente importa solo sus estilos y dependencias visuales, con variables/reset/utilidades compartidas. La entrada completa registra todos los componentes e incluye sus estilos. Para utilizar un subconjunto, puedes importar directamente, por ejemplo, `import Button from '@vue-skin/bootstrap/components/Button'`. No se carga `bootstrap.min.css`, y el consumidor no necesita Sass. Los detalles están en [la documentación del adapter](packages/bootstrap/README.md).
 
 Desde la raíz del repositorio:
 
@@ -43,12 +47,12 @@ Las páginas `/bootstrap.html`, `/basecoat.html`, `/terminal.html`, `/konsta.htm
 | --- | --- |
 | Acciones y contenido | `UiButton`, `UiButtonGroup`, `UiLink`, `UiIcon`, `UiBadge`, `UiCard` |
 | Formularios | `UiInput`, `UiInputGroup`, `UiAutocomplete`, `UiSelect`, `UiTextarea`, `UiCheckbox`, `UiRadio`, `UiSwitch` |
-| Estructura y navegación | `UiContainer`, `UiRow`, `UiCol`, `UiNavbar`, `UiSidebar`, `UiDropdown`, `UiTabs`, `UiAccordion` |
+| Estructura y navegación | `UiContainer`, `UiRow`, `UiCol`, `UiNavbar`, `UiSidebar`, `UiDropdown`, `UiTabs`, `UiStepper`, `UiAccordion` |
 | Datos | `UiList`, `UiListItem`, `UiDataTable`, `UiDataTableColumnButton`, `UiChart` |
 | Mensajes y carga | `UiModal`, `UiDialog`, `UiAlert`, `UiToast`, `UiSpinner` |
 | Apariencia | `UiThemeSwitcher`, `UiThemeSelector` |
 
-Además registra `UiDialogHost` para el servicio de diálogos. `@vue-skin/layouts` exporta por separado `UiAppLayout`, `UiLogin` y `UiDashboard`; se importan en las vistas que los utilizan. `FormField` es interno: organiza label, ayuda y errores de los controles de cada adapter.
+Además registra `UiDialogHost` para el servicio de diálogos. `@vue-skin/layouts` exporta por separado `UiAppLayout`, `UiLogin`, `UiDashboard` y `UiWizard`; se importan en las vistas que los utilizan. `FormField` es interno: organiza label, ayuda y errores de los controles de cada adapter.
 
 La API común normaliza props, slots, eventos y `v-model`; el HTML y la apariencia pertenecen al adapter. Puedes agregar atributos HTML, `class` y `style`: se combinan con los del componente. En los campos, se aplican al control interactivo; las clases específicas de un framework deben aportarse desde la aplicación cuando se utilicen.
 
@@ -296,6 +300,46 @@ En Bootstrap se utiliza `form-floating` oficial; el input genera el placeholder 
 ```
 
 `span` admite 1–12 o `auto`; sin `span`, las columnas comparten el espacio disponible. `sm`, `md`, `lg`, `xl` y `xxl` sobrescriben el ancho desde 576, 768, 992, 1200 y 1400px respectivamente. `gap` admite `none`, `xs`, `sm`, `md`, `lg`, `xl` (por defecto `md`) y controla ambos ejes. `fluid` ocupa todo el ancho; sin él, el container centra y limita el contenido. Los cinco adapters implementan esta API; Bootstrap la convierte a sus clases oficiales y los demás utilizan su CSS de estructura. El playground incluye ejemplos bajo Grid.
+
+## Stepper y Wizard
+
+`UiStepper` muestra etapas completadas, actuales y pendientes en los cinco adapters. Recibe `items` con `{ id, label, description?, disabled?, completed? }`, IDs únicos string/number y `v-model` con el ID activo. `orientation` admite `horizontal` (por defecto) o `vertical`. `readonly` muestra solo el indicador; `linear` bloquea la selección de etapas futuras. Los slots `item` y `marker` permiten personalizar texto y marcador. Las flechas, Home y End mueven el foco, y Enter/Espacio seleccionan una etapa habilitada.
+
+```vue
+<UiStepper v-model="etapa" :items="etapas" orientation="horizontal" />
+<UiStepper v-model="etapa" :items="etapas" orientation="vertical" />
+```
+
+`UiWizard` se importa de `@vue-skin/layouts` y compone `UiStepper` con los botones Cancelar, Anterior y Siguiente/Finalizar del adapter activo. Por defecto avanza de forma lineal, salta etapas deshabilitadas y muestra el contenido mediante `#panel` (o el slot por defecto). Los datos del formulario pertenecen a la aplicación.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { UiWizard } from '@vue-skin/layouts'
+
+const etapa = ref('datos')
+const nombre = ref('')
+const etapas = [{ id:'datos', label:'Datos' }, { id:'resumen', label:'Confirmación' }]
+function validar({ from, direction }) {
+  if (direction === 'next' && from.id === 'datos' && !nombre.value.trim()) return 'Ingrese su nombre'
+  return true
+}
+</script>
+
+<template>
+  <UiWizard v-model="etapa" :items="etapas" :before-change="validar">
+    <template #panel="{ item }">
+      <UiInput v-if="item.id === 'datos'" v-model="nombre" label="Nombre" />
+      <p v-else>Confirmar: {{ nombre }}</p>
+    </template>
+    <template #complete><UiAlert variant="success">Proceso completado</UiAlert></template>
+  </UiWizard>
+</template>
+```
+
+`beforeChange` recibe `{ from, to, fromIndex, toIndex, direction }`; la dirección es `next`, `back`, `step` o `finish` (en esta última, `to` y `toIndex` son null). Devuelve `false` para bloquear, un string para mostrar un error, o `true`/vacío para permitir. Puede ser asíncrono; los controles se bloquean hasta resolver y los errores lanzados muestran su `message`. Para validar campos expuestos, el callback puede esperar a `inputRef.value.validate()`.
+
+El wizard emite `change`, `finish`, `cancel` e `invalid`, además de `update:modelValue`. Cancelar emite la intención: la aplicación decide si cierra o abandona el flujo. `#complete` reemplaza el contenido al finalizar; `#step` personaliza el texto del stepper y `#actions` reemplaza los controles. Los slots de contenido/acciones reciben `{ item, index, busy, isFirst, isLast, next, back, goTo, finish, cancel, reset }`. También expone `next()`, `back()`, `goTo(id)`, `finish()` (promesas booleanas) y `reset()` para control desde una referencia. `:linear="false"` permite seleccionar cualquier etapa habilitada. El playground incluye ambos componentes con ejemplos horizontales/verticales y su código completo.
 
 ## Vista independiente de layouts
 

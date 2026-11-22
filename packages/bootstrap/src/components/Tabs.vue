@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Tabs.css'
 import { computed, useId } from 'vue'
 
 const props = defineProps({ modelValue: { type: [String, Number], default: null }, items: { type: Array, default: () => [] }, justified: Boolean })

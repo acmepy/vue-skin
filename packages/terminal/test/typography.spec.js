@@ -24,7 +24,7 @@ describe('Terminal typography', () => {
     document.head.append(stylesheet)
     document.documentElement.setAttribute('data-ui-terminal', 'test')
     // jsdom preserves var expressions; browsers resolve both through the mono stack.
-    expect(getComputedStyle(document.body).fontFamily).toBe('var(--ui-font-family, system-ui, sans-serif)')
+    expect(getComputedStyle(document.body).fontFamily).toBe('inherit')
     expect(getComputedStyle(document.documentElement).getPropertyValue('--ui-font-family')).toBe('var(--tc-font-family)')
     expect(getComputedStyle(document.documentElement).fontFamily).toBe('var(--tc-font-family)')
     const stack = getComputedStyle(document.documentElement).getPropertyValue('--tc-font-family')

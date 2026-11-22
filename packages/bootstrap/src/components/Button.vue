@@ -1,4 +1,7 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Button.css'
+import '../styles/Spinner.css'
 defineOptions({ inheritAttrs: false })
 
 defineProps({

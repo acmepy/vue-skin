@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Select.css'
 import FormField from './FormField.vue'
 import { useAttrs } from 'vue'
 

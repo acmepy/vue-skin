@@ -1,4 +1,8 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Container.css'
+import '../styles/Tabs.css'
+import '../styles/Navbar.css'
 defineProps({ title: String, fixed: Boolean, sticky: Boolean })
 </script>
 

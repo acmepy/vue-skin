@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Grid.css'
 import { computed } from 'vue'
 import { gridBreakpoints, spanProp, validSpan } from './grid.js'
 

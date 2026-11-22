@@ -1,4 +1,8 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/FormField.css'
+import '../styles/FloatingLabel.css'
+import '../styles/Tooltip.css'
 import { Tooltip } from 'bootstrap'
 import { onBeforeUnmount, ref, toRef, watch } from 'vue'
 import { useFieldIds } from '@vue-skin/core'

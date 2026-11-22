@@ -1,4 +1,6 @@
 <script setup>
+import '../styles/base.css'
+import '../styles/Spinner.css'
 defineProps({ size: String, label: { type: String, default: 'Cargando' } })
 </script>
 

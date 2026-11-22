@@ -1,4 +1,5 @@
 <script setup>
+import '../styles/base.css'
 import { UiIcon } from '@vue-skin/core'
 import Button from './Button.vue'
 import Link from './Link.vue'
