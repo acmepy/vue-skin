@@ -12,7 +12,7 @@ Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter 
 npm install github:acmepy/vue-skin
 ```
 
-La entrada raíz `vue-skin` prepara automáticamente los estilos y empaqueta core, adapters y layouts. No necesitas clonar el repositorio ni configurar Tailwind. Requiere una aplicación Vue 3.5+ con soporte para componentes `.vue` (por ejemplo Vite y `@vitejs/plugin-vue`).
+La entrada raíz `vue-skin` distribuye core, adapters, layouts y estilos ya generados en `dist/library`. No ejecuta scripts de instalación propios. No necesitas clonar el repositorio ni configurar Tailwind. Requiere una aplicación Vue 3.5+ con soporte para componentes `.vue` (por ejemplo Vite y `@vitejs/plugin-vue`).
 
 ```js
 import { createApp } from 'vue'
@@ -25,7 +25,9 @@ createApp(App).use(createVueSkin({ adapter: Konsta })).mount('#app')
 
 Los componentes `UiInput`, `UiButton`, etc. se registran globalmente. Para layouts: `import { UiAppLayout, UiWizard } from 'vue-skin/layouts'`. También están disponibles `vue-skin/bootstrap`, `vue-skin/basecoat`, `vue-skin/terminal` y `vue-skin/slate`. Importa un solo adapter; cada entrada carga sus propios estilos. Los paquetes separados `@vue-skin/*` conservan su API para workspaces o distribución individual.
 
-Puedes fijar una revisión con `github:acmepy/vue-skin#TAG_O_COMMIT`. Los archivos de prueba y el playground no forman parte del paquete final. Durante la preparación desde Git, npm descarga el repositorio e instala las herramientas de desarrollo necesarias; la aplicación recibe `dist/library` con los estilos preparados. Si deshabilitas scripts de instalación, esta preparación no se ejecuta.
+Puedes fijar una revisión con `github:acmepy/vue-skin#TAG_O_COMMIT`. Los archivos de prueba y el playground no forman parte del paquete final. No es necesario aprobar scripts de instalación de `vue-skin`; las dependencias de terceros conservan sus propias políticas.
+
+Antes de subir una versión, ejecuta `npm run build` desde la raíz y sube también `dist/library` a GitHub. Este comando genera los estilos, construye el playground y prepara los archivos de los exports. `dist/library` se versiona; el `dist` del playground sigue ignorado. `npm run build:library` permite generar solamente la distribución de la librería.
 
 ### Playground
 

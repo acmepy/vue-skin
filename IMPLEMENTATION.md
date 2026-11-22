@@ -165,7 +165,7 @@ Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-m
 
 ## 5. npm workspaces
 
-La raíz también ofrece una distribución unificada para instalar desde GitHub como `vue-skin`. Sus subpaths `core`, `bootstrap`, `basecoat`, `terminal`, `konsta`, `slate` y `layouts` conservan los módulos de cada paquete. `prepare` genera los estilos y copia exclusivamente fuentes/tipos a `dist/library`, reescribiendo los imports internos a rutas relativas. No modifica los paquetes originales ni requiere referencias `file:` en la aplicación consumidora. Los estilos siguen aislados por entrada; las dependencias de runtime del paquete unificado incluyen los frameworks que necesitan sus adapters. Los paquetes independientes conservan sus dependencias aisladas.
+La raíz también ofrece una distribución unificada para instalar desde GitHub como `vue-skin`. Sus subpaths `core`, `bootstrap`, `basecoat`, `terminal`, `konsta`, `slate` y `layouts` conservan los módulos de cada paquete. `npm run build` genera los estilos y copia exclusivamente fuentes/tipos a `dist/library`, reescribiendo los imports internos a rutas relativas. Esta distribución se versiona en Git y se debe subir junto con cada versión; no hay hooks de instalación ni `prepare` en la raíz. El `dist` del playground permanece ignorado. No modifica los paquetes originales ni requiere referencias `file:` en la aplicación consumidora. Los estilos siguen aislados por entrada; las dependencias de runtime del paquete unificado incluyen los frameworks que necesitan sus adapters. Los paquetes independientes conservan sus dependencias aisladas.
 
 El `package.json` raíz debe administrar los paquetes mediante npm workspaces.
 

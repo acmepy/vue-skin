@@ -1,6 +1,6 @@
 {
   "name": "@vue-skin/layouts",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Layouts agnósticos reutilizables para Vue Skin.",
   "type": "module",
   "files": [

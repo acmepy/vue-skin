@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
-import { execFileSync } from 'node:child_process'
 
 describe('GitHub package', () => {
   it('exports independent entries with resolvable internal imports and no workspace dependencies', () => {
-    execFileSync(process.execPath, ['scripts/package-github.js'])
     const manifest = JSON.parse(readFileSync('package.json', 'utf8'))
-    expect(manifest.scripts.prepare).toBe('npm run build:library')
+    for (const hook of ['prepare', 'preinstall', 'install', 'postinstall', 'prepack']) expect(manifest.scripts[hook]).toBeUndefined()
+    expect(manifest.scripts.build).toContain('node scripts/package-github.js')
+    for (const asset of ['bootstrap/src/styles/base.css', 'basecoat/src/styles/vendor/basecoat.css', 'konsta/src/styles/vendor/konsta.css', 'terminal/src/styles/vendor/terminal.css']) {
+      expect(existsSync('dist/library/' + asset), asset).toBe(true)
+    }
     for (const name of ['core', 'layouts', 'konsta', 'bootstrap', 'basecoat', 'terminal', 'slate']) {
       const entry = manifest.exports['./' + name]
       expect(existsSync(typeof entry === 'string' ? entry : entry.import)).toBe(true)
