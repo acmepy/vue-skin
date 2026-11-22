@@ -6,6 +6,29 @@ Vue Skin permite usar una API común de componentes Vue 3 mientras cada adapter 
 
 ## Elegir adapter en el playground
 
+### Instalar directamente desde GitHub en otra aplicación
+
+```sh
+npm install github:acmepy/vue-skin
+```
+
+La entrada raíz `vue-skin` prepara automáticamente los estilos y empaqueta core, adapters y layouts. No necesitas clonar el repositorio ni configurar Tailwind. Requiere una aplicación Vue 3.5+ con soporte para componentes `.vue` (por ejemplo Vite y `@vitejs/plugin-vue`).
+
+```js
+import { createApp } from 'vue'
+import { createVueSkin } from 'vue-skin/core'
+import Konsta from 'vue-skin/konsta'
+import App from './App.vue'
+
+createApp(App).use(createVueSkin({ adapter: Konsta })).mount('#app')
+```
+
+Los componentes `UiInput`, `UiButton`, etc. se registran globalmente. Para layouts: `import { UiAppLayout, UiWizard } from 'vue-skin/layouts'`. También están disponibles `vue-skin/bootstrap`, `vue-skin/basecoat`, `vue-skin/terminal` y `vue-skin/slate`. Importa un solo adapter; cada entrada carga sus propios estilos. Los paquetes separados `@vue-skin/*` conservan su API para workspaces o distribución individual.
+
+Puedes fijar una revisión con `github:acmepy/vue-skin#TAG_O_COMMIT`. Los archivos de prueba y el playground no forman parte del paquete final. Durante la preparación desde Git, npm descarga el repositorio e instala las herramientas de desarrollo necesarias; la aplicación recibe `dist/library` con los estilos preparados. Si deshabilitas scripts de instalación, esta preparación no se ejecuta.
+
+### Playground
+
 Todos los adapters implementan los 35 componentes del contrato común y funcionan con los layouts compartidos.
 
 | Adapter | Paquete | Presentación y dependencias visuales |

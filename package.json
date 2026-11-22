@@ -1,16 +1,35 @@
 {
   "name": "vue-skin",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Una capa de abstracción de UI para Vue 3.",
   "license": "MIT",
   "author": "hugo",
   "private": true,
+  "files": ["dist/library"],
+  "exports": {
+    ".": { "types": "./dist/library/core/index.d.ts", "import": "./dist/library/core/src/index.js" },
+    "./core": { "types": "./dist/library/core/index.d.ts", "import": "./dist/library/core/src/index.js" },
+    "./konsta": { "types": "./dist/library/konsta/index.d.ts", "import": "./dist/library/konsta/src/index.js" },
+    "./basecoat": { "types": "./dist/library/basecoat/index.d.ts", "import": "./dist/library/basecoat/src/index.js" },
+    "./terminal": { "types": "./dist/library/terminal/index.d.ts", "import": "./dist/library/terminal/src/index.js" },
+    "./slate": { "types": "./dist/library/slate/index.d.ts", "import": "./dist/library/slate/src/index.js" },
+    "./bootstrap": "./dist/library/bootstrap/src/index.js",
+    "./layouts": { "types": "./dist/library/layouts/index.d.ts", "import": "./dist/library/layouts/src/index.js" }
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "chart.js": "^4.5.1",
+    "konsta": "^5.5.0"
+  },
+  "peerDependencies": { "vue": "^3.5.0" },
   "type": "module",
   "workspaces": [
     "packages/*",
     "playground"
   ],
   "scripts": {
+    "build:library": "npm run generate:bootstrap && npm run build --workspace @vue-skin/basecoat && npm run build --workspace @vue-skin/konsta && node scripts/package-github.js",
+    "prepare": "npm run build:library",
     "version:sync": "node scripts/sync-versions.js",
     "generate:bootstrap": "npm run build --workspace @vue-skin/bootstrap",
     "dev": "npm run dev --workspace @vue-skin/playground",
