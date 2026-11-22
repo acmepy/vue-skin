@@ -6,7 +6,7 @@ export interface UiWizardProps { modelValue?: StepId | null; items?: UiStepItem[
 /** Slots: panel/default, step, actions, complete. Methods: next, back, goTo, finish, reset. */
 export const UiWizard: DefineComponent<UiWizardProps>
 
-export interface AppLayoutSection { id: string | number; title?: string; label?: string; groupTitle?: boolean }
+export interface AppLayoutSection { id: string | number; title?: string; label?: string; groupTitle?: boolean; icon?: string }
 /** Slots: default (main content), header (custom sidebar header; overrides the header prop), navbar-actions (extra controls before the theme buttons). */
 export interface UiAppLayoutProps { modelValue?: string | number; title?: string; header?: string; sidebarWidth?: string; sections?: Array<AppLayoutSection | [string | number, string]> }
 export const UiAppLayout: DefineComponent<UiAppLayoutProps>

@@ -13,7 +13,7 @@ const isDesktop = () => typeof window !== 'undefined' && (window.matchMedia?.('(
 const sidebarOpen = ref(isDesktop())
 const normalizedSections = computed(() => props.sections.map((section) => Array.isArray(section)
   ? { id: section[0], title: section[1] }
-  : { id: section.id, title: section.title ?? section.label, groupTitle: section.groupTitle }
+  : { id: section.id, title: section.title ?? section.label, groupTitle: section.groupTitle, icon: section.icon }
 ))
 
 function selectSection(section, event) {
@@ -31,18 +31,20 @@ function selectSection(section, event) {
       <UiSidebar v-model="sidebarOpen" class="ui-app-layout-navigation" :width="sidebarWidth" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
         <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--ui-layout-surface, var(--bs-tertiary-bg))" filter>
-          <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)" />
+          <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)">
+            <template v-if="section.icon" #media><UiIcon :name="section.icon" size="20" /></template>
+          </UiListItem>
         </UiList>
       </UiSidebar>
     </div>
     <div class="ui-app-layout-content">
       <UiNavbar class="ui-app-layout-navbar" :title="title">
         <template #start>
-          <UiButton class="ui-app-layout-sidebar-switcher d-inline-flex align-items-center justify-content-center p-0" style="width: 2rem; height: 2rem" variant="outline-secondary" :aria-label="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" :title="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" @click="sidebarOpen = !sidebarOpen">
+          <UiButton class="ui-app-layout-sidebar-switcher" variant="outline-secondary" :aria-label="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" :title="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" @click="sidebarOpen = !sidebarOpen">
             <template #icon><UiIcon name="lucide:sidebar" size="18" /></template>
           </UiButton>
         </template>
-        <template #end><div class="d-flex align-items-center gap-2"><slot name="navbar-actions" /><UiThemeSwitcher /><UiThemeSelector /></div></template>
+        <template #end><div class="ui-app-layout-navbar-actions"><slot name="navbar-actions" /><UiThemeSwitcher /><UiThemeSelector /></div></template>
       </UiNavbar>
       <slot />
     </div>
@@ -55,6 +57,9 @@ function selectSection(section, event) {
 .ui-app-layout-sidebar > * { height: 100%; }
 .ui-app-layout-sidebar > .ui-sidebar { border-inline-end: 1px solid var(--ui-sidebar-scroll-thumb) !important; }
 .ui-app-layout-navbar { min-height: var(--ui-app-layout-header-height); }
+.ui-app-layout-navbar-actions { display:flex; flex-direction:row; align-items:center; gap:.5rem; }
+.ui-app-layout .ui-app-layout-sidebar-switcher { display:inline-flex; align-items:center; justify-content:center; flex:0 0 2rem; width:2rem; height:2rem; min-height:2rem; padding:0; gap:0; box-sizing:border-box; }
+.ui-app-layout-sidebar-switcher > * { flex-shrink:0; }
 .ui-app-layout-navigation { background:var(--ui-layout-surface, var(--bs-tertiary-bg, #f8f9fa)); }
 .ui-app-layout-sidebar .ui-sidebar-header { min-height: var(--ui-app-layout-header-height); padding-block: .5rem; }
 .ui-app-layout-content { grid-column: 2; min-width: 0; }

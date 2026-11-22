@@ -281,7 +281,9 @@ button:disabled,[aria-disabled=true] { cursor:not-allowed; opacity:.55; }
 .ks-field-control { min-width:0; }
 .ks-dropdown-popover [role=menuitem],.ks-autocomplete [role=option] { border:0; background:transparent; color:inherit; font:inherit; text-decoration:none; }
 .ks-dropdown { display:inline-block; }
-.ks-table { width:100%; border-collapse:collapse; }
+.ks-data-table { min-width:0; max-width:100%; color:var(--foreground); }
+.ks-data-table > .table-container { max-width:100%; overflow-x:auto; }
+.ks-table { display:table; width:100%; border-collapse:collapse; background:var(--background); }
 .ks-table th { text-align:start; font-weight:600; }
 .ks-table tr { border-bottom:1px solid var(--border); }
 .ks-table th[style],.ks-table td[style] { text-align:inherit; }
