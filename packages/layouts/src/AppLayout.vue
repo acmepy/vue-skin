@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 
 const props = defineProps({
   modelValue: [String, Number],
@@ -11,6 +11,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'select'])
 const isDesktop = () => typeof window !== 'undefined' && (window.matchMedia?.('(min-width: 992px)').matches ?? false)
 const sidebarOpen = ref(isDesktop())
+const generatedId = typeof useId === 'function' ? useId() : undefined
+const sidebarId = generatedId ? `ui-app-layout-sidebar-${generatedId}` : 'ui-app-layout-sidebar'
 const normalizedSections = computed(() => props.sections.map((section) => Array.isArray(section)
   ? { id: section[0], title: section[1] }
   : { id: section.id, title: section.title ?? section.label, groupTitle: section.groupTitle, icon: section.icon }
@@ -28,7 +30,7 @@ function selectSection(section, event) {
 <template>
   <div class="ui-app-layout">
     <div class="ui-app-layout-sidebar">
-      <UiSidebar v-model="sidebarOpen" class="ui-app-layout-navigation" :width="sidebarWidth" aria-label="Navegación principal">
+      <UiSidebar :id="sidebarId" v-model="sidebarOpen" class="ui-app-layout-navigation" :width="sidebarWidth" aria-label="Navegación principal">
         <template #header><slot name="header"><h2 class="ui-app-layout-heading">{{ header }}</h2></slot></template>
         <UiList :bordered="false" :divided="false" style="--ui-list-filter-bg: var(--ui-layout-surface, var(--bs-tertiary-bg))" filter>
           <UiListItem v-for="section in normalizedSections" :key="section.id" :href="section.groupTitle ? undefined : `#${section.id}`" :title="section.title" :group-title="section.groupTitle" :active="modelValue === section.id" @click="selectSection(section, $event)">
@@ -40,7 +42,15 @@ function selectSection(section, event) {
     <div class="ui-app-layout-content">
       <UiNavbar class="ui-app-layout-navbar" :title="title">
         <template #start>
-          <UiButton class="ui-app-layout-sidebar-switcher" variant="outline-secondary" :aria-label="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" :title="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'" @click="sidebarOpen = !sidebarOpen">
+          <UiButton
+            class="ui-app-layout-sidebar-switcher"
+            variant="outline-secondary"
+            :aria-expanded="sidebarOpen"
+            :aria-controls="sidebarId"
+            :aria-label="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'"
+            :title="sidebarOpen ? 'Ocultar navegación' : 'Mostrar navegación'"
+            @click="sidebarOpen = !sidebarOpen"
+          >
             <template #icon><UiIcon name="lucide:sidebar" size="18" /></template>
           </UiButton>
         </template>

@@ -58,4 +58,24 @@ describe('UiAppLayout', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['settings'])
     expect(wrapper.emitted('select')?.[0]?.[0]).toMatchObject({ id: 'settings', title: 'Ajustes' })
   })
+
+  it('binds the switcher button to the sidebar with aria-controls and reflects aria-expanded', async () => {
+    const wrapper = mount(UiAppLayout, { global: { components } })
+    try {
+      const button = wrapper.get('.ui-app-layout-sidebar-switcher')
+      const sidebar = wrapper.get('aside')
+      const sidebarId = sidebar.attributes('id')
+
+      expect(sidebarId).toBeTruthy()
+      expect(button.attributes('aria-controls')).toBe(sidebarId)
+
+      const initialExpanded = button.attributes('aria-expanded')
+      await button.trigger('click')
+      expect(button.attributes('aria-expanded')).not.toBe(initialExpanded)
+      await button.trigger('click')
+      expect(button.attributes('aria-expanded')).toBe(initialExpanded)
+    } finally {
+      wrapper.unmount()
+    }
+  })
 })

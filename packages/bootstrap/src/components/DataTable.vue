@@ -78,7 +78,13 @@ watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
 </template>
 
 <style>
-.ui-data-table { min-width: 0; }
+.ui-data-table { min-width: 0; container-type: inline-size; }
+@container (max-width: 767.98px) {
+  .ui-data-table .ui-data-table-toolbar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
 .ui-data-table-filter { flex: 1 1 16rem; min-width: 0; }
 .ui-data-table-vertical-only > :not(caption) > * { border-top-width: 0; border-bottom-width: 0; }
 .ui-data-table-vertical-only > :not(caption) > * > * { border-left-width: var(--bs-border-width); border-right-width: var(--bs-border-width); }

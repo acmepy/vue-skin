@@ -10,14 +10,28 @@ const trigger = ref()
 const menu = ref()
 const open = ref(false)
 let disposed = false
-const close = () => { open.value = false }
+const close = () => {
+  try { menu.value?.hidePopover?.() } catch {}
+  open.value = false
+}
 const focusTrigger = () => trigger.value?.$el?.focus()
 function outside(event) { if (!root.value?.contains(event.target)) close() }
-function toggle() { if (!props.disabled) open.value = !open.value }
+function toggle() {
+  if (props.disabled) return
+  if (open.value) {
+    try { menu.value?.hidePopover?.() } catch {}
+  }
+  open.value = !open.value
+}
 watch(open, async value => {
   document[value ? 'addEventListener' : 'removeEventListener']('pointerdown', outside)
   emit(value ? 'show' : 'hide')
-  await nextTick()
+  if (value) {
+    await nextTick()
+    if (menu.value?.showPopover && !menu.value.matches?.(':popover-open')) {
+      try { menu.value.showPopover() } catch {}
+    }
+  }
   if (!disposed && open.value === value) emit(value ? 'shown' : 'hidden')
 })
 watch(() => props.disabled, value => { if (value) close() })
@@ -53,7 +67,7 @@ onBeforeUnmount(() => { disposed = true; document.removeEventListener('pointerdo
 <template>
   <div ref="root" class="sl-dropdown" :data-align="align" @keydown="keydown">
     <Button ref="trigger" :variant="variant" :size="size" :disabled="disabled" aria-haspopup="menu" :aria-controls="open ? id : undefined" :aria-expanded="open" @click="toggle">{{ label }}</Button>
-    <div v-if="open" ref="menu" :id="id" role="menu" class="sl-dropdown-popover">
+    <div v-if="open" ref="menu" :id="id" role="menu" class="sl-dropdown-popover" popover="manual">
       <component v-for="(item, index) in items" :key="index" :is="item.href ? 'a' : 'button'" :href="item.disabled ? undefined : item.href" :type="item.href ? undefined : 'button'" role="menuitem" :aria-disabled="item.disabled || undefined" :disabled="item.disabled" :tabindex="item.disabled ? -1 : 0" @click="item.disabled ? $event.preventDefault() : choose(item)">{{ item.label }}</component>
     </div>
   </div>

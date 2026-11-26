@@ -6,6 +6,8 @@ Este archivo contiene instrucciones de trabajo generales para el repositorio.
 
 Las decisiones de producto y arquitectura de Vue Skin —incluidos el contrato de adapters, los componentes de v1, accesibilidad, playground y criterios de aceptación— están en [IMPLEMENTATION.md](IMPLEMENTATION.md). Léelo antes de cambiar una API pública, la arquitectura o el comportamiento de un componente.
 
+Las propuestas de diseño y usabilidad están en [DESIGN-GUIDANCE.md](DESIGN-GUIDANCE.md).
+
 ## Forma de trabajar
 
 - Respeta la arquitectura y la API pública documentadas en `IMPLEMENTATION.md`.

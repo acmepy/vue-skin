@@ -165,6 +165,8 @@ Su primer componente, `UiAppLayout`, recibe `title`, `header`, `sections` y `v-m
 
 ## 5. npm workspaces
 
+La instalación mediante una referencia Git activa la preparación de npm cuando el manifiesto contiene `workspaces` o `build`, aun con `dist/library` ya generado. Para evitar esa preparación en el consumidor, se puede adjuntar al GitHub Release el `.tgz` producido por `npm pack` después de `npm run build:library`.
+
 La raíz también ofrece una distribución unificada para instalar desde GitHub como `vue-skin`. Sus subpaths `core`, `bootstrap`, `basecoat`, `terminal`, `konsta`, `slate` y `layouts` conservan los módulos de cada paquete. `npm run build` genera los estilos y copia exclusivamente fuentes/tipos a `dist/library`, reescribiendo los imports internos a rutas relativas. Esta distribución se versiona en Git y se debe subir junto con cada versión; no hay hooks de instalación ni `prepare` en la raíz. El `dist` del playground permanece ignorado. No modifica los paquetes originales ni requiere referencias `file:` en la aplicación consumidora. Los estilos siguen aislados por entrada; las dependencias de runtime del paquete unificado incluyen los frameworks que necesitan sus adapters. Los paquetes independientes conservan sus dependencias aisladas.
 
 El `package.json` raíz debe administrar los paquetes mediante npm workspaces.
@@ -1028,11 +1030,13 @@ Eventos:
 
 El modo `preloader` debe bloquear la interacción con la pantalla y no puede cerrarse mediante backdrop o teclado. Además del uso declarativo, el plugin puede exponer un servicio por aplicación para `alert`, `confirm`, `prompt` y `preloader`; no debe ser un singleton global compartido entre aplicaciones.
 
+El preloader muestra el título opcional encima de la animación y el mensaje opcional debajo. Sin título ni mensaje, el panel se ajusta a la animación. Cada adapter conserva su modal y su indicador de carga. El servicio acepta `preloader(title?, { message }?)` y `UiDialog` acepta las props `title` y `message`.
+
 Los tipos `info`, `success`, `warning` y `error` muestran mensajes con un botón Aceptar, icono y color semántico en el header; el body conserva el fondo normal del modal. En Bootstrap, el header usa las variables oficiales `--bs-{info|success|warning|danger}-bg-subtle`, `-text-emphasis` y `-border-subtle`, adaptadas al tema. El icono acompaña al título. Si se omite `title`, muestran Información, Operación realizada, Advertencia o Error respectivamente. No renderizan HTML arbitrario a partir de `message`.
 
 El servicio también expone `uiDialog.info(message, title?, options?)`, `success(...)`, `warning(...)` y `error(...)`, que devuelven `Promise<void>` y se completan después del cierre, respetando la cola por aplicación. `success` confirma una operación realizada; `confirm` solicita una decisión con Aceptar y Cancelar y sigue devolviendo `Promise<boolean>`. Los nombres de tipos y métodos son comunes a todos los adapters; iconos y estilos pertenecen a cada implementación.
 
-En Basecoat, el header coloreado de info/success/warning/error cubre todo el ancho y su padding, hasta los bordes superiores redondeados del modal. En estos casos el contenedor exterior no aporta padding: header, cuerpo y pie gestionan su propio espacio. Los modales normales y preloaders conservan su espaciado original; el cuerpo del mensaje no recibe el fondo semántico.
+En Basecoat, el header coloreado de info/success/warning/error cubre todo el ancho y su padding, hasta los bordes superiores redondeados del modal. En estos casos el contenedor exterior no aporta padding: header, cuerpo y pie gestionan su propio espacio. El color semántico se limita al header. Los modales normales usan el espaciado del adapter y el preloader sin texto usa el panel compacto descrito arriba.
 
 ---
 

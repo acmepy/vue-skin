@@ -43,3 +43,20 @@ it.each([375,1280])('keeps UiDataTable rendered as a visible table at %s px', wi
   expect(getComputedStyle(wrapper.get('table').element).display).toBe('table')
   expect(wrapper.get('tbody td').text()).toBe('Cliente')
 })
+
+it('renders with official Konsta UI table components and theme classes', () => {
+  setup(1024)
+  wrapper = mount(Konsta.components.DataTable, {
+    attachTo: target,
+    props: { data: [{ name: 'Cliente' }], header: { name: { label: 'Nombre' } } },
+    global: { plugins: [createVueSkin({ adapter: Konsta, theme: { target, persist: false } })] }
+  })
+  const card = wrapper.get('.table-container')
+  expect(card.classes()).toContain('k-card')
+  const table = wrapper.get('table')
+  expect(table.classes()).toContain('k-table')
+  expect(table.classes()).toContain('ks-table')
+  expect(wrapper.find('thead tr').exists()).toBe(true)
+  expect(wrapper.find('tbody tr').exists()).toBe(true)
+  expect(wrapper.get('tbody td').text()).toBe('Cliente')
+})

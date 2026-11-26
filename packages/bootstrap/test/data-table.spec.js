@@ -58,6 +58,21 @@ describe('UiDataTable', () => {
     } finally { wrapper.unmount(); plain.unmount() }
   })
 
+  it('defines inline-size container type on the table section to allow container-based responsive layout', () => {
+    const stylesheet = document.createElement('style')
+    stylesheet.textContent = '.ui-data-table { container-type: inline-size; }'
+    document.head.append(stylesheet)
+    const wrapper = render({ filter: true })
+    try {
+      const section = wrapper.get('section.ui-data-table')
+      expect(section.classes()).toContain('ui-data-table')
+      expect(getComputedStyle(section.element).containerType).toBe('inline-size')
+    } finally {
+      wrapper.unmount()
+      stylesheet.remove()
+    }
+  })
+
   it('demonstrates general actions and the renamed row buttons in the playground', async () => {
     const prompt = vi.spyOn(uiDialog, 'prompt').mockResolvedValue('Nuevo cliente')
     const wrapper = mount(App, { global: { plugins: [skin] } })

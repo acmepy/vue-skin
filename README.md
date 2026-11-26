@@ -25,7 +25,9 @@ createApp(App).use(createVueSkin({ adapter: Konsta })).mount('#app')
 
 Los componentes `UiInput`, `UiButton`, etc. se registran globalmente. Para layouts: `import { UiAppLayout, UiWizard } from 'vue-skin/layouts'`. También están disponibles `vue-skin/bootstrap`, `vue-skin/basecoat`, `vue-skin/terminal` y `vue-skin/slate`. Importa un solo adapter; cada entrada carga sus propios estilos. Los paquetes separados `@vue-skin/*` conservan su API para workspaces o distribución individual.
 
-Puedes fijar una revisión con `github:acmepy/vue-skin#TAG_O_COMMIT`. Los archivos de prueba y el playground no forman parte del paquete final. No es necesario aprobar scripts de instalación de `vue-skin`; las dependencias de terceros conservan sus propias políticas.
+Puedes fijar una revisión con `github:acmepy/vue-skin#TAG_O_COMMIT`. Al instalar una referencia Git, npm prepara el monorepo en un directorio temporal porque el manifiesto incluye `workspaces` y `build`. Esto puede instalar dependencias de desarrollo aunque `dist/library` ya exista. [Reglas de npm para dependencias Git](https://docs.npmjs.com/files/package.json/#git-urls-as-dependencies)
+
+Para distribuir la librería ya empaquetada, ejecuta `npm run build:library` y luego `npm pack` en Vue Skin. Adjunta el `.tgz` resultante al GitHub Release. En la aplicación consumidora, pasa a `npm install` la URL del archivo adjunto al release. Los imports son los mismos. El paquete incluye `dist/library` y sus dependencias de ejecución se resuelven durante la instalación.
 
 Antes de subir una versión, ejecuta `npm run build` desde la raíz y sube también `dist/library` a GitHub. Este comando genera los estilos, construye el playground y prepara los archivos de los exports. `dist/library` se versiona; el `dist` del playground sigue ignorado. `npm run build:library` permite generar solamente la distribución de la librería.
 
@@ -562,7 +564,7 @@ const name = await uiDialog.prompt('Ingrese un nombre.', 'Nuevo proyecto', {
   label: 'Nombre'
 })
 
-const preloader = uiDialog.preloader('Procesando información')
+const preloader = uiDialog.preloader('Procesando información', { message: 'Espera un momento…' })
 try {
   await save()
 } finally {
@@ -573,6 +575,8 @@ try {
 `info`, `success`, `warning` y `error` tienen un botón Aceptar y devuelven `Promise<void>` al cerrarse. El título es opcional y admite un tercer argumento, por ejemplo `{ acceptText: 'Entendido' }`. `success` comunica una operación realizada; `confirm` solicita una decisión y devuelve `true` o `false`. También puedes usarlos declarativamente: `<UiDialog v-model="open" type="error" message="No se pudo guardar" />`.
 
 `prompt` devuelve el texto aceptado o `null` al cancelar y admite `initialValue`, `label` y `placeholder`. El preloader bloquea la interacción hasta llamar a `close()`. Las solicitudes se encolan por aplicación. Dentro de componentes, el mismo servicio está disponible mediante `inject('uiDialog')` o `this.$uiDialog`.
+
+`uiDialog.preloader()` muestra un panel compacto con la animación. El título opcional va arriba y el `message` opcional va debajo. En el template puedes pasar ambos directamente a `<UiDialog v-model="open" type="preloader" title="Guardando" message="Espera un momento…" />`.
 
 ## Desarrollo
 

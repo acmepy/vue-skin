@@ -14,13 +14,27 @@ let mediaQuery
 
 const breakpointWidths = { sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 }
 function isOverlay() { return !mediaQuery?.matches }
+let transitioningBreakpoint = false
 
 function sync(visible) {
   if (!isOverlay()) return
   visible ? instance?.show() : instance?.hide()
 }
 function onShown() { emit('update:modelValue', true); emit('open') }
-function onHidden() { emit('update:modelValue', false); emit('close') }
+function onHidden() {
+  if (transitioningBreakpoint) return
+  emit('update:modelValue', false)
+  emit('close')
+}
+function onMediaChange() {
+  if (!isOverlay()) {
+    transitioningBreakpoint = true
+    instance?.hide()
+    transitioningBreakpoint = false
+  } else if (props.modelValue) {
+    instance?.show()
+  }
+}
 
 watch(() => props.modelValue, sync)
 onMounted(() => {
@@ -28,11 +42,13 @@ onMounted(() => {
   instance = Offcanvas.getOrCreateInstance(element.value)
   element.value.addEventListener('shown.bs.offcanvas', onShown)
   element.value.addEventListener('hidden.bs.offcanvas', onHidden)
+  mediaQuery.addEventListener?.('change', onMediaChange)
   sync(props.modelValue)
 })
 onBeforeUnmount(() => {
   element.value?.removeEventListener('shown.bs.offcanvas', onShown)
   element.value?.removeEventListener('hidden.bs.offcanvas', onHidden)
+  mediaQuery.removeEventListener?.('change', onMediaChange)
   instance?.dispose()
 })
 </script>

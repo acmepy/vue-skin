@@ -45,7 +45,7 @@ function visibilityChanged(visible) {
 </script>
 
 <template>
-  <Modal :model-value="modelValue" :title="modalTitle()" :class="state ? `ui-dialog-${state.variant}` : undefined" centered :closable="type !== 'preloader'" @update:model-value="visibilityChanged" @closed="emit('closed')">
+  <Modal :model-value="modelValue" :title="modalTitle()" :class="[state && `ui-dialog-${state.variant}`, { 'bs-preloader-compact': type === 'preloader' && !title && !message }]" :aria-label="type === 'preloader' ? (title || 'Cargando') : undefined" centered :closable="type !== 'preloader'" @update:model-value="visibilityChanged" @closed="emit('closed')">
     <template v-if="state" #header>
       <div class="d-flex align-items-center gap-3">
         <UiIcon v-if="type === 'info'" name="mdi:information-outline" size="xl" class="flex-shrink-0" />
@@ -55,11 +55,12 @@ function visibilityChanged(visible) {
         <h2 class="modal-title fs-5">{{ modalTitle() }}</h2>
       </div>
     </template>
-    <p v-if="message" class="mb-0" :role="state ? (type === 'warning' || type === 'error' ? 'alert' : 'status') : undefined">{{ message }}</p>
+    <p v-if="message && type !== 'preloader'" class="mb-0" :role="state ? (type === 'warning' || type === 'error' ? 'alert' : 'status') : undefined">{{ message }}</p>
     <Input v-if="isPrompt()" :model-value="inputValue" :label="label" :placeholder="placeholder" autofocus @update:model-value="emit('update:inputValue', $event)" />
-    <div v-if="type === 'preloader'" class="d-flex align-items-center gap-3">
+    <div v-if="type === 'preloader'" class="bs-loader d-flex flex-column align-items-center gap-2 text-center">
+      <strong v-if="title">{{ title }}</strong>
       <Spinner />
-      <div><strong v-if="title" class="d-block">{{ title }}</strong><span>Procesando…</span></div>
+      <p v-if="message" class="mb-0">{{ message }}</p>
     </div>
     <template v-if="type !== 'preloader'" #footer>
       <Button v-if="canCancel()" variant="secondary" @click="cancel">{{ cancelText }}</Button>
@@ -69,6 +70,9 @@ function visibilityChanged(visible) {
 </template>
 
 <style>
+.bs-loader { overflow-wrap:anywhere; }
+.bs-loader p { white-space:pre-line; }
+.bs-preloader-compact .modal-dialog { width:fit-content; margin-inline:auto; }
 .ui-dialog-info .modal-header { background-color: var(--bs-info-bg-subtle); color: var(--bs-info-text-emphasis); border-color: var(--bs-info-border-subtle); }
 .ui-dialog-success .modal-header { background-color: var(--bs-success-bg-subtle); color: var(--bs-success-text-emphasis); border-color: var(--bs-success-border-subtle); }
 .ui-dialog-warning .modal-header { background-color: var(--bs-warning-bg-subtle); color: var(--bs-warning-text-emphasis); border-color: var(--bs-warning-border-subtle); }

@@ -43,10 +43,14 @@ function visibilityChanged(visible) {
 }
 </script>
 <template>
-<Modal :model-value="modelValue" :title="modalTitle()" :tone="state?.variant" centered :closable="type !== 'preloader'" @update:model-value="visibilityChanged" @closed="emit('closed')">
-  <p v-if="message" :role="type === 'error' || type === 'warning' ? 'alert' : undefined">{{ message }}</p>
+<Modal :model-value="modelValue" :title="modalTitle()" :tone="state?.variant" :class="{ 'ks-preloader-compact': type === 'preloader' && !title && !message }" :aria-label="type === 'preloader' ? (title || 'Cargando') : undefined" centered :closable="type !== 'preloader'" @update:model-value="visibilityChanged" @closed="emit('closed')">
+  <p v-if="message && type !== 'preloader'" :role="type === 'error' || type === 'warning' ? 'alert' : undefined">{{ message }}</p>
   <Input v-if="isPrompt()" :model-value="inputValue" :label="label" :placeholder="placeholder" autofocus @update:model-value="emit('update:inputValue', $event)" />
-  <div v-if="type === 'preloader'" class="ks-loader"><Spinner /><div><strong v-if="title">{{ title }}</strong><p>Procesando…</p></div></div>
+  <div v-if="type === 'preloader'" class="ks-loader">
+    <strong v-if="title">{{ title }}</strong>
+    <Spinner />
+    <p v-if="message">{{ message }}</p>
+  </div>
   <template v-if="type !== 'preloader'" #footer><Button v-if="canCancel()" variant="secondary" @click="cancel">{{ cancelText }}</Button><Button :variant="state?.variant ?? 'primary'" @click="accept">{{ acceptText }}</Button></template>
 </Modal>
 </template>

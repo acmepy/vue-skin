@@ -397,7 +397,7 @@ async function showError() { await uiDialog.error('No se pudo guardar. Intente n
 async function showAlert() { await uiDialog.alert('Los cambios fueron guardados.', 'Éxito'); result.value = 'Alert aceptado' }
 async function showConfirm() { result.value = (await uiDialog.confirm('¿Desea continuar?', 'Confirmación')) ? 'Confirmado' : 'Cancelado' }
 async function showPrompt() { const value = await uiDialog.prompt('Ingrese un nombre para el proyecto.', 'Nuevo proyecto', { label: 'Nombre', initialValue: 'Vue Skin' }); result.value = value === null ? 'Prompt cancelado' : \`Proyecto: \${value}\` }
-async function showPreloader() { const preloader = uiDialog.preloader('Procesando cambios'); await new Promise((resolve) => setTimeout(resolve, 5000)); preloader.close(); result.value = 'Proceso finalizado' }
+async function showPreloader() { const preloader = uiDialog.preloader('Procesando cambios', { message: 'Espera un momento…' }); await new Promise((resolve) => setTimeout(resolve, 5000)); preloader.close(); result.value = 'Proceso finalizado' }
 <\/script>
 
 <template>
@@ -599,7 +599,7 @@ async function showWarning() { await uiDialog.warning('Hay pedidos pendientes de
 async function showError() { await uiDialog.error('No se pudo guardar. Intente nuevamente.', 'Error'); result.value = 'Error aceptado' }
 async function showConfirm() { result.value = (await uiDialog.confirm('¿Desea continuar?', 'Confirmación')) ? 'Confirmado' : 'Cancelado' }
 async function showPrompt() { const value = await uiDialog.prompt('Ingrese un nombre para el proyecto.', 'Nuevo proyecto', { label: 'Nombre', initialValue: 'Vue Skin' }); result.value = value === null ? 'Prompt cancelado' : `Proyecto: ${value}` }
-async function showPreloader() { const preloader = uiDialog.preloader('Procesando cambios'); await new Promise((resolve) => setTimeout(resolve, 5000)); preloader.close(); result.value = 'Proceso finalizado' }
+async function showPreloader() { const preloader = uiDialog.preloader('Procesando cambios', { message: 'Espera un momento…' }); await new Promise((resolve) => setTimeout(resolve, 5000)); preloader.close(); result.value = 'Proceso finalizado' }
 function login({ email, remember }) { loginResult.value = `Enviado: ${email || 'sin correo'}${remember ? ' · recordar sesión' : ''}` }
 </script>
 

@@ -3,6 +3,14 @@ import { computed, ref, watch } from 'vue'
 import InputGroup from './InputGroup.vue'
 import { Button } from './basic.js'
 import { UiIcon } from '@vue-skin/core'
+import {
+  Card as KCard,
+  Table as KTable,
+  TableHead as KTableHead,
+  TableBody as KTableBody,
+  TableRow as KTableRow,
+  TableCell as KTableCell
+} from 'konsta/vue'
 
 const props = defineProps({
   data: { type: Array, default: () => [] },
@@ -47,13 +55,26 @@ watch(query, (value) => { if (!value.trim()) appliedQuery.value = '' })
     <form v-if="filter" role="search" @submit.prevent="appliedQuery = query"><InputGroup v-model="query" type="search" aria-label="Buscar en la tabla" placeholder="Buscar en los datos…"><template #suffix><Button type="submit" variant="outline-secondary" aria-label="Buscar" title="Buscar"><UiIcon name="mdi:magnify" size="md" /></Button></template></InputGroup></form>
     <div v-if="$slots.actions" class="ks-table-actions"><slot name="actions" :data="rows" :total="data.length" /></div>
   </div>
-  <div class="table-container" :style="scrollStyle" :tabindex="scroll ? 0 : undefined" :role="scroll ? 'region' : undefined" :aria-label="scroll ? (title || 'Tabla de datos') : undefined">
-    <table class="table ks-table" :class="{ 'ks-table-striped': striped, 'ks-table-vertical': verticalBorders, 'ks-table-no-horizontal': !horizontalBorders }">
+  <KCard class="table-container m-0 overflow-x-auto" :content-wrap="false" :style="scrollStyle" :tabindex="scroll ? 0 : undefined" :role="scroll ? 'region' : undefined" :aria-label="scroll ? (title || 'Tabla de datos') : undefined">
+    <KTable class="table ks-table" :class="{ 'ks-table-striped': striped, 'ks-table-vertical': verticalBorders, 'ks-table-no-horizontal': !horizontalBorders }">
       <caption class="ks-sr-only">{{ title || 'Tabla de datos' }}</caption>
-      <thead><tr><th v-for="column in columns" :key="column.key" scope="col" :style="{ textAlign: column.align }">{{ column.label }}</th><th v-if="$slots.detail" scope="col" class="ks-text-end">{{ detailLabel }}</th></tr></thead>
-      <tbody><tr v-for="(row,index) in rows" :key="index"><td v-for="column in columns" :key="column.key" :style="{ textAlign: column.align }">{{ row[column.key] }}</td><td v-if="$slots.detail" class="ks-text-end"><slot name="detail" :row="row" :index="index" /></td></tr><tr v-if="!rows.length"><td :colspan="Math.max(columns.length + ($slots.detail ? 1 : 0),1)">Sin resultados</td></tr></tbody>
-    </table>
-  </div>
+      <KTableHead>
+        <KTableRow header>
+          <KTableCell v-for="column in columns" :key="column.key" header scope="col" :style="{ textAlign: column.align }">{{ column.label }}</KTableCell>
+          <KTableCell v-if="$slots.detail" header scope="col" class="ks-text-end">{{ detailLabel }}</KTableCell>
+        </KTableRow>
+      </KTableHead>
+      <KTableBody>
+        <KTableRow v-for="(row,index) in rows" :key="index">
+          <KTableCell v-for="column in columns" :key="column.key" :style="{ textAlign: column.align }">{{ row[column.key] }}</KTableCell>
+          <KTableCell v-if="$slots.detail" class="ks-text-end"><slot name="detail" :row="row" :index="index" /></KTableCell>
+        </KTableRow>
+        <KTableRow v-if="!rows.length">
+          <KTableCell :colspan="Math.max(columns.length + ($slots.detail ? 1 : 0),1)">Sin resultados</KTableCell>
+        </KTableRow>
+      </KTableBody>
+    </KTable>
+  </KCard>
   <footer v-if="footer || $slots.footer"><slot name="footer" :data="rows" :total="data.length">{{ footer }}</slot></footer>
 </section>
 </template>
